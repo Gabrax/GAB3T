@@ -1,0 +1,361 @@
+{
+    "version": 2,
+    "configurePresets": [
+        {
+            "name": "conan-deb",
+            "hidden": true,
+            "cacheVariables": {
+                "CMAKE_TOOLCHAIN_FILE": "${sourceDir}/conan/deb/conan_toolchain.cmake"
+            }
+        },
+        {
+            "name": "rel",
+            "hidden": true,
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Release",
+                "CMAKE_EXPORT_COMPILE_COMMANDS": true
+            },
+            "warnings": {
+                "unusedCli": false
+            }
+        },
+        {
+            "name": "deb",
+            "hidden": true,
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug",
+                "BUILD_TESTS": true,
+                "CMAKE_EXPORT_COMPILE_COMMANDS": true
+            }
+        },
+        {
+            "name": "unix",
+            "hidden": true,
+            "generator": "Unix Makefiles",
+            "cacheVariables": {
+                "CMAKE_CXX_FLAGS_INIT": "$env{CMAKE_CXX_FLAGS} -Werror -Wall -Wextra -pedantic"
+            }
+        },
+        {
+            "name": "unix-shared",
+            "hidden": true,
+            "inherits": "unix",
+            "cacheVariables": {
+                "CMAKE_CXX_FLAGS_INIT": "$env{CMAKE_CXX_FLAGS_INIT} $env{CMAKE_CXX_FLAGS} -fPIC -Werror -Wall -Wextra -pedantic",
+                "BUILD_SHARED_LIBS": true
+            }
+        },
+        {
+            "name": "MinGW",
+            "hidden": true,
+            "generator": "MinGW Makefiles",
+            "environment": {
+                "PATH": "C:/msys64/mingw64/bin;$penv{PATH}"
+            },
+            "cacheVariables": {
+                "CMAKE_C_COMPILER": "gcc.exe",
+                "CMAKE_CXX_COMPILER": "g++.exe",
+                "CMAKE_CXX_FLAGS_INIT": "$env{CMAKE_CXX_FLAGS} -Werror -Wall -Wextra -pedantic"
+            }
+        },
+        {
+            "name": "MinGW-shared",
+            "hidden": true,
+            "inherits": "MinGW",
+            "generator": "MinGW Makefiles",
+            "cacheVariables": {
+                "CMAKE_CXX_FLAGS_INIT": "$env{CMAKE_CXX_FLAGS_INIT} $env{CMAKE_CXX_FLAGS} -fPIC -Werror -Wall -Wextra -pedantic",
+                "BUILD_SHARED_LIBS": true
+            }
+        },
+        {
+            "name": "MSYS",
+            "hidden": true,
+            "generator": "MSYS Makefiles",
+            "environment": {
+                "PATH": "C:/msys64/mingw64/bin;$penv{PATH}"
+            },
+            "cacheVariables": {
+                "CMAKE_C_COMPILER": "gcc.exe",
+                "CMAKE_CXX_COMPILER": "g++.exe",
+                "CMAKE_CXX_FLAGS_INIT": "$env{CMAKE_CXX_FLAGS} -Werror -Wall -Wextra -pedantic"
+            }
+        },
+        {
+            "name": "MSYS-shared",
+            "hidden": true,
+            "inherits": "MSYS",
+            "generator": "MSYS Makefiles",
+            "cacheVariables": {
+                "CMAKE_CXX_FLAGS_INIT": "$env{CMAKE_CXX_FLAGS_INIT} $env{CMAKE_CXX_FLAGS} -fPIC -Werror -Wall -Wextra -pedantic",
+                "BUILD_SHARED_LIBS": true
+            }
+        },
+        {
+            "name": "vs2022",
+            "hidden": true,
+            "generator": "Visual Studio 17 2022",
+            "cacheVariables": {
+                "CMAKE_CXX_FLAGS_INIT": "$env{CMAKE_CXX_FLAGS_INIT} $env{CMAKE_CXX_FLAGS} /W4 /WX /EHsc"
+            }
+        },
+        {
+            "name": "vs2022-shared",
+            "hidden": true,
+            "generator": "Visual Studio 17 2022",
+            "cacheVariables": {
+                "CMAKE_CXX_FLAGS_INIT": "$env{CMAKE_CXX_FLAGS_INIT} $env{CMAKE_CXX_FLAGS} /W4 /WX /EHsc",
+                "BUILD_SHARED_LIBS": true
+            }
+        },
+
+
+
+
+        {
+            "name": "MinGW-rel",
+            "displayName": "MinGW Make Release",
+            "binaryDir": "${sourceDir}/build/MinGW-rel",
+            "inherits": ["MinGW", "rel"],
+            "cacheVariables": {
+                "CMAKE_INSTALL_PREFIX": "${sourceDir}/build/MinGW-rel/install"
+            }
+        },
+        {
+            "name": "MinGW-rel-shared",
+            "displayName": "MinGW Make Release Shared",
+            "binaryDir": "${sourceDir}/build/MinGW-rel-shared",
+            "inherits": ["MinGW-shared", "MinGW-rel"],
+            "cacheVariables": {
+                "CMAKE_INSTALL_PREFIX": "${sourceDir}/build/MinGW-rel-shared/install"
+            }
+        },
+        {
+            "name": "MinGW-deb",
+            "displayName": "MinGW Make Debug",
+            "binaryDir": "${sourceDir}/build/MinGW-deb",
+            "inherits": ["MinGW", "deb", "conan-deb"],
+            "cacheVariables": {
+                "CMAKE_CXX_FLAGS": "-O0 --coverage -g",
+                "CMAKE_INSTALL_PREFIX": "${sourceDir}/build/MinGW-deb/install"
+            }
+        },
+        {
+            "name": "MinGW-deb-shared",
+            "displayName": "MinGW Make Debug Shared",
+            "binaryDir": "${sourceDir}/build/MinGW-deb-shared",
+            "inherits": ["MinGW-shared", "MinGW-deb"],
+            "cacheVariables": {
+                "CMAKE_INSTALL_PREFIX": "${sourceDir}/build/MinGW-deb-shared/install"
+            }
+        },
+        {
+            "name": "MSYS-rel",
+            "displayName": "MSYS Make Release",
+            "binaryDir": "${sourceDir}/build/MSYS-rel",
+            "inherits": ["MSYS", "rel"],
+            "cacheVariables": {
+                "CMAKE_INSTALL_PREFIX": "${sourceDir}/build/MSYS-rel/install"
+            }
+        },
+        {
+            "name": "MSYS-rel-shared",
+            "displayName": "MSYS Make Release Shared",
+            "binaryDir": "${sourceDir}/build/MSYS-rel-shared",
+            "inherits": ["MSYS-shared", "MSYS-rel"],
+            "cacheVariables": {
+                "CMAKE_INSTALL_PREFIX": "${sourceDir}/build/MSYS-rel-shared/install"
+            }
+        },
+        {
+            "name": "MSYS-deb",
+            "displayName": "MSYS Make Debug",
+            "binaryDir": "${sourceDir}/build/MSYS-deb",
+            "inherits": ["MSYS", "deb", "conan-deb"],
+            "cacheVariables": {
+                "CMAKE_CXX_FLAGS": "-O0 --coverage -g",
+                "CMAKE_INSTALL_PREFIX": "${sourceDir}/build/MSYS-deb/install"
+            }
+        },
+        {
+            "name": "MSYS-deb-shared",
+            "displayName": "MSYS Make Debug Shared",
+            "binaryDir": "${sourceDir}/build/MSYS-deb-shared",
+            "inherits": ["MSYS-shared", "MSYS-deb"],
+            "cacheVariables": {
+                "CMAKE_INSTALL_PREFIX": "${sourceDir}/build/MSYS-deb-shared/install"
+            }
+        },
+        {
+            "name": "unix-rel",
+            "displayName": "Unix Make Release",
+            "binaryDir": "${sourceDir}/build/unix-rel",
+            "inherits": ["unix", "rel"],
+            "cacheVariables": {
+                "CMAKE_INSTALL_PREFIX": "${sourceDir}/build/unix-rel/install"
+            }
+        },
+        {
+            "name": "unix-rel-shared",
+            "displayName": "Unix Make Release Shared",
+            "binaryDir": "${sourceDir}/build/unix-rel-shared",
+            "inherits": ["unix-shared", "unix-rel"],
+            "cacheVariables": {
+                "CMAKE_INSTALL_PREFIX": "${sourceDir}/build/unix-rel-shared/install"
+            }
+        },
+        {
+            "name": "unix-deb",
+            "displayName": "Unix Make Debug",
+            "binaryDir": "${sourceDir}/build/unix-deb",
+            "inherits": ["unix", "deb", "conan-deb"],
+            "cacheVariables": {
+                "CMAKE_CXX_FLAGS": "-O0 --coverage -g",
+                "CMAKE_INSTALL_PREFIX": "${sourceDir}/build/unix-deb/install"
+            }
+        },
+        {
+            "name": "unix-deb-shared",
+            "displayName": "Unix Make Debug Shared",
+            "binaryDir": "${sourceDir}/build/unix-deb-shared",
+            "inherits": ["unix-shared", "unix-deb"],
+            "cacheVariables": {
+                "CMAKE_INSTALL_PREFIX": "${sourceDir}/build/unix-deb-shared/install"
+            }
+        },
+        {
+            "name": "vs2022-rel",
+            "displayName": "Visual Studio 2022 Release",
+            "binaryDir": "${sourceDir}/build/vs2022-rel",
+            "inherits": ["vs2022", "rel"],
+            "cacheVariables": {
+                "CMAKE_INSTALL_PREFIX": "${sourceDir}/build/vs2022-rel/install"
+            }
+        },
+        {
+            "name": "vs2022-deb",
+            "displayName": "Visual Studio 2022 Debug",
+            "binaryDir": "${sourceDir}/build/vs2022-deb",
+            "inherits": ["vs2022", "deb", "conan-deb"],
+            "cacheVariables": {
+                "CMAKE_INSTALL_PREFIX": "${sourceDir}/build/vs2022-deb/install"
+            }
+        },
+        {
+            "name": "vs2022-rel-shared",
+            "displayName": "Visual Studio 2022 Release Shared",
+            "binaryDir": "${sourceDir}/build/vs2022-rel-shared",
+            "inherits": ["vs2022-shared", "rel"],
+            "cacheVariables": {
+                "CMAKE_INSTALL_PREFIX": "${sourceDir}/build/vs2022-rel/install"
+            }
+        },
+        {
+            "name": "vs2022-deb-shared",
+            "displayName": "Visual Studio 2022 Debug Shared",
+            "binaryDir": "${sourceDir}/build/vs2022-deb-shared",
+            "inherits": ["vs2022-shared", "deb", "conan-deb"],
+            "cacheVariables": {
+                "CMAKE_INSTALL_PREFIX": "${sourceDir}/build/vs2022-rel/install"
+            }
+        }
+    ],
+    "buildPresets": [
+        {
+            "name": "MinGW-deb",
+            "displayName": "MinGW Make Debug Build",
+            "configurePreset": "MinGW-deb",
+            "configuration": "Debug"
+        },
+        {
+            "name": "MinGW-deb-shared",
+            "displayName": "MinGW Make Debug Build",
+            "configurePreset": "MinGW-deb-shared",
+            "configuration": "Debug"
+        },
+        {
+            "name": "MinGW-rel",
+            "displayName": "MinGW Make Release Build",
+            "configurePreset": "MinGW-rel",
+            "configuration": "Release"
+        },
+        {
+            "name": "MinGW-rel-shared",
+            "displayName": "MinGW Make Release Build",
+            "configurePreset": "MinGW-rel-shared",
+            "configuration": "Release"
+        },
+        {
+            "name": "MSYS-deb",
+            "displayName": "MSYS Make Debug Build",
+            "configurePreset": "MSYS-deb",
+            "configuration": "Debug"
+        },
+        {
+            "name": "MSYS-deb-shared",
+            "displayName": "MSYS Make Debug Build",
+            "configurePreset": "MSYS-deb-shared",
+            "configuration": "Debug"
+        },
+        {
+            "name": "MSYS-rel",
+            "displayName": "MSYS Make Release Build",
+            "configurePreset": "MSYS-rel",
+            "configuration": "Release"
+        },
+        {
+            "name": "MSYS-rel-shared",
+            "displayName": "MSYS Make Release Build",
+            "configurePreset": "MSYS-rel-shared",
+            "configuration": "Release"
+        },
+        {
+            "name": "vs2022-rel",
+            "displayName": "Visual Studio 2022 Release Build",
+            "configurePreset": "vs2022-rel",
+            "configuration": "Release"
+        },
+        {
+            "name": "vs2022-deb",
+            "displayName": "Visual Studio 2022 Debug Build",
+            "configurePreset": "vs2022-deb",
+            "configuration": "Debug"
+        },
+        {
+            "name": "vs2022-rel-shared",
+            "displayName": "Visual Studio 2022 Release Shared Build",
+            "configurePreset": "vs2022-rel-shared",
+            "configuration": "Release"
+        },
+        {
+            "name": "vs2022-deb-shared",
+            "displayName": "Visual Studio 2022 Debug Shared Build",
+            "configurePreset": "vs2022-deb-shared",
+            "configuration": "Debug"
+        },
+        {
+            "name": "unix-deb",
+            "displayName": "Unix Make Debug Build",
+            "configurePreset": "unix-deb",
+            "configuration": "Debug"
+        },
+        {
+            "name": "unix-deb-shared",
+            "displayName": "Unix Make Debug Build",
+            "configurePreset": "unix-deb-shared",
+            "configuration": "Debug"
+        },
+        {
+            "name": "unix-rel",
+            "displayName": "Unix Make Release Build",
+            "configurePreset": "unix-rel",
+            "configuration": "Release"
+        },
+        {
+            "name": "unix-rel-shared",
+            "displayName": "Unix Make Release Build",
+            "configurePreset": "unix-rel-shared",
+            "configuration": "Release"
+        }
+    ]
+}
