@@ -1,4 +1,4 @@
-# OpenGl w/ Conan, Cmake
+# OpenGL w/ Conan, Cmake
 
 Experimental project, i'll se how it'll ends up 
 
@@ -7,10 +7,10 @@ Experimental project, i'll se how it'll ends up
 
 - First, choose which libraries build type u want:
 ```bash
-conan install . -sbuild_type=Release -of="conan/rel" --build=missing
+conan install . -sbuild_type=Release -of="conan/rel" -s compiler.cppstd=20 --build=missing
 ```
 ```bash
-conan install . -sbuild_type=Debug -of="conan/deb" --build=missing
+conan install . -sbuild_type=Debug -of="conan/deb" -s compiler.cppstd=20 --build=missing
 ```
 - Then, show the presets to choose from 
 ```bash
@@ -26,9 +26,6 @@ cmake --build --preset "<name-of-preset>"
 ```
 
 
-"environment": {
-                "PATH": "$env{HOME}/msys64/ucrt64/bin;$penv{PATH}"
-            },
 
 
 
