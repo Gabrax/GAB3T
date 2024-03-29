@@ -9,6 +9,13 @@
             }
         },
         {
+            "name": "conan-rel",
+            "hidden": true,
+            "cacheVariables": {
+                "CMAKE_TOOLCHAIN_FILE": "${sourceDir}/conan/rel/conan_toolchain.cmake"
+            }
+        },
+        {
             "name": "rel",
             "hidden": true,
             "cacheVariables": {
@@ -46,49 +53,34 @@
             }
         },
         {
-            "name": "MinGW",
+            "name": "Ninja",
             "hidden": true,
-            "generator": "MinGW Makefiles",
-            "environment": {
-                "PATH": "C:/msys64/mingw64/bin;$penv{PATH}"
-            },
+            "generator": "Ninja",
             "cacheVariables": {
-                "CMAKE_C_COMPILER": "gcc.exe",
-                "CMAKE_CXX_COMPILER": "g++.exe",
                 "CMAKE_CXX_FLAGS_INIT": "$env{CMAKE_CXX_FLAGS} -Werror -Wall -Wextra -pedantic"
+            },
+            "architecture": {
+                "value": "x64",
+                "strategy": "external"
+            },
+            "environment": {
+                "PATH": "$env{HOME}/ninja/bin:$penv{PATH}"
             }
         },
         {
-            "name": "MinGW-shared",
+            "name": "Ninja-shared",
             "hidden": true,
-            "inherits": "MinGW",
-            "generator": "MinGW Makefiles",
+            "generator": "Ninja",
             "cacheVariables": {
                 "CMAKE_CXX_FLAGS_INIT": "$env{CMAKE_CXX_FLAGS_INIT} $env{CMAKE_CXX_FLAGS} -fPIC -Werror -Wall -Wextra -pedantic",
                 "BUILD_SHARED_LIBS": true
-            }
-        },
-        {
-            "name": "MSYS",
-            "hidden": true,
-            "generator": "MSYS Makefiles",
-            "environment": {
-                "PATH": "C:/msys64/mingw64/bin;$penv{PATH}"
             },
-            "cacheVariables": {
-                "CMAKE_C_COMPILER": "gcc.exe",
-                "CMAKE_CXX_COMPILER": "g++.exe",
-                "CMAKE_CXX_FLAGS_INIT": "$env{CMAKE_CXX_FLAGS} -Werror -Wall -Wextra -pedantic"
-            }
-        },
-        {
-            "name": "MSYS-shared",
-            "hidden": true,
-            "inherits": "MSYS",
-            "generator": "MSYS Makefiles",
-            "cacheVariables": {
-                "CMAKE_CXX_FLAGS_INIT": "$env{CMAKE_CXX_FLAGS_INIT} $env{CMAKE_CXX_FLAGS} -fPIC -Werror -Wall -Wextra -pedantic",
-                "BUILD_SHARED_LIBS": true
+            "architecture": {
+                "value": "x64",
+                "strategy": "external"
+            },
+            "environment": {
+                "PATH": "$env{HOME}/ninja/bin:$penv{PATH}"
             }
         },
         {
@@ -109,81 +101,41 @@
             }
         },
 
-
-
-
         {
-            "name": "MinGW-rel",
-            "displayName": "MinGW Make Release",
-            "binaryDir": "${sourceDir}/build/MinGW-rel",
-            "inherits": ["MinGW", "rel"],
+            "name": "Ninja-rel",
+            "displayName": "Ninja Make Release",
+            "binaryDir": "${sourceDir}/build/Ninja-rel",
+            "inherits": ["Ninja", "rel", "conan-rel"],
             "cacheVariables": {
-                "CMAKE_INSTALL_PREFIX": "${sourceDir}/build/MinGW-rel/install"
+                "CMAKE_INSTALL_PREFIX": "${sourceDir}/build/Ninja-rel/install"
             }
         },
         {
-            "name": "MinGW-rel-shared",
-            "displayName": "MinGW Make Release Shared",
-            "binaryDir": "${sourceDir}/build/MinGW-rel-shared",
-            "inherits": ["MinGW-shared", "MinGW-rel"],
+            "name": "Ninja-rel-shared",
+            "displayName": "Ninja Make Release Shared",
+            "binaryDir": "${sourceDir}/build/Ninja-rel-shared",
+            "inherits": ["Ninja-shared", "Ninja-rel"],
             "cacheVariables": {
-                "CMAKE_INSTALL_PREFIX": "${sourceDir}/build/MinGW-rel-shared/install"
+                "CMAKE_INSTALL_PREFIX": "${sourceDir}/build/Ninja-rel-shared/install"
             }
         },
         {
-            "name": "MinGW-deb",
-            "displayName": "MinGW Make Debug",
-            "binaryDir": "${sourceDir}/build/MinGW-deb",
-            "inherits": ["MinGW", "deb", "conan-deb"],
+            "name": "Ninja-deb",
+            "displayName": "Ninja Make Debug",
+            "binaryDir": "${sourceDir}/build/Ninja-deb",
+            "inherits": ["Ninja", "deb", "conan-deb"],
             "cacheVariables": {
                 "CMAKE_CXX_FLAGS": "-O0 --coverage -g",
-                "CMAKE_INSTALL_PREFIX": "${sourceDir}/build/MinGW-deb/install"
+                "CMAKE_INSTALL_PREFIX": "${sourceDir}/build/Ninja-deb/install"
             }
         },
         {
-            "name": "MinGW-deb-shared",
-            "displayName": "MinGW Make Debug Shared",
-            "binaryDir": "${sourceDir}/build/MinGW-deb-shared",
-            "inherits": ["MinGW-shared", "MinGW-deb"],
+            "name": "Ninja-deb-shared",
+            "displayName": "Ninja Make Debug Shared",
+            "binaryDir": "${sourceDir}/build/Ninja-deb-shared",
+            "inherits": ["Ninja-shared", "Ninja-deb"],
             "cacheVariables": {
-                "CMAKE_INSTALL_PREFIX": "${sourceDir}/build/MinGW-deb-shared/install"
-            }
-        },
-        {
-            "name": "MSYS-rel",
-            "displayName": "MSYS Make Release",
-            "binaryDir": "${sourceDir}/build/MSYS-rel",
-            "inherits": ["MSYS", "rel"],
-            "cacheVariables": {
-                "CMAKE_INSTALL_PREFIX": "${sourceDir}/build/MSYS-rel/install"
-            }
-        },
-        {
-            "name": "MSYS-rel-shared",
-            "displayName": "MSYS Make Release Shared",
-            "binaryDir": "${sourceDir}/build/MSYS-rel-shared",
-            "inherits": ["MSYS-shared", "MSYS-rel"],
-            "cacheVariables": {
-                "CMAKE_INSTALL_PREFIX": "${sourceDir}/build/MSYS-rel-shared/install"
-            }
-        },
-        {
-            "name": "MSYS-deb",
-            "displayName": "MSYS Make Debug",
-            "binaryDir": "${sourceDir}/build/MSYS-deb",
-            "inherits": ["MSYS", "deb", "conan-deb"],
-            "cacheVariables": {
-                "CMAKE_CXX_FLAGS": "-O0 --coverage -g",
-                "CMAKE_INSTALL_PREFIX": "${sourceDir}/build/MSYS-deb/install"
-            }
-        },
-        {
-            "name": "MSYS-deb-shared",
-            "displayName": "MSYS Make Debug Shared",
-            "binaryDir": "${sourceDir}/build/MSYS-deb-shared",
-            "inherits": ["MSYS-shared", "MSYS-deb"],
-            "cacheVariables": {
-                "CMAKE_INSTALL_PREFIX": "${sourceDir}/build/MSYS-deb-shared/install"
+                "CMAKE_INSTALL_PREFIX": "${sourceDir}/build/Ninja-deb-shared/install"
             }
         },
         {
@@ -227,11 +179,11 @@
             "name": "vs2022-rel",
             "displayName": "Visual Studio 2022 Release",
             "binaryDir": "${sourceDir}/build/vs2022-rel",
-            "inherits": ["vs2022", "rel"],
+            "inherits": ["vs2022", "rel", "conan-rel"],
             "cacheVariables": {
                 "CMAKE_INSTALL_PREFIX": "${sourceDir}/build/vs2022-rel/install"
             }
-        },
+        }, 
         {
             "name": "vs2022-deb",
             "displayName": "Visual Studio 2022 Debug",
@@ -247,66 +199,42 @@
             "binaryDir": "${sourceDir}/build/vs2022-rel-shared",
             "inherits": ["vs2022-shared", "rel"],
             "cacheVariables": {
-                "CMAKE_INSTALL_PREFIX": "${sourceDir}/build/vs2022-rel/install"
+                "CMAKE_INSTALL_PREFIX": "${sourceDir}/build/vs2022-rel-shared/install"
             }
         },
         {
             "name": "vs2022-deb-shared",
             "displayName": "Visual Studio 2022 Debug Shared",
             "binaryDir": "${sourceDir}/build/vs2022-deb-shared",
-            "inherits": ["vs2022-shared", "deb", "conan-deb"],
+            "inherits": ["vs2022-shared", "deb"],
             "cacheVariables": {
-                "CMAKE_INSTALL_PREFIX": "${sourceDir}/build/vs2022-rel/install"
+                "CMAKE_INSTALL_PREFIX": "${sourceDir}/build/vs2022-deb/install"
             }
         }
     ],
     "buildPresets": [
         {
-            "name": "MinGW-deb",
-            "displayName": "MinGW Make Debug Build",
-            "configurePreset": "MinGW-deb",
+            "name": "Ninja-deb",
+            "displayName": "Ninja Make Debug Build",
+            "configurePreset": "Ninja-deb",
             "configuration": "Debug"
         },
         {
-            "name": "MinGW-deb-shared",
-            "displayName": "MinGW Make Debug Build",
-            "configurePreset": "MinGW-deb-shared",
+            "name": "Ninja-deb-shared",
+            "displayName": "Ninja Make Debug Build",
+            "configurePreset": "Ninja-deb-shared",
             "configuration": "Debug"
         },
         {
-            "name": "MinGW-rel",
-            "displayName": "MinGW Make Release Build",
-            "configurePreset": "MinGW-rel",
+            "name": "Ninja-rel",
+            "displayName": "Ninja Make Release Build",
+            "configurePreset": "Ninja-rel",
             "configuration": "Release"
         },
         {
-            "name": "MinGW-rel-shared",
-            "displayName": "MinGW Make Release Build",
-            "configurePreset": "MinGW-rel-shared",
-            "configuration": "Release"
-        },
-        {
-            "name": "MSYS-deb",
-            "displayName": "MSYS Make Debug Build",
-            "configurePreset": "MSYS-deb",
-            "configuration": "Debug"
-        },
-        {
-            "name": "MSYS-deb-shared",
-            "displayName": "MSYS Make Debug Build",
-            "configurePreset": "MSYS-deb-shared",
-            "configuration": "Debug"
-        },
-        {
-            "name": "MSYS-rel",
-            "displayName": "MSYS Make Release Build",
-            "configurePreset": "MSYS-rel",
-            "configuration": "Release"
-        },
-        {
-            "name": "MSYS-rel-shared",
-            "displayName": "MSYS Make Release Build",
-            "configurePreset": "MSYS-rel-shared",
+            "name": "Ninja-rel-shared",
+            "displayName": "Ninja Make Release Build",
+            "configurePreset": "Ninja-rel-shared",
             "configuration": "Release"
         },
         {
