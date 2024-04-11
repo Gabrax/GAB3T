@@ -35,6 +35,8 @@
 .vscode/
 build/
 conan/
+Release/
+Debug/
 
 # Ignore file
 CMakeUserPresets.json
