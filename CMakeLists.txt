@@ -7,6 +7,7 @@ set(CMAKE_CXX_EXTENSIONS Off)
 
 project(Gl LANGUAGES CXX)
 
+#set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(EXECUTABLE_OUTPUT_PATH ${CMAKE_SOURCE_DIR})
 
 add_subdirectory(src/main_files)

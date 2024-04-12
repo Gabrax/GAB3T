@@ -7,7 +7,6 @@
 #include "GLFW/glfw3.h"
 
 
-
 //camera properties
 Camera camera(glm::vec3(0.0f, 0.0f, 6.0f));
 float deltaTime = 0.0f;
@@ -15,6 +14,7 @@ float lastFrame = 0.0f;
 float lastX = 800 / 2.0f;
 float lastY = 600 / 2.0f;
 bool firstMouse = true;
+
 
 void Engine::Run(){
 

@@ -90,6 +90,7 @@ GLenum glCheckError_(const char* file, int line) {
     std::cout << std::endl;
 }*/
 
+
 void Window::ToggleFullscreen()
 {
     if (_windowMode == WINDOWED)

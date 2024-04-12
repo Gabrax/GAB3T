@@ -18,7 +18,7 @@ cmake --list-presets
 ```
 - Choose the build type (choose build type of libraries you've chosen in previous step)
 ```bash
-cmake . --preset <name-of-preset>
+cmake . --preset "<name-of-preset>"
 ```
 - Lastly, build the project
 ```bash
