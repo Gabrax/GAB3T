@@ -31,7 +31,7 @@ namespace Window
     inline double prevTime = 0.0;
     inline double crntTime = 0.0;
     inline double timeDiff;
-    unsigned int counter = 0;
+    inline unsigned int counter = 0;
 }
 
 
@@ -185,6 +185,8 @@ void Window::Init(int  width, int height)
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, true);    
     glfwWindowHint(GLFW_SAMPLES, 4);
+
+
     // Resolution and window size
     _monitor = glfwGetPrimaryMonitor();
     _mode = glfwGetVideoMode(_monitor);
@@ -196,17 +198,20 @@ void Window::Init(int  width, int height)
     _fullscreenHeight = _mode->height;
     _windowedWidth = width;
     _windowedHeight = height;
+
 	if (_windowedWidth > _fullscreenWidth || _windowedHeight > _fullscreenHeight)
     {
 		_windowedWidth = _fullscreenWidth * 0.75f;
 		_windowedHeight = _fullscreenHeight * 0.75f;
 	}
+
     if (_windowMode == FULLSCREEN)
     {
         _currentWidth = _fullscreenWidth;
         _currentHeight = _fullscreenHeight;
         _window = glfwCreateWindow(_fullscreenWidth, _fullscreenHeight, "JD", _monitor, NULL);
     } 
+
     else
     {
         _currentWidth = _windowedWidth;
@@ -214,6 +219,7 @@ void Window::Init(int  width, int height)
         _window = glfwCreateWindow(_windowedWidth, _windowedHeight, "GAB", NULL, NULL);
 		glfwSetWindowPos(_window, 0, 0);
     }
+    
     if (_window == NULL)
     {
         std::cout << "Failed to create GLFW window" << std::endl;
@@ -225,7 +231,7 @@ void Window::Init(int  width, int height)
     glfwSetFramebufferSizeCallback(_window, framebuffer_size_callback);
     glfwSetWindowFocusCallback(_window, window_focus_callback);
     glfwSetCursorPosCallback(_window, Engine::mouse_callback);
-    glfwSetScrollCallback(_window, Engine::scroll_callback);
+    //glfwSetScrollCallback(_window, Engine::scroll_callback);
     DisableCursor();
 
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
@@ -255,7 +261,7 @@ void Window::Init(int  width, int height)
     }*/    
 
     // Clear screen to black
-    glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+    glClearColor(0.0f, 0.0f, 0.1f, 0.0f);
     glClear(GL_COLOR_BUFFER_BIT);
     
 }
