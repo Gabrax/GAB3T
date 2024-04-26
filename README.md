@@ -1,7 +1,6 @@
-# OpenGL w/ Conan, Cmake
+# TicTacToe 
 
-Experimental project, i'll se how it'll ends up 
-
+The objective of this project is to gain experience in C++ and OpenGL development.
 
 ## 💬 To run this project, Conan 2.0 and Cmake needs to be installed
 
@@ -25,6 +24,12 @@ cmake . --preset "<name-of-preset>"
 cmake --build --preset "<name-of-preset>"
 ```
 
+## 👨‍💻 Tech stack
+- C++
+- GLFW
+- GLAD
+- stb_image
+- GLSL
 
 
 
