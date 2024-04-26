@@ -5,7 +5,6 @@ find_package(glfw3 REQUIRED)
 find_package(glm REQUIRED)
 
 
-
 add_executable(app 
     main.cpp 
     engine.h 
@@ -16,12 +15,13 @@ add_executable(app
     Shader.h
     stb_image.cpp
     stb_image.h
+    Input.cpp
+    Input.h
+    ControllerASCII.h
+    GameMap.h
+    Utility.h
 )
 
-target_sources(app PRIVATE 
-    ../Shaders/Crosshair.vert 
-    ../Shaders/Crosshair.frag
-)
 
 target_link_libraries(app PRIVATE
     glad::glad

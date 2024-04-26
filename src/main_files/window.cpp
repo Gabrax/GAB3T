@@ -32,6 +32,8 @@ namespace Window
     inline double crntTime = 0.0;
     inline double timeDiff;
     inline unsigned int counter = 0;
+    inline int windowPosX = (_windowedWidth - _windowedWidth) / 2;
+    inline int windowPosY = (_windowedHeight - _windowedHeight) / 2;
 }
 
 
@@ -129,6 +131,7 @@ void Window::CreateWindow(WindowMode windowMode)
         _currentWidth = _windowedWidth;
         _currentHeight = _windowedHeight;
         _window = glfwCreateWindow(_windowedWidth, _windowedHeight, "JD", NULL, NULL);
+        //glfwSetWindowPos(_window, windowPosX, windowPosY);
     }
     else if (windowMode == FULLSCREEN)
     {
