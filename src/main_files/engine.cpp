@@ -6,6 +6,7 @@
 #include "Shader.h"
 #include "Input.h"
 #include "GameMap.h"
+#include "TextBox.h"
 
 #include "glad/glad.h"
 #include "GLFW/glfw3.h"
@@ -28,9 +29,11 @@ void Engine::Run(){
     glfwSwapInterval(0);
 
     GameMap GameMap;
+    TextBox TextBox;
 
     GameMap.BindAndLoad();
-    
+    TextBox.BindAndLoad();
+
     stbi_set_flip_vertically_on_load(true);
 
     while (Window::WindowIsOpen() && Window::WindowHasNotBeenForceClosed())
@@ -39,6 +42,7 @@ void Engine::Run(){
         
 
         GameMap.Render();
+        TextBox.Render();
         
 
         if (Input::KeyPressed(GAB_KEY_F))

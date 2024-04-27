@@ -13,13 +13,14 @@ add_executable(app
     window.cpp
     camera.h
     Shader.h
+    Utility.h
     stb_image.cpp
     stb_image.h
     Input.cpp
     Input.h
     ControllerASCII.h
     GameMap.h
-    Utility.h
+    TextBox.h
 )
 
 
