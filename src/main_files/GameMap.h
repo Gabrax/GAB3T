@@ -62,7 +62,7 @@ private:
      1.0f, -1.8f, 0.0f,    1.0f, 0.0f, // Vertex 2: Bottom-right
      1.0f,  1.8f, 0.0f,    1.0f, 1.0f, // Vertex 3: Top-right
     -1.0f,  1.8f, 0.0f,    0.0f, 1.0f  // Vertex 4: Top-left
-};
+    };
     unsigned int MapIndices[6] = {  // Define array size explicitly
         0, 1, 2,   // first triangle
         2, 3, 0    // second triangle

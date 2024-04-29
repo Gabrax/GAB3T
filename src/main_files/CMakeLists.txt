@@ -21,6 +21,8 @@ add_executable(app
     ControllerASCII.h
     GameMap.h
     Title.h
+    Select.h
+    Player.h
 )
 
 

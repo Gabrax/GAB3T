@@ -13,13 +13,17 @@
 
 
 struct StartScreen {
-    StartScreen() : StartScreenShader("../TitleShader.vert", "../TitleShader.frag"), render(true), StartScreenTexture(0) {}
-    
+    StartScreen() : StartScreenShader("../TitleShader.vert", "../TitleShader.frag"),
+                    PressEnterShader("../MapShader.vert", "../MapShader.frag") ,render(true), StartScreenTexture(0) {}
+
     ~StartScreen(){
-        // Delete buffers and perform any cleanup operations
         glDeleteBuffers(1, &StartVBO);
         glDeleteBuffers(1, &StartEBO);
         glDeleteVertexArrays(1, &StartVAO);
+
+        glDeleteBuffers(1, &EnterVBO);
+        glDeleteBuffers(1, &EnterEBO);
+        glDeleteVertexArrays(1, &EnterVAO);
 
         render = false;
     }
@@ -44,6 +48,25 @@ struct StartScreen {
         glBindVertexArray(0);
 
         StartScreenTexture = loadTexture("../title.png");
+
+        glGenVertexArrays(1, &EnterVAO);
+        glGenBuffers(1, &EnterVBO);
+        glGenBuffers(1, &EnterEBO);
+        glBindVertexArray(EnterVAO);
+        glBindBuffer(GL_ARRAY_BUFFER, EnterVBO);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(EnterVertices), EnterVertices, GL_STATIC_DRAW);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EnterEBO);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(EnterIndices), EnterIndices, GL_STATIC_DRAW);
+
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
+        glEnableVertexAttribArray(0);
+        glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
+        glEnableVertexAttribArray(1);
+
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
+        glBindVertexArray(0);
+
+        PressEnterTexture = loadTexture("../pressEnter.png");
     }
     
     // flag for rendering
@@ -55,10 +78,19 @@ struct StartScreen {
             glBindTexture(GL_TEXTURE_2D, StartScreenTexture);
 
             StartScreenShader.Use();
-            StartScreenShader.setMat4("projection", BoxProjection);
+            StartScreenShader.setMat4("projection", projection);
             StartScreenShader.setInt("texture1", 0);
             StartScreenShader.setFloat("time",glfwGetTime());
             glBindVertexArray(StartVAO);
+            glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+
+            glActiveTexture(GL_TEXTURE1);
+            glBindTexture(GL_TEXTURE_2D, PressEnterTexture);
+
+            PressEnterShader.Use();
+            PressEnterShader.setMat4("projection", projection);
+            PressEnterShader.setInt("texture1", 1);
+            glBindVertexArray(EnterVAO);
             glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
         }
     }
@@ -74,20 +106,36 @@ private:
     float viewportWidth = 1920.0f;
     float viewportHeight = 1080.0f;
     float aspectRatio = viewportWidth / viewportHeight;
-    glm::mat4 BoxProjection = glm::ortho(-aspectRatio, aspectRatio, -1.0f, 1.0f);
+    glm::mat4 projection = glm::ortho(-aspectRatio, aspectRatio, -1.0f, 1.0f);
 
 
     Shader StartScreenShader;
     unsigned int StartScreenTexture;
     unsigned int StartVAO, StartVBO, StartEBO;
-    float TitleVertices[20] = { // Define array size explicitly
-    // Positions           // Texture Coordinates
-    -1.0f, -0.5f, 0.0f,    0.0f, 0.0f, // Vertex 1: Bottom-left
-     1.0f, -0.5f, 0.0f,    1.0f, 0.0f, // Vertex 2: Bottom-right
-     1.0f,  0.5f, 0.0f,    1.0f, 1.0f, // Vertex 3: Top-right
-    -1.0f,  0.5f, 0.0f,    0.0f, 1.0f  // Vertex 4: Top-left
-};
-    unsigned int TitleIndices[6] = {  // Define array size explicitly
+    float TitleVertices[20] = { 
+        // Positions           // Texture Coordinates
+        -1.5f, -0.5f, 0.0f,    0.0f, 0.0f, // Vertex 1: Bottom-left
+         1.5f, -0.5f, 0.0f,    1.0f, 0.0f, // Vertex 2: Bottom-right
+         1.5f,  0.5f, 0.0f,    1.0f, 1.0f, // Vertex 3: Top-right
+        -1.5f,  0.5f, 0.0f,    0.0f, 1.0f  // Vertex 4: Top-left
+    };
+    unsigned int TitleIndices[6] = {  
+        0, 1, 2,   // first triangle
+        2, 3, 0    // second triangle
+    };
+
+    Shader PressEnterShader;
+    unsigned int PressEnterTexture;
+    unsigned int EnterVAO, EnterVBO, EnterEBO;
+
+    float EnterVertices[20] = { 
+        // Positions           // Texture Coordinates
+        -1.0f, -1.0f, 0.0f,    0.0f, 0.0f, // Vertex 1: Bottom-left
+         1.0f, -1.0f, 0.0f,    1.0f, 0.0f, // Vertex 2: Bottom-right
+         1.0f, -0.5f, 0.0f,    1.0f, 1.0f, // Vertex 3: Top-right
+        -1.0f, -0.5f, 0.0f,    0.0f, 1.0f  // Vertex 4: Top-left
+    };
+    unsigned int EnterIndices[6] = {  
         0, 1, 2,   // first triangle
         2, 3, 0    // second triangle
     };

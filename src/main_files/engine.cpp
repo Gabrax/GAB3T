@@ -7,6 +7,8 @@
 #include "Input.h"
 #include "GameMap.h"
 #include "Title.h"
+#include "Select.h"
+#include "Player.h"
 
 #include "glad/glad.h"
 #include "GLFW/glfw3.h"
@@ -34,10 +36,16 @@ void Engine::Run(){
     
     GameMap GameMap;
     StartScreen Title;
+    SelectBorder Border;
+    Player Player;
 
     GameMap.BindAndLoad();
     Title.BindAndLoad();
+    Border.BindAndLoad();
+    Player.BindAndLoad();
 
+    bool renderPlayer = false;
+    bool updatePlayer = true;
 
     while (Window::WindowIsOpen() && Window::WindowHasNotBeenForceClosed())
     {  
@@ -46,11 +54,51 @@ void Engine::Run(){
 
         Title.Render();
         Title.Delete();
-        
-        if(Title.render == false){
+
+        if(!Title.render){
             GameMap.Render();
+            Border.Render();
+
+            float newX;
+            float newY;
+
+            if (Input::KeyPressed(GAB_KEY_UP)) {
+                Border.UpdatePosition(0.0f, 1.17f); // Move image up
+                if(updatePlayer){
+                    Player.UpdatePosition(0.0f, 1.17f); // Move image up
+                }
+            }
+            if (Input::KeyPressed(GAB_KEY_DOWN)) {
+                Border.UpdatePosition(0.0f, -1.17f); // Move image down
+                if(updatePlayer){
+                    Player.UpdatePosition(0.0f, -1.17f); // Move image down
+                }
+            }
+            if (Input::KeyPressed(GAB_KEY_LEFT)) {
+                Border.UpdatePosition(-0.65f, 0.0f); // Move image left
+                if(updatePlayer){
+                    Player.UpdatePosition(-0.65f, 0.0f); // Move image left
+                }
+            }
+            if (Input::KeyPressed(GAB_KEY_RIGHT)) {
+                Border.UpdatePosition(0.65f, 0.0f); // Move image right
+                if(updatePlayer){
+                    Player.UpdatePosition(0.65f, 0.0f); // Move image left
+                }
+            }
+            if (Input::KeyPressed(GAB_KEY_X)) {
+                renderPlayer = true;
+                updatePlayer = false;
+            }
+
+            if(renderPlayer){
+                Player.Render();
+            }
         }
-        
+
+
+        std::cout << Border.getNewX() << " " << Border.getNewY() << '\n';
+
 
         if (Input::KeyPressed(GAB_KEY_F))
 		{
