@@ -6,7 +6,7 @@
 #include "Shader.h"
 #include "Input.h"
 #include "GameMap.h"
-#include "TextBox.h"
+#include "Title.h"
 
 #include "glad/glad.h"
 #include "GLFW/glfw3.h"
@@ -27,22 +27,29 @@ void Engine::Run(){
 
     Window::Init(1920 * 1.5f, 1080 * 1.5f);
     glfwSwapInterval(0);
+    stbi_set_flip_vertically_on_load(true);
 
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    
     GameMap GameMap;
-    TextBox TextBox;
+    StartScreen Title;
 
     GameMap.BindAndLoad();
-    TextBox.BindAndLoad();
+    Title.BindAndLoad();
 
-    stbi_set_flip_vertically_on_load(true);
 
     while (Window::WindowIsOpen() && Window::WindowHasNotBeenForceClosed())
     {  
         Window::ShowFPS();
-        
 
-        GameMap.Render();
-        TextBox.Render();
+
+        Title.Render();
+        Title.Delete();
+        
+        if(Title.render == false){
+            GameMap.Render();
+        }
         
 
         if (Input::KeyPressed(GAB_KEY_F))

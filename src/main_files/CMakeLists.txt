@@ -20,7 +20,7 @@ add_executable(app
     Input.h
     ControllerASCII.h
     GameMap.h
-    TextBox.h
+    Title.h
 )
 
 
