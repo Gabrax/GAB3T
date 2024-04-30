@@ -1,4 +1,6 @@
 #include <iostream>
+#include <vector>
+#include <utility>
 
 #include "engine.h"
 #include "window.h"
@@ -9,6 +11,7 @@
 #include "Title.h"
 #include "Select.h"
 #include "Player.h"
+#include "Instantiate.h"
 
 #include "glad/glad.h"
 #include "GLFW/glfw3.h"
@@ -24,6 +27,7 @@ float lastX = 800 / 2.0f;
 float lastY = 600 / 2.0f;
 bool firstMouse = true;
 
+std::vector<std::pair<float,float>> mapCoord;
 
 void Engine::Run(){
 
@@ -37,12 +41,11 @@ void Engine::Run(){
     GameMap GameMap;
     StartScreen Title;
     SelectBorder Border;
-    Player Player;
+    InstantiatePlayer InstPlay;
 
     GameMap.BindAndLoad();
     Title.BindAndLoad();
     Border.BindAndLoad();
-    Player.BindAndLoad();
 
     bool renderPlayer = false;
     bool updatePlayer = true;
@@ -51,6 +54,8 @@ void Engine::Run(){
     {  
         Window::ShowFPS();
 
+        Player Player;
+        Player.BindAndLoad();
 
         Title.Render();
         Title.Delete();
@@ -59,45 +64,38 @@ void Engine::Run(){
             GameMap.Render();
             Border.Render();
 
-            float newX;
-            float newY;
 
             if (Input::KeyPressed(GAB_KEY_UP)) {
                 Border.UpdatePosition(0.0f, 1.17f); // Move image up
-                if(updatePlayer){
-                    Player.UpdatePosition(0.0f, 1.17f); // Move image up
-                }
+                    //Player.UpdatePosition(0.0f, 1.17f); // Move image up
+                
             }
             if (Input::KeyPressed(GAB_KEY_DOWN)) {
                 Border.UpdatePosition(0.0f, -1.17f); // Move image down
-                if(updatePlayer){
-                    Player.UpdatePosition(0.0f, -1.17f); // Move image down
-                }
+                    //Player.UpdatePosition(0.0f, -1.17f); // Move image down
+    
             }
             if (Input::KeyPressed(GAB_KEY_LEFT)) {
                 Border.UpdatePosition(-0.65f, 0.0f); // Move image left
-                if(updatePlayer){
-                    Player.UpdatePosition(-0.65f, 0.0f); // Move image left
-                }
+                    //Player.UpdatePosition(-0.65f, 0.0f); // Move image left
+                
             }
             if (Input::KeyPressed(GAB_KEY_RIGHT)) {
                 Border.UpdatePosition(0.65f, 0.0f); // Move image right
-                if(updatePlayer){
-                    Player.UpdatePosition(0.65f, 0.0f); // Move image left
-                }
+                    //Player.UpdatePosition(0.65f, 0.0f); // Move image left
+                
             }
             if (Input::KeyPressed(GAB_KEY_X)) {
-                renderPlayer = true;
-                updatePlayer = false;
-            }
-
-            if(renderPlayer){
-                Player.Render();
+                //renderPlayer = true;
+                //updatePlayer = false;
+                mapCoord.emplace_back(Player.getNewX(),Player.getNewY());
+                Player.UpdatePosition(Border.getNewX(),Border.getNewY());
+                InstPlay.AddPlayer(Player);
             }
         }
 
 
-        std::cout << Border.getNewX() << " " << Border.getNewY() << '\n';
+        std::cout << Player.getNewX() << " " << Player.getNewY() << '\n';
 
 
         if (Input::KeyPressed(GAB_KEY_F))
@@ -109,11 +107,18 @@ void Engine::Run(){
 			Window::ToggleWireframe();
         }
 
+        InstPlay.RenderAllPlayers();
         Window::ProcessInput();
         Input::Update();
         Window::SwapBuffersPollEvents();
         glClear(GL_COLOR_BUFFER_BIT);
     }
+
+    std::cout << "-----------" << '\n';
+    for(const auto& i : mapCoord){
+        std::cout << i.first << " " << i.second << '\n';
+    }
+
 }
 
 

@@ -23,6 +23,7 @@ add_executable(app
     Title.h
     Select.h
     Player.h
+    Instantiate.h
 )
 
 

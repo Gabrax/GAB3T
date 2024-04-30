@@ -13,6 +13,13 @@
 struct Player {
     Player() : PlayerShader("../Player.vert", "../Player.frag"), PlayerTexture(0) {}
 
+    float getNewX() const {
+        return newX;
+    }
+    float getNewY() const {
+        return newY;
+    }
+
     void BindAndLoad() {
         glGenVertexArrays(1, &PlayerVAO);
         glGenBuffers(1, &PlayerVBO);
@@ -69,6 +76,30 @@ struct Player {
             glBindBuffer(GL_ARRAY_BUFFER, 0);
         }
     }
+
+    void UpdatePositionFromBorder(float newX, float newY) {
+    // Check if the new position is within the bounds
+    if (newX >= -1.3f && newX <= 0.65f && newY >= -2.34f && newY <= 1.17f) {
+        // Calculate the displacement from the current position
+        float displacementX = newX - PlayerVertices[0];
+        float displacementY = newY - PlayerVertices[1];
+
+        // Update position of the player vertices
+        for (int i = 0; i < 20; i += 5) {
+            PlayerVertices[i] += displacementX;
+            PlayerVertices[i + 1] += displacementY;
+        }
+
+        // Update the new position
+        PlayerVertices[0] = newX;
+        PlayerVertices[1] = newY;
+
+        // Bind and update the vertex buffer object
+        glBindBuffer(GL_ARRAY_BUFFER, PlayerVBO);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(PlayerVertices), PlayerVertices, GL_STATIC_DRAW);
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
+    }
+}
     
 
 private:
