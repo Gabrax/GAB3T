@@ -11,7 +11,7 @@
 #include "Title.h"
 #include "Select.h"
 #include "Player.h"
-#include "Instantiate.h"
+#include "Enemy.h"
 
 #include "glad/glad.h"
 #include "GLFW/glfw3.h"
@@ -42,6 +42,8 @@ void Engine::Run(){
     StartScreen Title;
     SelectBorder Border;
     InstantiatePlayer InstPlay;
+    InstantiateEnemy InstEnem;
+    
 
     GameMap.BindAndLoad();
     Title.BindAndLoad();
@@ -49,13 +51,14 @@ void Engine::Run(){
 
     bool renderPlayer = false;
     bool updatePlayer = true;
+    bool isPlayer1Turn = true;
+
+    std::cout << "Your turn" << '\n';
 
     while (Window::WindowIsOpen() && Window::WindowHasNotBeenForceClosed())
     {  
         Window::ShowFPS();
 
-        Player Player;
-        Player.BindAndLoad();
 
         Title.Render();
         Title.Delete();
@@ -64,38 +67,57 @@ void Engine::Run(){
             GameMap.Render();
             Border.Render();
 
+            Player player1;
+            player1.BindAndLoad();
 
+            Enemy enemy;
+            enemy.BindAndLoad();
+
+            // Check whose turn it is and update the corresponding player
+        if (isPlayer1Turn) {
             if (Input::KeyPressed(GAB_KEY_UP)) {
                 Border.UpdatePosition(0.0f, 1.17f); // Move image up
-                    //Player.UpdatePosition(0.0f, 1.17f); // Move image up
-                
-            }
-            if (Input::KeyPressed(GAB_KEY_DOWN)) {
+            } else if (Input::KeyPressed(GAB_KEY_DOWN)) {
                 Border.UpdatePosition(0.0f, -1.17f); // Move image down
-                    //Player.UpdatePosition(0.0f, -1.17f); // Move image down
-    
-            }
-            if (Input::KeyPressed(GAB_KEY_LEFT)) {
+            } else if (Input::KeyPressed(GAB_KEY_LEFT)) {
                 Border.UpdatePosition(-0.65f, 0.0f); // Move image left
-                    //Player.UpdatePosition(-0.65f, 0.0f); // Move image left
-                
-            }
-            if (Input::KeyPressed(GAB_KEY_RIGHT)) {
+            } else if (Input::KeyPressed(GAB_KEY_RIGHT)) {
                 Border.UpdatePosition(0.65f, 0.0f); // Move image right
-                    //Player.UpdatePosition(0.65f, 0.0f); // Move image left
+            } else if (Input::KeyPressed(GAB_KEY_X)) {
+                // Add player 1's move to the map coordinates and render the player
+                mapCoord.emplace_back(Border.getNewX(), Border.getNewY());
+                player1.UpdatePositionFromBorder(Border.getNewX(), Border.getNewY());
+                InstPlay.AddPlayer(player1);
                 
+                // Toggle to player 2's turn
+                isPlayer1Turn = false;
+                std::cout << "Player2 turn" << '\n';
             }
-            if (Input::KeyPressed(GAB_KEY_X)) {
-                //renderPlayer = true;
-                //updatePlayer = false;
-                mapCoord.emplace_back(Player.getNewX(),Player.getNewY());
-                Player.UpdatePosition(Border.getNewX(),Border.getNewY());
-                InstPlay.AddPlayer(Player);
+        } else {
+            // Similar logic for player 2's turn
+            if (Input::KeyPressed(GAB_KEY_UP)) {
+                Border.UpdatePosition(0.0f, 1.17f); // Move image up
+            } else if (Input::KeyPressed(GAB_KEY_DOWN)) {
+                Border.UpdatePosition(0.0f, -1.17f); // Move image down
+            } else if (Input::KeyPressed(GAB_KEY_LEFT)) {
+                Border.UpdatePosition(-0.65f, 0.0f); // Move image left
+            } else if (Input::KeyPressed(GAB_KEY_RIGHT)) {
+                Border.UpdatePosition(0.65f, 0.0f); // Move image right
+            } else if (Input::KeyPressed(GAB_KEY_X)) {
+                // Add player 2's move to the map coordinates and render the player
+                mapCoord.emplace_back(Border.getNewX(), Border.getNewY());
+                enemy.UpdatePositionFromBorder(Border.getNewX(), Border.getNewY());
+                InstEnem.AddEnemy(enemy);
+                
+                // Toggle to player 1's turn
+                isPlayer1Turn = true;
+                std::cout << "Your turn" << '\n';
+                }
             }
         }
 
 
-        std::cout << Player.getNewX() << " " << Player.getNewY() << '\n';
+        //std::cout << Border.getNewX() << " " << Border.getNewY() << '\n';
 
 
         if (Input::KeyPressed(GAB_KEY_F))
@@ -108,6 +130,7 @@ void Engine::Run(){
         }
 
         InstPlay.RenderAllPlayers();
+        InstEnem.RenderAllEnemys();
         Window::ProcessInput();
         Input::Update();
         Window::SwapBuffersPollEvents();
