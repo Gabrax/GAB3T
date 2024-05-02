@@ -111,9 +111,7 @@ private:
 
 class InstantiateEnemy {
 public:
-    InstantiateEnemy() {
-        // Initialize the renderer
-    }
+    InstantiateEnemy() = default;
 
     // Add a new image to render
     void AddEnemy(const Enemy& Enemy) {

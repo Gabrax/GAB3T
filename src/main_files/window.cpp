@@ -1,7 +1,7 @@
 #include "window.h"
 #include "GLFW/glfw3.h"
 #include "glad/glad.h"
-#include "engine.h"
+//#include "engine.h"
 #include "camera.h"
 
 
@@ -233,7 +233,7 @@ void Window::Init(int  width, int height)
     glfwMakeContextCurrent(_window);
     glfwSetFramebufferSizeCallback(_window, framebuffer_size_callback);
     glfwSetWindowFocusCallback(_window, window_focus_callback);
-    glfwSetCursorPosCallback(_window, Engine::mouse_callback);
+    //glfwSetCursorPosCallback(_window, Engine::mouse_callback);
     //glfwSetScrollCallback(_window, Engine::scroll_callback);
     DisableCursor();
 

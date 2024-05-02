@@ -24,6 +24,7 @@ add_executable(app
     Select.h
     Player.h
     Enemy.h
+    GameLogic.h
 )
 
 

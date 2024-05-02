@@ -111,9 +111,7 @@ private:
 
 class InstantiatePlayer {
 public:
-    InstantiatePlayer() {
-        // Initialize the renderer
-    }
+    InstantiatePlayer() = default;
 
     // Add a new image to render
     void AddPlayer(const Player& player) {
