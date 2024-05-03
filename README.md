@@ -30,6 +30,8 @@ cmake --build --preset "<name-of-preset>"
 - GLAD
 - stb_image
 - GLSL
+- CMake
+- Conan
 
 
 

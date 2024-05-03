@@ -60,6 +60,7 @@ void Engine::Run(){
 
     //game.printMapCoord();
     game.printTuple();
+    game.printBoard(Logic::board);
     
 }
 
