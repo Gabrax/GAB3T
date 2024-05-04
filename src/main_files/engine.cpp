@@ -1,6 +1,8 @@
 #include <iostream>
 #include <vector>
-#include <utility>
+#include <thread>
+#include <mutex>
+#include <condition_variable>
 
 #include "Shader.h"
 #include "Input.h"

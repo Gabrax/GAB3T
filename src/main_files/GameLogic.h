@@ -2,7 +2,6 @@
 #include <vector>
 #include <utility>
 #include <tuple>
-#include <unordered_set>
 #include <cmath>
 
 #include "Shader.h"
@@ -19,6 +18,7 @@ namespace Logic {
     constexpr float changeX = 0.65f;
     constexpr float changeY = 1.17f;
     constexpr int BOARD_SIZE = 3;
+
     std::array<std::array<char, BOARD_SIZE>, BOARD_SIZE> board;
 
     struct Game {
@@ -47,11 +47,16 @@ namespace Logic {
                 InstPlay.RenderAllPlayers();
                 InstEnem.RenderAllEnemys();
 
-                // if (checkPValues(check)) {
-                //         std::cout << "'P' coordinates match the expected values." << std::endl;
-                //     } else {
-                //         std::cout << "'P' coordinates do not match the expected values." << std::endl;
-                //     }
+                char Pwins = checkifPwins(board);
+                if(Pwins == 'P'){
+                    std::cout << Pwins << '\n';
+                }
+                char Ewins = checkifEwins(board);
+                if(Ewins == 'E'){
+                    std::cout << Ewins << '\n';
+                }
+                
+
             }
         }
 
@@ -104,7 +109,7 @@ namespace Logic {
                 float minDist = std::numeric_limits<float>::max();
                 int closestIndex = -1;
                 for (size_t i = 0; i < mapCoord.size(); ++i) {
-                    float dist = std::hypot(x - mapCoord[i].first, y - mapCoord[i].second);
+                    float dist = std::hypot(x - mapCoord[i].first, y - mapCoord[i].second); //Computes the square root of the sum of the squares of x and y
                     if (dist < minDist) {
                         minDist = dist;
                         closestIndex = static_cast<int>(i);
@@ -122,13 +127,11 @@ namespace Logic {
             std::array<std::array<char, BOARD_SIZE>, BOARD_SIZE> createEmptyBoard() {
                 std::array<std::array<char, BOARD_SIZE>, BOARD_SIZE> emptyBoard;
 
-                // Initialize all cells with empty space
                 for (auto& row : emptyBoard) {
                     for (char& cell : row) {
                         cell = ' ';
                     }
                 }
-
                 return emptyBoard;
             }
 
@@ -219,36 +222,102 @@ namespace Logic {
                 return false;
             }
 
-            bool checkPValues(const std::vector<std::tuple<char, float, float>>& check) {
-                // Create a vector to store the expected 'P' coordinates
-                std::vector<std::pair<float, float>> expectedPValues = {
-                    {-1.0f, 0.53f}, {-0.35f, 0.53f}, {0.3f, 0.53f}
-                };
-
-                int count = 0;
-                for (const auto& item : check) {
-                    char player = std::get<0>(item);
-                    float x = std::get<1>(item);
-                    float y = std::get<2>(item);
-                    //std::cout << "Position: (" << x << ", " << y << "), Player: " << player << std::endl;
-                    
-                    if (player == 'P') {
-                        // Check if the coordinates match any of the expected 'P' values
-                        for (const auto& coord : expectedPValues) {
-                            float dx = std::abs(x - coord.first);
-                            float dy = std::abs(y - coord.second);
-                            if (dx < 0.01f && dy < 0.01f) {
-                                count++;
-                                break; // No need to check further once a match is found
-                            }
+            char checkifPwins(const std::array<std::array<char, BOARD_SIZE>, BOARD_SIZE>& board) {
+                // Check horizontally
+                for (const auto& row : board) {
+                    int count = 0;
+                    for (char cell : row) {
+                        if (cell == 'P') {
+                            count++;
+                            if (count == 3) return 'P'; // 'P' wins
+                        } else {
+                            count = 0; // Reset count if 'P' is not consecutive
                         }
                     }
                 }
 
-                //std::cout << "Count: " << count << std::endl;
-                return count == 3; // Return true if exactly three matches were found
+                // Check vertically
+                for (size_t col = 0; col < BOARD_SIZE; col++) {
+                    int count = 0;
+                    for (size_t row = 0; row < BOARD_SIZE; row++) {
+                        if (board[row][col] == 'P') {
+                            count++;
+                            if (count == 3) return 'P'; // 'P' wins
+                        } else {
+                            count = 0; // Reset count if 'P' is not consecutive
+                        }
+                    }
+                }
+
+                // Check diagonally (top-left to bottom-right)
+                for (size_t i = 0; i <= BOARD_SIZE - 3; i++) {
+                    for (size_t j = 0; j <= BOARD_SIZE - 3; j++) {
+                        if (board[i][j] == 'P' && board[i+1][j+1] == 'P' && board[i+2][j+2] == 'P') {
+                            return 'P'; // 'P' wins diagonally
+                        }
+                    }
+                }
+
+                // Check diagonally (top-right to bottom-left)
+                for (size_t i = 0; i <= BOARD_SIZE - 3; i++) {
+                    for (size_t j = BOARD_SIZE - 1; j >= 2; j--) {
+                        if (board[i][j] == 'P' && board[i+1][j-1] == 'P' && board[i+2][j-2] == 'P') {
+                            return 'P'; // 'P' wins diagonally
+                        }
+                    }
+                }
+
+                // If no winner found
+                return '\0';
             }
-            
-            
+
+            char checkifEwins(const std::array<std::array<char, BOARD_SIZE>, BOARD_SIZE>& board) {
+                // Check horizontally
+                for (const auto& row : board) {
+                    int count = 0;
+                    for (char cell : row) {
+                        if (cell == 'E') {
+                            count++;
+                            if (count == 3) return 'E'; // 'P' wins
+                        } else {
+                            count = 0; // Reset count if 'P' is not consecutive
+                        }
+                    }
+                }
+
+                // Check vertically
+                for (size_t col = 0; col < BOARD_SIZE; col++) {
+                    int count = 0;
+                    for (size_t row = 0; row < BOARD_SIZE; row++) {
+                        if (board[row][col] == 'E') {
+                            count++;
+                            if (count == 3) return 'E'; // 'P' wins
+                        } else {
+                            count = 0; // Reset count if 'P' is not consecutive
+                        }
+                    }
+                }
+
+                // Check diagonally (top-left to bottom-right)
+                for (size_t i = 0; i <= BOARD_SIZE - 3; i++) {
+                    for (size_t j = 0; j <= BOARD_SIZE - 3; j++) {
+                        if (board[i][j] == 'E' && board[i+1][j+1] == 'E' && board[i+2][j+2] == 'E') {
+                            return 'E'; // 'P' wins diagonally
+                        }
+                    }
+                }
+
+                // Check diagonally (top-right to bottom-left)
+                for (size_t i = 0; i <= BOARD_SIZE - 3; i++) {
+                    for (size_t j = BOARD_SIZE - 1; j >= 2; j--) {
+                        if (board[i][j] == 'E' && board[i+1][j-1] == 'E' && board[i+2][j-2] == 'E') {
+                            return 'E'; // 'P' wins diagonally
+                        }
+                    }
+                }
+
+                // If no winner found
+                return '\0';
+            }
     };
 } 
