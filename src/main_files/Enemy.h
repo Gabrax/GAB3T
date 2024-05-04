@@ -60,27 +60,26 @@ struct Enemy {
     void UpdatePositionFromBorder(float newX, float newY) {
     // Check if the new position is within the bounds
     if (newX >= -1.3f && newX <= 0.65f && newY >= -2.34f && newY <= 1.17f) {
-        // Calculate the displacement from the current position
-        displacementX = newX - EnemyVertices[0];
-        displacementY = newY - EnemyVertices[1];
+            // Calculate the displacement from the current position
+            displacementX = newX - EnemyVertices[0];
+            displacementY = newY - EnemyVertices[1];
 
-        // Update position of the Enemy vertices
-        for (int i = 0; i < 20; i += 5) {
-            EnemyVertices[i] += displacementX;
-            EnemyVertices[i + 1] += displacementY;
+            // Update position of the Enemy vertices
+            for (int i = 0; i < 20; i += 5) {
+                EnemyVertices[i] += displacementX;
+                EnemyVertices[i + 1] += displacementY;
+            }
+
+            // Update the new position
+            EnemyVertices[0] = newX;
+            EnemyVertices[1] = newY;
+
+            // Bind and update the vertex buffer object
+            glBindBuffer(GL_ARRAY_BUFFER, EnemyVBO);
+            glBufferData(GL_ARRAY_BUFFER, sizeof(EnemyVertices), EnemyVertices, GL_STATIC_DRAW);
+            glBindBuffer(GL_ARRAY_BUFFER, 0);
         }
-
-        // Update the new position
-        EnemyVertices[0] = newX;
-        EnemyVertices[1] = newY;
-
-        // Bind and update the vertex buffer object
-        glBindBuffer(GL_ARRAY_BUFFER, EnemyVBO);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(EnemyVertices), EnemyVertices, GL_STATIC_DRAW);
-        glBindBuffer(GL_ARRAY_BUFFER, 0);
     }
-}
-    
 
 private:
 
@@ -109,9 +108,10 @@ private:
     };
 };
 
-class InstantiateEnemy {
-public:
+struct InstantiateEnemy {
+
     InstantiateEnemy() = default;
+    ~InstantiateEnemy() = default;
 
     // Add a new image to render
     void AddEnemy(const Enemy& Enemy) {
@@ -123,6 +123,10 @@ public:
         for (auto& Enemy : Enemys) {
             Enemy.Render();
         }
+    }
+
+    void Delete(){
+        this->~InstantiateEnemy();
     }
 
 private:

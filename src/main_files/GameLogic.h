@@ -11,6 +11,7 @@
 #include "Select.h"
 #include "Player.h"
 #include "Enemy.h"
+#include "WinBox.h"
 
 namespace Logic {
 
@@ -18,6 +19,7 @@ namespace Logic {
     constexpr float changeX = 0.65f;
     constexpr float changeY = 1.17f;
     constexpr int BOARD_SIZE = 3;
+    bool isEnd = false;
 
     std::array<std::array<char, BOARD_SIZE>, BOARD_SIZE> board;
 
@@ -41,22 +43,47 @@ namespace Logic {
             if (!title.render) {
                 map.Render();
                 border.Render();
-
-                handleInput();
+                if(!isEnd){
+                    handleInput();
+                }
                 
                 InstPlay.RenderAllPlayers();
                 InstEnem.RenderAllEnemys();
 
+                score = countPlayers(board);
+
                 char Pwins = checkifPwins(board);
                 if(Pwins == 'P'){
-                    std::cout << Pwins << '\n';
-                }
-                char Ewins = checkifEwins(board);
-                if(Ewins == 'E'){
-                    std::cout << Ewins << '\n';
+                    isEnd = true;
+                    
+                    WinBox box;
+                    box.Pwin = true;
+                    box.BindAndLoad();
+                    box.Render();
                 }
                 
+                char Ewins = checkifEwins(board);
+                if(Ewins == 'E'){
+                    isEnd = true;
 
+                    WinBox box;
+                    box.Ewin = true;
+                    box.BindAndLoad();
+                    box.Render();
+                }
+
+                if(Pwins != 'P' && Ewins != 'E' && score == 9){
+                    isEnd = true;
+
+                    WinBox box;
+                    box.Draw = true;
+                    box.BindAndLoad();
+                    box.Render();
+                }
+                
+                if(Input::KeyPressed(GAB_KEY_R)){
+                    ResetGame(isEnd);
+                }
             }
         }
 
@@ -72,7 +99,6 @@ namespace Logic {
             }
         }
         
-        // Function to print the board
             void printBoard(const std::array<std::array<char, BOARD_SIZE>, BOARD_SIZE>& board) {
                 for (int i = 0; i < BOARD_SIZE; ++i) {
                     for (int j = 0; j < BOARD_SIZE; ++j) {
@@ -87,6 +113,8 @@ namespace Logic {
                     }
                 }
             }
+
+            
 
     private:
 
@@ -103,6 +131,18 @@ namespace Logic {
         InstantiatePlayer InstPlay; 
         InstantiateEnemy InstEnem;  
         bool isPlayerTurn;
+        unsigned int score;
+            
+            void ResetGame(bool reset){
+                if(reset = true){
+                    isPlayerTurn = true;
+                    isEnd = false;
+                    board = createEmptyBoard();
+                    check.clear();
+                    InstEnem.Delete();
+                    InstPlay.Delete();
+                }
+            }
 
             void updateBoard(std::array<std::array<char, BOARD_SIZE>, BOARD_SIZE>& board, char player, float x, float y) {
                 // Find the closest coordinates in mapCoord
@@ -122,6 +162,18 @@ namespace Logic {
                     int col = closestIndex % BOARD_SIZE;
                     board[row][col] = player;
                 }
+            }
+
+            unsigned int countPlayers(std::array<std::array<char, BOARD_SIZE>, BOARD_SIZE>& board){
+                unsigned int count = 0;
+                for(const auto& i : board){
+                    for(char j : i){
+                        if(j == 'P' || j == 'E'){
+                            count++;
+                        }
+                    }
+                }
+                return count;
             }
 
             std::array<std::array<char, BOARD_SIZE>, BOARD_SIZE> createEmptyBoard() {

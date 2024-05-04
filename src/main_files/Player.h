@@ -109,10 +109,10 @@ private:
     };
 };
 
-class InstantiatePlayer {
-public:
-    InstantiatePlayer() = default;
+struct InstantiatePlayer {
 
+    InstantiatePlayer() = default;
+    ~InstantiatePlayer() = default;
     // Add a new image to render
     void AddPlayer(const Player& player) {
         players.push_back(player);
@@ -123,6 +123,10 @@ public:
         for (auto& player : players) {
             player.Render();
         }
+    }
+
+    void Delete(){
+        this->~InstantiatePlayer();
     }
 
 private:

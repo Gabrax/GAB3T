@@ -25,6 +25,7 @@ add_executable(app
     Player.h
     Enemy.h
     GameLogic.h
+    WinBox.h
 )
 
 
