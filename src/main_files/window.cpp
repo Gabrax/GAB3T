@@ -246,8 +246,8 @@ void Window::Init(int  width, int height)
     glGetIntegerv(GL_MINOR_VERSION, &minor);
     const GLubyte* vendor = glGetString(GL_VENDOR);
     const GLubyte* renderer = glGetString(GL_RENDERER);
-    std::cout << "\nGPU: " << renderer << "\n";
-    std::cout << "GL version: " << major << "." << minor << "\n\n";
+    //std::cout << "\nGPU: " << renderer << "\n";
+    //std::cout << "GL version: " << major << "." << minor << "\n\n";
 
     int flags;
     glGetIntegerv(GL_CONTEXT_FLAGS, &flags);

@@ -12,11 +12,11 @@
 #include <glm/glm.hpp>
 
 
-struct StartScreen {
-    StartScreen() : StartScreenShader("../TitleShader.vert", "../TitleShader.frag"),
-                    PressEnterShader("../MapShader.vert", "../MapShader.frag") ,render(true){}
+struct ChooseMode {
+    ChooseMode() : ChooseModeShader("../MapShader.vert", "../MapShader.frag"),
+                    PressEnterShader("../MapShader.vert", "../MapShader.frag") ,render(true) {}
 
-    ~StartScreen(){
+    ~ChooseMode(){
         glDeleteBuffers(1, &StartVBO);
         glDeleteBuffers(1, &StartEBO);
         glDeleteVertexArrays(1, &StartVAO);
@@ -47,7 +47,7 @@ struct StartScreen {
         glBindBuffer(GL_ARRAY_BUFFER, 0);
         glBindVertexArray(0);
 
-        StartScreenTexture = loadTexture("../title.png");
+        ChooseModeTexture = loadTexture("../pvp.png");
 
         glGenVertexArrays(1, &EnterVAO);
         glGenBuffers(1, &EnterVBO);
@@ -66,7 +66,7 @@ struct StartScreen {
         glBindBuffer(GL_ARRAY_BUFFER, 0);
         glBindVertexArray(0);
 
-        PressEnterTexture = loadTexture("../pressEnter.png");
+        PressEnterTexture = loadTexture("../pve.png");
     }
     
     // flag for rendering
@@ -75,12 +75,12 @@ struct StartScreen {
     void Render() {
         if(render){
             glActiveTexture(GL_TEXTURE0);
-            glBindTexture(GL_TEXTURE_2D, StartScreenTexture);
+            glBindTexture(GL_TEXTURE_2D, ChooseModeTexture);
 
-            StartScreenShader.Use();
-            StartScreenShader.setMat4("projection", projection);
-            StartScreenShader.setInt("texture1", 0);
-            StartScreenShader.setFloat("time",glfwGetTime());
+            ChooseModeShader.Use();
+            ChooseModeShader.setMat4("projection", projection);
+            ChooseModeShader.setInt("texture1", 0);
+            ChooseModeShader.setFloat("time",glfwGetTime());
             glBindVertexArray(StartVAO);
             glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
@@ -97,7 +97,7 @@ struct StartScreen {
 
     void Delete() {
         if (Input::KeyPressed(GAB_KEY_ENTER)){
-           this->~StartScreen();
+           this->~ChooseMode();
 		}
     }
 
@@ -109,15 +109,15 @@ private:
     glm::mat4 projection = glm::ortho(-aspectRatio, aspectRatio, -1.0f, 1.0f);
 
 
-    Shader StartScreenShader;
-    unsigned int StartScreenTexture;
+    Shader ChooseModeShader;
+    unsigned int ChooseModeTexture;
     unsigned int StartVAO, StartVBO, StartEBO;
     float TitleVertices[20] = { 
         // Positions           // Texture Coordinates
-        -1.5f, -0.5f, 0.0f,    0.0f, 0.0f, // Vertex 1: Bottom-left
-         1.5f, -0.5f, 0.0f,    1.0f, 0.0f, // Vertex 2: Bottom-right
-         1.5f,  0.5f, 0.0f,    1.0f, 1.0f, // Vertex 3: Top-right
-        -1.5f,  0.5f, 0.0f,    0.0f, 1.0f  // Vertex 4: Top-left
+        -0.5f, -1.0f, 0.0f,    0.0f, 0.0f, // Vertex 1: Bottom-left
+         0.5f, -1.0f, 0.0f,    1.0f, 0.0f, // Vertex 2: Bottom-right
+         0.5f, -0.5f, 0.0f,    1.0f, 1.0f, // Vertex 3: Top-right
+        -0.5f, -0.5f, 0.0f,    0.0f, 1.0f  // Vertex 4: Top-left
     };
     unsigned int TitleIndices[6] = {  
         0, 1, 2,   // first triangle
@@ -130,10 +130,10 @@ private:
 
     float EnterVertices[20] = { 
         // Positions           // Texture Coordinates
-        -1.0f, -1.0f, 0.0f,    0.0f, 0.0f, // Vertex 1: Bottom-left
-         1.0f, -1.0f, 0.0f,    1.0f, 0.0f, // Vertex 2: Bottom-right
-         1.0f, -0.5f, 0.0f,    1.0f, 1.0f, // Vertex 3: Top-right
-        -1.0f, -0.5f, 0.0f,    0.0f, 1.0f  // Vertex 4: Top-left
+        -0.5f, 0.0f, 0.0f,    0.0f, 0.0f, // Vertex 1: Bottom-left
+         0.5f, 0.0f, 0.0f,    1.0f, 0.0f, // Vertex 2: Bottom-right
+         0.5f, 0.5f, 0.0f,    1.0f, 1.0f, // Vertex 3: Top-right
+        -0.5f, 0.5f, 0.0f,    0.0f, 1.0f  // Vertex 4: Top-left
     };
     unsigned int EnterIndices[6] = {  
         0, 1, 2,   // first triangle

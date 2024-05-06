@@ -9,6 +9,9 @@ file(COPY Ximage.png DESTINATION ${CMAKE_BINARY_DIR}/src/main_files)
 file(COPY playerOwins.png DESTINATION ${CMAKE_BINARY_DIR}/src/main_files)
 file(COPY playerXwins.png DESTINATION ${CMAKE_BINARY_DIR}/src/main_files)
 file(COPY draw.png DESTINATION ${CMAKE_BINARY_DIR}/src/main_files)
+file(COPY pve.png DESTINATION ${CMAKE_BINARY_DIR}/src/main_files)
+file(COPY pvp.png DESTINATION ${CMAKE_BINARY_DIR}/src/main_files)
+file(COPY modeborder.png DESTINATION ${CMAKE_BINARY_DIR}/src/main_files)
 
 
 

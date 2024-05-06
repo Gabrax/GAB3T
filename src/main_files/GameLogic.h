@@ -12,6 +12,7 @@
 #include "Player.h"
 #include "Enemy.h"
 #include "WinBox.h"
+#include "ChooseMode.h"
 
 namespace Logic {
 
@@ -20,6 +21,7 @@ namespace Logic {
     constexpr float changeY = 1.17f;
     constexpr int BOARD_SIZE = 3;
     bool isEnd = false;
+    bool choosingMode;
 
     std::array<std::array<char, BOARD_SIZE>, BOARD_SIZE> board;
 
@@ -33,7 +35,9 @@ namespace Logic {
             map.BindAndLoad();
             title.BindAndLoad();
             border.BindAndLoad();
-            std::cout << "Your turn" << '\n';
+            mode.BindAndLoad();
+            
+            //std::cout << "Your turn" << '\n';
         }
 
         void update() {
@@ -41,49 +45,51 @@ namespace Logic {
             title.Delete();
 
             if (!title.render) {
-                map.Render();
+                mode.Render();
                 border.Render();
-                if(!isEnd){
-                    handleInput();
-                }
+                // map.Render();
+                // border.Render();
+                // if(!isEnd){
+                //     handleInput();
+                // }
                 
-                InstPlay.RenderAllPlayers();
-                InstEnem.RenderAllEnemys();
+                // InstPlay.RenderAllPlayers();
+                // InstEnem.RenderAllEnemys();
 
-                score = countPlayers(board);
+                // score = countPlayers(board);
 
-                char Pwins = checkifPwins(board);
-                if(Pwins == 'P'){
-                    isEnd = true;
+                // char Pwins = checkifPwins(board);
+                // if(Pwins == 'P'){
+                //     isEnd = true;
                     
-                    WinBox box;
-                    box.Pwin = true;
-                    box.BindAndLoad();
-                    box.Render();
-                }
+                //     WinBox box;
+                //     box.Pwin = true;
+                //     box.BindAndLoad();
+                //     box.Render();
+                // }
                 
-                char Ewins = checkifEwins(board);
-                if(Ewins == 'E'){
-                    isEnd = true;
+                // char Ewins = checkifEwins(board);
+                // if(Ewins == 'E'){
+                //     isEnd = true;
 
-                    WinBox box;
-                    box.Ewin = true;
-                    box.BindAndLoad();
-                    box.Render();
-                }
+                //     WinBox box;
+                //     box.Ewin = true;
+                //     box.BindAndLoad();
+                //     box.Render();
+                // }
 
-                if(Pwins != 'P' && Ewins != 'E' && score == 9){
-                    isEnd = true;
+                // if(Pwins != 'P' && Ewins != 'E' && score == 9){
+                //     isEnd = true;
 
-                    WinBox box;
-                    box.Draw = true;
-                    box.BindAndLoad();
-                    box.Render();
-                }
+                //     WinBox box;
+                //     box.Draw = true;
+                //     box.BindAndLoad();
+                //     box.Render();
+                // }
                 
-                if(Input::KeyPressed(GAB_KEY_R)){
-                    ResetGame(isEnd);
-                }
+                // if(Input::KeyPressed(GAB_KEY_R)){
+                //     ResetGame(isEnd);
+                // }
             }
         }
 
@@ -129,7 +135,8 @@ namespace Logic {
         StartScreen title;
         SelectBorder border;
         InstantiatePlayer InstPlay; 
-        InstantiateEnemy InstEnem;  
+        InstantiateEnemy InstEnem; 
+        ChooseMode mode; 
         bool isPlayerTurn;
         unsigned int score;
             
@@ -216,15 +223,15 @@ namespace Logic {
                         player.UpdatePositionFromBorder(newX, newY);
                         instPlayer.AddPlayer(player);
 
-                        if (isPlayerTurn) {
-                            std::cout << "Player2 turn" << '\n';
-                        } else {
-                            std::cout << "Your turn" << '\n';
-                        }
+                        // if (isPlayerTurn) {
+                        //     std::cout << "Player2 turn" << '\n';
+                        // } else {
+                        //     std::cout << "Your turn" << '\n';
+                        // }
 
                         isPlayerTurn = !isPlayerTurn;
                     } else {
-                        std::cout << "Position is taken" << '\n';
+                        //std::cout << "Position is taken" << '\n';
                     }
                 }
             }
@@ -250,15 +257,15 @@ namespace Logic {
                         enemy.UpdatePositionFromBorder(newX, newY);
                         InstEnem.AddEnemy(enemy);
 
-                        if (isPlayerTurn) {
-                            std::cout << "Player2 turn" << '\n';
-                        } else {
-                            std::cout << "Your turn" << '\n';
-                        }
+                        // if (isPlayerTurn) {
+                        //     std::cout << "Player2 turn" << '\n';
+                        // } else {
+                        //     std::cout << "Your turn" << '\n';
+                        // }
 
                         isPlayerTurn = !isPlayerTurn;
                     } else {
-                        std::cout << "Position is taken" << '\n';
+                        //std::cout << "Position is taken" << '\n';
                     }
                 }
             }
