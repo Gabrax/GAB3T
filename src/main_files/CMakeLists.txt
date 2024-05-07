@@ -27,6 +27,7 @@ add_executable(app
     GameLogic.h
     WinBox.h
     ChooseMode.h
+    modeBorder.h
 )
 
 

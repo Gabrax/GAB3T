@@ -96,9 +96,7 @@ struct ChooseMode {
     }
 
     void Delete() {
-        if (Input::KeyPressed(GAB_KEY_ENTER)){
            this->~ChooseMode();
-		}
     }
 
 private:

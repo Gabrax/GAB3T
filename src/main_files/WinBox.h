@@ -1,6 +1,7 @@
 #pragma once
 #include <iostream>
 #include <array>
+#include <unordered_map>
 
 
 #include "Shader.h"
@@ -13,7 +14,11 @@
 
 
 struct WinBox {
-    WinBox() : BoxShader("../MapShader.vert", "../MapShader.frag"), WinBoxTexture(0) {}
+    WinBox() : BoxShader("../MapShader.vert", "../MapShader.frag"), WinBoxTexture(0) {
+        textures["playerOwins"] = loadTexture("../playerOwins.png");
+        textures["playerXwins"] = loadTexture("../playerXwins.png");
+        textures["draw"] = loadTexture("../draw.png");
+    }
 
     bool Pwin = false;
     bool Ewin = false;
@@ -36,21 +41,23 @@ struct WinBox {
 
         glBindBuffer(GL_ARRAY_BUFFER, 0);
         glBindVertexArray(0);
-
-        if(Pwin == true){
-            WinBoxTexture = loadTexture("../playerOwins.png");
-        }
-        if(Ewin == true){
-            WinBoxTexture = loadTexture("../playerXwins.png");
-        }
-        if(Draw == true){
-            WinBoxTexture = loadTexture("../draw.png");
-        }
     }
 
     void Render() {
+        GLuint textureToUse = 0; // Default texture ID
+
+        if (Pwin) {
+        textureToUse = textures["playerOwins"];
+        }
+        if (Ewin) {
+            textureToUse = textures["playerXwins"];
+        }
+        if (Draw) {
+            textureToUse = textures["draw"];
+        }
+
         glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, WinBoxTexture);
+        glBindTexture(GL_TEXTURE_2D, textureToUse);
 
         BoxShader.Use();
         BoxShader.setMat4("projection", MapProjection);
@@ -64,6 +71,8 @@ private:
     float viewportHeight = 1080.0f;
     float aspectRatio = viewportWidth / viewportHeight;
     glm::mat4 MapProjection = glm::ortho(-aspectRatio, aspectRatio, -1.0f, 1.0f);
+    std::unordered_map<std::string, GLuint> textures;
+
 
 
     Shader BoxShader;

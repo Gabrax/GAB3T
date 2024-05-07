@@ -11,7 +11,7 @@
 
 
 struct Enemy {
-    Enemy() : EnemyShader("../Player.vert", "../Player.frag"), EnemyTexture(0) {}
+    Enemy() : enemieshader("../Player.vert", "../Player.frag"), EnemyTexture(0) {}
 
     float getNewX() const {
         return displacementX;
@@ -45,13 +45,13 @@ struct Enemy {
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, EnemyTexture);
 
-        EnemyShader.Use();
-        EnemyShader.setMat4("projection", MapProjection);
-        EnemyShader.setInt("texture1", 0);
+        enemieshader.Use();
+        enemieshader.setMat4("projection", MapProjection);
+        enemieshader.setInt("texture1", 0);
 
         //Translate the model to the specified position
         //glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(xPos, yPos, 0.0f));
-        //EnemyShader.setMat4("model", model);
+        //enemieshader.setMat4("model", model);
 
         glBindVertexArray(EnemyVAO);
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
@@ -92,7 +92,7 @@ private:
     glm::mat4 MapProjection = glm::ortho(-aspectRatio, aspectRatio, -1.0f, 1.0f);
 
 
-    Shader EnemyShader;
+    Shader enemieshader;
     unsigned int EnemyTexture;
     unsigned int EnemyVAO, EnemyVBO, EnemyEBO;
     float EnemyVertices[20] = { // Define array size explicitly
@@ -115,12 +115,12 @@ struct InstantiateEnemy {
 
     // Add a new image to render
     void AddEnemy(const Enemy& Enemy) {
-        Enemys.push_back(Enemy);
+        enemies.push_back(Enemy);
     }
 
     // Render all the added images
-    void RenderAllEnemys() {
-        for (auto& Enemy : Enemys) {
+    void RenderAllenemies() {
+        for (auto& Enemy : enemies) {
             Enemy.Render();
         }
     }
@@ -129,6 +129,10 @@ struct InstantiateEnemy {
         this->~InstantiateEnemy();
     }
 
+    void clearEnemy(){
+        enemies.clear();
+    }
+
 private:
-    std::vector<Enemy> Enemys;
+    std::vector<Enemy> enemies;
 };

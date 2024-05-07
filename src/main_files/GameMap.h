@@ -12,7 +12,15 @@
 
 
 struct GameMap {
-    GameMap() : MapShader("../MapShader.vert", "../MapShader.frag"), GameMapTexture(0) {}
+    GameMap() : MapShader("../MapShader.vert", "../MapShader.frag"), GameMapTexture(0), render(true) {}
+
+    ~GameMap(){
+        glDeleteBuffers(1, &MapVBO);
+        glDeleteBuffers(1, &MapEBO);
+        glDeleteVertexArrays(1, &MapVAO);
+
+        render = false;
+    }
 
     void BindAndLoad() {
         glGenVertexArrays(1, &MapVAO);
@@ -35,15 +43,23 @@ struct GameMap {
         GameMapTexture = loadTexture("../tictactoe.png");
     }
 
-    void Render() {
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, GameMapTexture);
+    bool render;
 
-        MapShader.Use();
-        MapShader.setMat4("projection", MapProjection);
-        MapShader.setInt("texture1", 0);
-        glBindVertexArray(MapVAO);
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+    void Render() {
+        if(render){
+            glActiveTexture(GL_TEXTURE0);
+            glBindTexture(GL_TEXTURE_2D, GameMapTexture);
+
+            MapShader.Use();
+            MapShader.setMat4("projection", MapProjection);
+            MapShader.setInt("texture1", 0);
+            glBindVertexArray(MapVAO);
+            glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+        }
+    }
+
+    void Delete(){
+        this->~GameMap();
     }
 
 private:

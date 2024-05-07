@@ -129,6 +129,10 @@ struct InstantiatePlayer {
         this->~InstantiatePlayer();
     }
 
+    void clearPlayer(){
+        players.clear();
+    }
+
 private:
     std::vector<Player> players;
 };
