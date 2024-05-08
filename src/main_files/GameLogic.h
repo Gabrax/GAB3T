@@ -14,6 +14,7 @@
 #include "WinBox.h"
 #include "ChooseMode.h"
 #include "modeBorder.h"
+#include "Background.h"
 
 namespace Logic {
 
@@ -34,6 +35,7 @@ namespace Logic {
         }
 
         void initialize() {
+            gif.BindAndLoad("../background1.gif");
             map.BindAndLoad();
             title.BindAndLoad();
             border.BindAndLoad();
@@ -43,6 +45,7 @@ namespace Logic {
         }
 
         void update() {
+            gif.renderNextFrame();
             title.Render();
             title.Delete();
 
@@ -135,7 +138,7 @@ namespace Logic {
             {-1.0f, -0.64f}, {-0.35f, -0.64f}, {0.3f, -0.64f},
             {-1.0f, -1.81f}, {-0.35f, -1.81f}, {0.3f, -1.81f}
         };
-
+        GifRenderer gif;
         GameMap map;
         StartScreen title;
         SelectBorder border;

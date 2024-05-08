@@ -3,6 +3,7 @@
 find_package(glad REQUIRED)
 find_package(glfw3 REQUIRED)
 find_package(glm REQUIRED)
+find_package(GIF REQUIRED)
 
 
 add_executable(app 
@@ -28,6 +29,7 @@ add_executable(app
     WinBox.h
     ChooseMode.h
     modeBorder.h
+    Background.h
 )
 
 
@@ -35,6 +37,7 @@ target_link_libraries(app PRIVATE
     glad::glad
     glm::glm
     glfw
+    GIF::GIF
 )
 
 

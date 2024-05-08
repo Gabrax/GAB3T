@@ -1,16 +1,6 @@
 #include <iostream>
 #include <vector>
-#include <thread>
-#include <mutex>
-#include <condition_variable>
 
-#include "Shader.h"
-#include "Input.h"
-#include "GameMap.h"
-#include "Title.h"
-#include "Select.h"
-#include "Player.h"
-#include "Enemy.h"
 #include "engine.h"
 #include "window.h"
 #include "Input.h"
@@ -21,7 +11,6 @@
 #include <glm/glm.hpp>
 #include "stb_image.h"
 
-
 void Engine::Run(){
 
     Window::Init(1920 * 1.5f, 1080 * 1.5f);
@@ -31,7 +20,7 @@ void Engine::Run(){
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-    
+
     Logic::Game game;
     game.initialize();
 
@@ -41,8 +30,8 @@ void Engine::Run(){
         Window::ShowFPS();
 
         glClear(GL_COLOR_BUFFER_BIT);
-        
-        
+
+    
         game.update();
 
 

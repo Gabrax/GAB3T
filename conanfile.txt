@@ -2,6 +2,7 @@
 glfw/3.4
 glad/0.1.36
 glm/cci.20230113
+giflib/5.2.2
 
 [generators]
 CMakeDeps

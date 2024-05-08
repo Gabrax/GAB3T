@@ -48,7 +48,7 @@ struct modeBorder {
         glBindBuffer(GL_ARRAY_BUFFER, 0);
         glBindVertexArray(0);
 
-        modeBorderTexture = loadTexture("../modeBorder.png");
+        modeBorderTexture = loadTexture("../borderProto.png");
     }
 
     // flag for rendering
@@ -73,7 +73,7 @@ struct modeBorder {
         newY = BorderVertices[1] + y;
 
         // Check if the new position is within the bounds
-        if (newY >= -1.0f && newY <= 0.5f) {
+        if (newY >= -1.1f && newY <= 0.4f) {
             // Update position of the border vertices
             for (int i = 0; i < 20; i += 5) {
                 BorderVertices[i + 1] += y;
@@ -105,10 +105,10 @@ private:
     unsigned int BorderVAO, BorderVBO, BorderEBO;
     float BorderVertices[20] = { // Define array size explicitly
         // Positions           // Texture Coordinates
-        -0.5f, -1.0f, 0.0f,    0.0f, 0.0f, // Vertex 1: Bottom-left
-         0.5f, -1.0f, 0.0f,    1.0f, 0.0f, // Vertex 2: Bottom-right
-         0.5f, -0.5f, 0.0f,    1.0f, 1.0f, // Vertex 3: Top-right
-        -0.5f, -0.5f, 0.0f,    0.0f, 1.0f  // Vertex 4: Top-left
+        -0.6f, -1.1f, 0.0f,    0.0f, 0.0f, // Vertex 1: Bottom-left
+         0.6f, -1.1f, 0.0f,    1.0f, 0.0f, // Vertex 2: Bottom-right
+         0.6f, -0.4f, 0.0f,    1.0f, 1.0f, // Vertex 3: Top-right
+        -0.6f, -0.4f, 0.0f,    0.0f, 1.0f  // Vertex 4: Top-left
     };
     unsigned int BorderIndices[6] = {  // Define array size explicitly
         0, 1, 2,   // first triangle

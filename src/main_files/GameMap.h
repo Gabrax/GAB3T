@@ -2,7 +2,6 @@
 #include <iostream>
 #include <array>
 
-
 #include "Shader.h"
 #include "Utility.h"
 
