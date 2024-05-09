@@ -31,7 +31,7 @@ void Engine::Run(){
 
         glClear(GL_COLOR_BUFFER_BIT);
 
-    
+        
         game.update();
 
 

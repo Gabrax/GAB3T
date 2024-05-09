@@ -8,8 +8,10 @@ extern "C" {
 
 int main()
 {
-    Engine::Run();
     
+    Engine::Run();
+
     return 0;
 }
+
 

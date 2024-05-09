@@ -8,6 +8,7 @@ in vec2 TexCoord;
 uniform sampler2D texture1;
 
 uniform float time; // Time uniform for controlling the movement of the gradient
+uniform float fadeInDuration; // Duration of fade-in animation
 
 void main()
 {
@@ -35,6 +36,9 @@ void main()
     // Get the color from the texture
     vec4 textureColor = texture(texture1, TexCoord);
 
-    // Mix the texture color with the gradient color
-    FragColor = vec4(finalColor * textureColor.rgb, textureColor.a);
+    // Calculate fade-in alpha based on elapsed time and fadeInDuration
+    float alpha = clamp(time / fadeInDuration, 0.0, 1.0);
+
+    // Mix the texture color with the gradient color and apply fade-in alpha
+    FragColor = vec4(finalColor * textureColor.rgb, textureColor.a * alpha);
 }

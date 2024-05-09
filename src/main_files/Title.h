@@ -14,7 +14,7 @@
 
 struct StartScreen {
     StartScreen() : StartScreenShader("../TitleShader.vert", "../TitleShader.frag"),
-                    PressEnterShader("../MapShader.vert", "../MapShader.frag") ,render(true){}
+                    PressEnterShader("../TitleEnterShader.vert", "../TitleEnterShader.frag") ,render(true){}
 
     ~StartScreen(){
         glDeleteBuffers(1, &StartVBO);
@@ -81,6 +81,7 @@ struct StartScreen {
             StartScreenShader.setMat4("projection", projection);
             StartScreenShader.setInt("texture1", 0);
             StartScreenShader.setFloat("time",glfwGetTime());
+            StartScreenShader.setFloat("fadeInDuration",4.0f);
             glBindVertexArray(StartVAO);
             glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
@@ -90,6 +91,8 @@ struct StartScreen {
             PressEnterShader.Use();
             PressEnterShader.setMat4("projection", projection);
             PressEnterShader.setInt("texture1", 1);
+            PressEnterShader.setFloat("time",glfwGetTime());
+            PressEnterShader.setFloat("fadeInDuration",5.0f);
             glBindVertexArray(EnterVAO);
             glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
         }
@@ -107,7 +110,6 @@ private:
     float viewportHeight = 1080.0f;
     float aspectRatio = viewportWidth / viewportHeight;
     glm::mat4 projection = glm::ortho(-aspectRatio, aspectRatio, -1.0f, 1.0f);
-
 
     Shader StartScreenShader;
     unsigned int StartScreenTexture;

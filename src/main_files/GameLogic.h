@@ -35,7 +35,7 @@ namespace Logic {
         }
 
         void initialize() {
-            gif.BindAndLoad("../background1.gif");
+            //gif.BindAndLoad("../background1.gif");
             map.BindAndLoad();
             title.BindAndLoad();
             border.BindAndLoad();
@@ -45,7 +45,7 @@ namespace Logic {
         }
 
         void update() {
-            gif.renderNextFrame();
+            //gif.renderNextFrame();
             title.Render();
             title.Delete();
 
@@ -224,13 +224,13 @@ namespace Logic {
                 } else if (Input::KeyPressed(GAB_KEY_DOWN)) {
                     modeBorder.UpdatePosition(0.0f, -1.0f);
                 }else if (Input::KeyPressed(GAB_KEY_ENTER)){
-                    if(modeBorder.getNewY() == -1){
+                    if(modeBorder.getNewY() == -1.1f){
                         PvPmode = true;
                         map.render = true;
                         // mode.Delete();
                         // modeBorder.Delete();
                     }
-                    if(modeBorder.getNewY() == 0){
+                    if(modeBorder.getNewY() == -0.1f){
                         PvEmode = true;
                         //mode.Delete();
                     }
