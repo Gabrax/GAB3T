@@ -97,6 +97,47 @@ namespace Logic {
                     } else if(Input::KeyPressed(GAB_KEY_RIGHT_CONTROL)){
                         goBack();
                     } 
+                }else if(PvEmode){
+                    std::cout << "PVE\n";
+                    map.Render();
+                    border.Render();
+                    if(!isEnd){
+                        handleInput();
+                    }
+                    
+                    InstPlay.RenderAllPlayers();
+                    InstEnem.RenderAllenemies();
+
+                    score = countPlayers(board);
+
+                    char Pwins = checkifPwins(board);
+                    if(Pwins == 'P'){
+                        isEnd = true;
+                        
+                        box.Pwin = true;
+                        box.Render();
+                    }
+                    
+                    char Ewins = checkifEwins(board);
+                    if(Ewins == 'E'){
+                        isEnd = true;
+
+                        box.Ewin = true;
+                        box.Render();
+                    }
+
+                    if(Pwins != 'P' && Ewins != 'E' && score == 9){
+                        isEnd = true;
+
+                        box.Draw = true;
+                        box.Render();
+                    }
+                    
+                    if(Input::KeyPressed(GAB_KEY_R)){
+                        ResetGame(isEnd);
+                    } else if(Input::KeyPressed(GAB_KEY_RIGHT_CONTROL)){
+                        goBack();
+                    } 
                 }
             }
         }
@@ -224,15 +265,12 @@ namespace Logic {
                 } else if (Input::KeyPressed(GAB_KEY_DOWN)) {
                     modeBorder.UpdatePosition(0.0f, -1.0f);
                 }else if (Input::KeyPressed(GAB_KEY_ENTER)){
-                    if(modeBorder.getNewY() == -1.1f){
+                    if(std::abs(modeBorder.getNewY() + 0.1f) >= 1.0f){
                         PvPmode = true;
                         map.render = true;
-                        // mode.Delete();
-                        // modeBorder.Delete();
-                    }
-                    if(modeBorder.getNewY() == -0.1f){
+                    }else if(std::abs(modeBorder.getNewY() + 0.1f) < 0.001f){
                         PvEmode = true;
-                        //mode.Delete();
+                        map.render = true;
                     }
                 }
             }

@@ -39,7 +39,7 @@ struct GameMap {
         glBindBuffer(GL_ARRAY_BUFFER, 0);
         glBindVertexArray(0);
 
-        GameMapTexture = loadTexture("../tictactoe.png");
+        GameMapTexture = loadTexture("../new_map.png");
     }
 
     bool render;
