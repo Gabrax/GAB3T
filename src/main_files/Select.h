@@ -40,7 +40,7 @@ struct SelectBorder {
         glBindBuffer(GL_ARRAY_BUFFER, 0);
         glBindVertexArray(0);
 
-        SelectBorderTexture = loadTexture("../SelectBorder.png");
+        SelectBorderTexture = loadTexture("../new_select_border.png");
     }
 
     void Render() {
@@ -75,6 +75,23 @@ struct SelectBorder {
         }
     }
 
+    void ResetPosition() {
+        // Reset the position to initial values
+        newX = 0.0f; // Set newX to initial X position
+        newY = 0.0f; // Set newY to initial Y position
+
+        // Update position of the border vertices to initial values
+        for (int i = 0; i < 20; i += 5) {
+            BorderVertices[i] = InitialBorderVertices[i]; // Set X position of vertex
+            BorderVertices[i + 1] = InitialBorderVertices[i + 1]; // Set Y position of vertex
+        }
+
+        // Bind and update the vertex buffer object
+        glBindBuffer(GL_ARRAY_BUFFER, BorderVBO);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(BorderVertices), BorderVertices, GL_STATIC_DRAW);
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
+    }
+
 private:
     float newX;
     float newY;
@@ -90,13 +107,20 @@ private:
     unsigned int BorderVAO, BorderVBO, BorderEBO;
     float BorderVertices[20] = { // Define array size explicitly
     // Positions           // Texture Coordinates
-    -0.35f, -0.64f, 0.0f,    0.0f, 0.0f, // Vertex 1: Bottom-left
-     0.35f, -0.64f, 0.0f,    1.0f, 0.0f, // Vertex 2: Bottom-right
-     0.35f,  0.62f, 0.0f,    1.0f, 1.0f, // Vertex 3: Top-right
-    -0.35f,  0.62f, 0.0f,    0.0f, 1.0f  // Vertex 4: Top-left
+    -0.28f, -0.52f, 0.0f,    0.0f, 0.0f, // Vertex 1: Bottom-left
+     0.28f, -0.52f, 0.0f,    1.0f, 0.0f, // Vertex 2: Bottom-right
+     0.28f,  0.49f, 0.0f,    1.0f, 1.0f, // Vertex 3: Top-right
+    -0.28f,  0.49f, 0.0f,    0.0f, 1.0f  // Vertex 4: Top-left
     };
     unsigned int BorderIndices[6] = {  // Define array size explicitly
         0, 1, 2,   // first triangle
         2, 3, 0    // second triangle
+    };
+    float InitialBorderVertices[20] = {
+        // Positions           // Texture Coordinates
+        -0.28f, -0.52f, 0.0f,    0.0f, 0.0f, // Vertex 1: Bottom-left
+        0.28f, -0.52f, 0.0f,    1.0f, 0.0f, // Vertex 2: Bottom-right
+        0.28f,  0.49f, 0.0f,    1.0f, 1.0f, // Vertex 3: Top-right
+        -0.28f,  0.49f, 0.0f,    0.0f, 1.0f  // Vertex 4: Top-left
     };
 };

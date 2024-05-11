@@ -38,7 +38,7 @@ struct Enemy {
         glBindBuffer(GL_ARRAY_BUFFER, 0);
         glBindVertexArray(0);
 
-        EnemyTexture = loadTexture("../Ximage.png");
+        EnemyTexture = loadTexture("../new_X.png");
     }
 
     void Render() {
@@ -97,10 +97,10 @@ private:
     unsigned int EnemyVAO, EnemyVBO, EnemyEBO;
     float EnemyVertices[20] = { // Define array size explicitly
         // Positions           // Texture Coordinates
-        -0.35f, -0.64f, 0.0f,    0.0f, 0.0f, // Vertex 1: Bottom-left
-         0.35f, -0.64f, 0.0f,    1.0f, 0.0f, // Vertex 2: Bottom-right
-         0.35f,  0.62f, 0.0f,    1.0f, 1.0f, // Vertex 3: Top-right
-        -0.35f,  0.62f, 0.0f,    0.0f, 1.0f  // Vertex 4: Top-left
+        -0.28f, -0.52f, 0.0f,    0.0f, 0.0f, // Vertex 1: Bottom-left
+        0.28f, -0.52f, 0.0f,    1.0f, 0.0f, // Vertex 2: Bottom-right
+        0.28f,  0.49f, 0.0f,    1.0f, 1.0f, // Vertex 3: Top-right
+        -0.28f,  0.49f, 0.0f,    0.0f, 1.0f  // Vertex 4: Top-left
     };
     unsigned int EnemyIndices[6] = {  // Define array size explicitly
         0, 1, 2,   // first triangle

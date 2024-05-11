@@ -19,8 +19,8 @@
 namespace Logic {
 
     
-    constexpr float changeX = 0.65f;
-    constexpr float changeY = 1.17f;
+    constexpr float changeX = 0.59f;
+    constexpr float changeY = 1.07f;
     constexpr int BOARD_SIZE = 3;
     bool isEnd = false;
     bool PvPmode = false;
@@ -57,6 +57,8 @@ namespace Logic {
                 //std::cout << modeBorder.getNewY() << '\n';
 
                 if(PvPmode){
+                    
+                    //std::cout << border.getNewX() << " " << border.getNewY() << '\n';
 
                     map.Render();
                     border.Render();
@@ -291,6 +293,7 @@ namespace Logic {
                 InstPlay.clearPlayer();
                 InstEnem.clearEnemy();
                 ClearBoard();
+                border.ResetPosition();
             }
 
             void handlePlayerInput(InstantiatePlayer& instPlayer) {

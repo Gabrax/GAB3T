@@ -15,6 +15,9 @@ file(COPY modeborder.png DESTINATION ${CMAKE_BINARY_DIR}/src/main_files)
 file(COPY borderProto.png DESTINATION ${CMAKE_BINARY_DIR}/src/main_files)
 file(COPY background1.gif DESTINATION ${CMAKE_BINARY_DIR}/src/main_files)
 file(COPY new_map.png DESTINATION ${CMAKE_BINARY_DIR}/src/main_files)
+file(COPY new_select_border.png DESTINATION ${CMAKE_BINARY_DIR}/src/main_files)
+file(COPY new_X.png DESTINATION ${CMAKE_BINARY_DIR}/src/main_files)
+file(COPY new_O.png DESTINATION ${CMAKE_BINARY_DIR}/src/main_files)
 
 
 
