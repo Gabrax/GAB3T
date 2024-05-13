@@ -35,7 +35,6 @@ namespace Logic {
         }
 
         void initialize() {
-            //gif.BindAndLoad("../background1.gif");
             map.BindAndLoad();
             title.BindAndLoad();
             border.BindAndLoad();
@@ -45,25 +44,28 @@ namespace Logic {
         }
 
         void update() {
-            //gif.renderNextFrame();
+            
             title.Render();
             title.Delete();
 
             if (!title.render) {
+                // MENU //
 
                 mode.Render();
                 modeBorder.Render();
                 handleBorderInput();
                 //std::cout << modeBorder.getNewY() << '\n';
 
+                // MENU // 
                 if(PvPmode){
-                    
+                    // PVP PVP PVP //
+
                     //std::cout << border.getNewX() << " " << border.getNewY() << '\n';
 
                     map.Render();
                     border.Render();
                     if(!isEnd){
-                        handleInput();
+                        PVPhandlePlayersInput();
                     }
                     
                     InstPlay.RenderAllPlayers();
@@ -98,13 +100,15 @@ namespace Logic {
                         ResetGame(isEnd);
                     } else if(Input::KeyPressed(GAB_KEY_RIGHT_CONTROL)){
                         goBack();
-                    } 
+                    }
+                    // PVP PVP PVP // 
                 }else if(PvEmode){
-                    std::cout << "PVE\n";
+                    // PVE PVE PVE //
+                    //std::cout << "PVE\n";
                     map.Render();
                     border.Render();
                     if(!isEnd){
-                        handleInput();
+                        PVEhandlePlayersInput();
                     }
                     
                     InstPlay.RenderAllPlayers();
@@ -140,6 +144,7 @@ namespace Logic {
                     } else if(Input::KeyPressed(GAB_KEY_RIGHT_CONTROL)){
                         goBack();
                     } 
+                    // PVE PVE PVE //
                 }
             }
         }
@@ -177,11 +182,11 @@ namespace Logic {
 
         std::vector<std::tuple<char,float,float>> check;
         std::vector<std::pair<float,float>> mapCoord = {
-            {-1.0f, 0.53f}, {-0.35f, 0.53f}, {0.3f, 0.53f},
+            {-1.0f, 0.53f},  {-0.35f, 0.53f},  {0.3f, 0.53f},
             {-1.0f, -0.64f}, {-0.35f, -0.64f}, {0.3f, -0.64f},
             {-1.0f, -1.81f}, {-0.35f, -1.81f}, {0.3f, -1.81f}
         };
-        GifRenderer gif;
+        
         GameMap map;
         StartScreen title;
         SelectBorder border;
@@ -192,7 +197,148 @@ namespace Logic {
         WinBox box;
         bool isPlayerTurn;
         unsigned int score;
-            
+
+
+            // MENU INPUT //     
+            void handleBorderInput(){
+                if (Input::KeyPressed(GAB_KEY_UP)) {
+                    modeBorder.UpdatePosition(0.0f, 1.0f);
+                } else if (Input::KeyPressed(GAB_KEY_DOWN)) {
+                    modeBorder.UpdatePosition(0.0f, -1.0f);
+                }else if (Input::KeyPressed(GAB_KEY_ENTER)){
+                    if(std::abs(modeBorder.getNewY() + 0.1f) >= 1.0f){
+                        PvPmode = true;
+                        map.render = true;
+                    }else if(std::abs(modeBorder.getNewY() + 0.1f) < 0.001f){
+                        PvEmode = true;
+                        map.render = true;
+                    }
+                }
+            }
+
+            void goBack(){
+                PvPmode = false;
+                PvEmode = false;
+                mode.render = true;
+                modeBorder.render = true;
+                map.render = false;
+                isPlayerTurn = true;
+                isEnd = false;
+                box.Pwin = false;
+                box.Ewin = false;
+                box.Draw = false;
+                
+                check.clear();
+                InstPlay.clearPlayer();
+                InstEnem.clearEnemy();
+                ClearBoard();
+                border.ResetPosition();
+            }
+            // MENU INPUT //
+
+            // PVP MODE //
+            void PVPhandlePlayersInput() {
+                if (isPlayerTurn) {
+                    handlePlayerInput(InstPlay);
+                } else {
+                    handleEnemyInput(InstEnem);
+                }
+            }
+
+            void handlePlayerInput(InstantiatePlayer& instPlayer) {
+                if (Input::KeyPressed(GAB_KEY_UP)) {
+                    border.UpdatePosition(0.0f, changeY);
+                } else if (Input::KeyPressed(GAB_KEY_DOWN)) {
+                    border.UpdatePosition(0.0f, -changeY);
+                } else if (Input::KeyPressed(GAB_KEY_LEFT)) {
+                    border.UpdatePosition(-changeX, 0.0f);
+                } else if (Input::KeyPressed(GAB_KEY_RIGHT)) {
+                    border.UpdatePosition(changeX, 0.0f);
+                } else if (Input::KeyPressed(GAB_KEY_X)) {
+                    float newX = border.getNewX();
+                    float newY = border.getNewY();
+
+                    if (!PositionTaken(newX, newY)) {
+                        check.emplace_back('P',newX, newY);
+                        updateBoard(board, 'P', newX, newY);
+                        Player player; 
+                        player.BindAndLoad();
+                        player.UpdatePositionFromBorder(newX, newY);
+                        instPlayer.AddPlayer(player);
+
+                        isPlayerTurn = !isPlayerTurn;
+                    }
+                }
+            }
+
+            void handleEnemyInput(InstantiateEnemy& InstEnem) {
+                if (Input::KeyPressed(GAB_KEY_UP)) {
+                    border.UpdatePosition(0.0f, changeY);
+                } else if (Input::KeyPressed(GAB_KEY_DOWN)) {
+                    border.UpdatePosition(0.0f, -changeY);
+                } else if (Input::KeyPressed(GAB_KEY_LEFT)) {
+                    border.UpdatePosition(-changeX, 0.0f);
+                } else if (Input::KeyPressed(GAB_KEY_RIGHT)) {
+                    border.UpdatePosition(changeX, 0.0f);
+                } else if (Input::KeyPressed(GAB_KEY_X)) {
+                    float newX = border.getNewX();
+                    float newY = border.getNewY();
+
+                    if (!PositionTaken(newX, newY)) {
+                        check.emplace_back('E',newX, newY);
+                        updateBoard(board, 'E', newX, newY);
+                        Enemy enemy;
+                        enemy.BindAndLoad();
+                        enemy.UpdatePositionFromBorder(newX, newY);
+                        InstEnem.AddEnemy(enemy);
+
+                        isPlayerTurn = !isPlayerTurn;
+                    }
+                }
+            }
+            // PVP MODE //
+
+            // PVE MODE //
+
+            void PVEhandlePlayersInput() {
+                if (isPlayerTurn) {
+                    handlePlayerInput(InstPlay);
+                } else {
+                    handleAiInput(InstEnem);
+                }
+            }
+
+            void handleAiInput(InstantiateEnemy& InstEnem) {
+                if(!isPlayerTurn){
+                    float newX, newY;
+                    bool positionFound = false;
+
+                    while (!positionFound) {
+                        int randomIndex = rand() % mapCoord.size();
+                        newX = mapCoord[randomIndex].first;
+                        newY = mapCoord[randomIndex].second;
+
+                        std::cout << newX << " "<< newY << '\n';
+
+                        if (!PositionTaken(newX, newY)) {
+                            positionFound = true;
+                            check.emplace_back('E', newX, newY);
+                            updateBoard(board, 'E', newX, newY);
+                            Enemy enemy;
+                            enemy.BindAndLoad();
+                            enemy.UpdatePositionFromBorder(newX, newY);
+                            InstEnem.AddEnemy(enemy);
+
+                            isPlayerTurn = !isPlayerTurn;
+                        }
+                    }
+                }
+            }
+
+
+            // PVE MODE // 
+
+            // BOARD LOGIC //
             void ResetGame(bool reset){
                 if(reset = true){
                     isPlayerTurn = true;
@@ -202,6 +348,17 @@ namespace Logic {
                     InstEnem.Delete();
                     InstPlay.Delete();
                 }
+            }
+
+            bool PositionTaken(float x, float y) {
+                for (const auto& i : check) {
+                    float val1 = std::get<1>(i);
+                    float val2 = std::get<2>(i);
+                    if (val1 == x && val2 == y) {
+                        return true;
+                    }
+                }
+                return false;
             }
 
             void updateBoard(std::array<std::array<char, BOARD_SIZE>, BOARD_SIZE>& board, char player, float x, float y) {
@@ -253,128 +410,6 @@ namespace Logic {
                 }
             }
 
-            void handleInput() {
-                if (isPlayerTurn) {
-                    handlePlayerInput(InstPlay);
-                } else {
-                    handleEnemyInput(InstEnem);
-                }
-            }
-
-            void handleBorderInput(){
-                if (Input::KeyPressed(GAB_KEY_UP)) {
-                    modeBorder.UpdatePosition(0.0f, 1.0f);
-                } else if (Input::KeyPressed(GAB_KEY_DOWN)) {
-                    modeBorder.UpdatePosition(0.0f, -1.0f);
-                }else if (Input::KeyPressed(GAB_KEY_ENTER)){
-                    if(std::abs(modeBorder.getNewY() + 0.1f) >= 1.0f){
-                        PvPmode = true;
-                        map.render = true;
-                    }else if(std::abs(modeBorder.getNewY() + 0.1f) < 0.001f){
-                        PvEmode = true;
-                        map.render = true;
-                    }
-                }
-            }
-
-            void goBack(){
-                PvPmode = false;
-                PvEmode = false;
-                mode.render = true;
-                modeBorder.render = true;
-                map.render = false;
-                isPlayerTurn = true;
-                isEnd = false;
-                box.Pwin = false;
-                box.Ewin = false;
-                box.Draw = false;
-                
-                check.clear();
-                InstPlay.clearPlayer();
-                InstEnem.clearEnemy();
-                ClearBoard();
-                border.ResetPosition();
-            }
-
-            void handlePlayerInput(InstantiatePlayer& instPlayer) {
-                if (Input::KeyPressed(GAB_KEY_UP)) {
-                    border.UpdatePosition(0.0f, changeY);
-                } else if (Input::KeyPressed(GAB_KEY_DOWN)) {
-                    border.UpdatePosition(0.0f, -changeY);
-                } else if (Input::KeyPressed(GAB_KEY_LEFT)) {
-                    border.UpdatePosition(-changeX, 0.0f);
-                } else if (Input::KeyPressed(GAB_KEY_RIGHT)) {
-                    border.UpdatePosition(changeX, 0.0f);
-                } else if (Input::KeyPressed(GAB_KEY_X)) {
-                    float newX = border.getNewX();
-                    float newY = border.getNewY();
-
-                    if (!PositionTaken(newX, newY)) {
-                        check.emplace_back('P',newX, newY);
-                        updateBoard(board, 'P', newX, newY);
-                        Player player; 
-                        player.BindAndLoad();
-                        player.UpdatePositionFromBorder(newX, newY);
-                        instPlayer.AddPlayer(player);
-
-                        // if (isPlayerTurn) {
-                        //     std::cout << "Player2 turn" << '\n';
-                        // } else {
-                        //     std::cout << "Your turn" << '\n';
-                        // }
-
-                        isPlayerTurn = !isPlayerTurn;
-                    } else {
-                        //std::cout << "Position is taken" << '\n';
-                    }
-                }
-            }
-
-            void handleEnemyInput(InstantiateEnemy& instPlayer) {
-                if (Input::KeyPressed(GAB_KEY_UP)) {
-                    border.UpdatePosition(0.0f, changeY);
-                } else if (Input::KeyPressed(GAB_KEY_DOWN)) {
-                    border.UpdatePosition(0.0f, -changeY);
-                } else if (Input::KeyPressed(GAB_KEY_LEFT)) {
-                    border.UpdatePosition(-changeX, 0.0f);
-                } else if (Input::KeyPressed(GAB_KEY_RIGHT)) {
-                    border.UpdatePosition(changeX, 0.0f);
-                } else if (Input::KeyPressed(GAB_KEY_X)) {
-                    float newX = border.getNewX();
-                    float newY = border.getNewY();
-
-                    if (!PositionTaken(newX, newY)) {
-                        check.emplace_back('E',newX, newY);
-                        updateBoard(board, 'E', newX, newY);
-                        Enemy enemy;
-                        enemy.BindAndLoad();
-                        enemy.UpdatePositionFromBorder(newX, newY);
-                        InstEnem.AddEnemy(enemy);
-
-                        // if (isPlayerTurn) {
-                        //     std::cout << "Player2 turn" << '\n';
-                        // } else {
-                        //     std::cout << "Your turn" << '\n';
-                        // }
-
-                        isPlayerTurn = !isPlayerTurn;
-                    } else {
-                        //std::cout << "Position is taken" << '\n';
-                    }
-                }
-            }
-
-            bool PositionTaken(float x, float y) {
-                for (const auto& i : check) {
-                    float val1 = std::get<1>(i);
-                    float val2 = std::get<2>(i);
-                    if (val1 == x && val2 == y) {
-                        return true;
-                    }
-                }
-                return false;
-            }
-
             char checkifPwins(const std::array<std::array<char, BOARD_SIZE>, BOARD_SIZE>& board) {
                 // Check horizontally
                 for (const auto& row : board) {
@@ -382,9 +417,9 @@ namespace Logic {
                     for (char cell : row) {
                         if (cell == 'P') {
                             count++;
-                            if (count == 3) return 'P'; // 'P' wins
+                            if (count == 3) return 'P'; 
                         } else {
-                            count = 0; // Reset count if 'P' is not consecutive
+                            count = 0; 
                         }
                     }
                 }
@@ -395,9 +430,9 @@ namespace Logic {
                     for (size_t row = 0; row < BOARD_SIZE; row++) {
                         if (board[row][col] == 'P') {
                             count++;
-                            if (count == 3) return 'P'; // 'P' wins
+                            if (count == 3) return 'P'; 
                         } else {
-                            count = 0; // Reset count if 'P' is not consecutive
+                            count = 0; 
                         }
                     }
                 }
@@ -406,7 +441,7 @@ namespace Logic {
                 for (size_t i = 0; i <= BOARD_SIZE - 3; i++) {
                     for (size_t j = 0; j <= BOARD_SIZE - 3; j++) {
                         if (board[i][j] == 'P' && board[i+1][j+1] == 'P' && board[i+2][j+2] == 'P') {
-                            return 'P'; // 'P' wins diagonally
+                            return 'P'; 
                         }
                     }
                 }
@@ -415,7 +450,7 @@ namespace Logic {
                 for (size_t i = 0; i <= BOARD_SIZE - 3; i++) {
                     for (size_t j = BOARD_SIZE - 1; j >= 2; j--) {
                         if (board[i][j] == 'P' && board[i+1][j-1] == 'P' && board[i+2][j-2] == 'P') {
-                            return 'P'; // 'P' wins diagonally
+                            return 'P'; 
                         }
                     }
                 }
@@ -431,9 +466,9 @@ namespace Logic {
                     for (char cell : row) {
                         if (cell == 'E') {
                             count++;
-                            if (count == 3) return 'E'; // 'P' wins
+                            if (count == 3) return 'E'; 
                         } else {
-                            count = 0; // Reset count if 'P' is not consecutive
+                            count = 0; 
                         }
                     }
                 }
@@ -444,9 +479,9 @@ namespace Logic {
                     for (size_t row = 0; row < BOARD_SIZE; row++) {
                         if (board[row][col] == 'E') {
                             count++;
-                            if (count == 3) return 'E'; // 'P' wins
+                            if (count == 3) return 'E'; 
                         } else {
-                            count = 0; // Reset count if 'P' is not consecutive
+                            count = 0; 
                         }
                     }
                 }
@@ -455,7 +490,7 @@ namespace Logic {
                 for (size_t i = 0; i <= BOARD_SIZE - 3; i++) {
                     for (size_t j = 0; j <= BOARD_SIZE - 3; j++) {
                         if (board[i][j] == 'E' && board[i+1][j+1] == 'E' && board[i+2][j+2] == 'E') {
-                            return 'E'; // 'P' wins diagonally
+                            return 'E'; 
                         }
                     }
                 }
@@ -464,7 +499,7 @@ namespace Logic {
                 for (size_t i = 0; i <= BOARD_SIZE - 3; i++) {
                     for (size_t j = BOARD_SIZE - 1; j >= 2; j--) {
                         if (board[i][j] == 'E' && board[i+1][j-1] == 'E' && board[i+2][j-2] == 'E') {
-                            return 'E'; // 'P' wins diagonally
+                            return 'E'; 
                         }
                     }
                 }
@@ -472,5 +507,6 @@ namespace Logic {
                 // If no winner found
                 return '\0';
             }
+            // BOARD LOGIC //
     };
 } 

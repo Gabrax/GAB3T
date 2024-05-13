@@ -3,7 +3,7 @@
 find_package(glad REQUIRED)
 find_package(glfw3 REQUIRED)
 find_package(glm REQUIRED)
-find_package(GIF REQUIRED)
+find_package(cgif REQUIRED)
 
 
 add_executable(app 
@@ -37,7 +37,7 @@ target_link_libraries(app PRIVATE
     glad::glad
     glm::glm
     glfw
-    GIF::GIF
+    cgif::cgif
 )
 
 
