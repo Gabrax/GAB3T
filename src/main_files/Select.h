@@ -119,8 +119,8 @@ private:
     float InitialBorderVertices[20] = {
         // Positions           // Texture Coordinates
         -0.28f, -0.52f, 0.0f,    0.0f, 0.0f, // Vertex 1: Bottom-left
-        0.28f, -0.52f, 0.0f,    1.0f, 0.0f, // Vertex 2: Bottom-right
-        0.28f,  0.49f, 0.0f,    1.0f, 1.0f, // Vertex 3: Top-right
+         0.28f, -0.52f, 0.0f,    1.0f, 0.0f, // Vertex 2: Bottom-right
+         0.28f,  0.49f, 0.0f,    1.0f, 1.0f, // Vertex 3: Top-right
         -0.28f,  0.49f, 0.0f,    0.0f, 1.0f  // Vertex 4: Top-left
     };
 };

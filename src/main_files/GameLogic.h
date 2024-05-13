@@ -182,9 +182,9 @@ namespace Logic {
 
         std::vector<std::tuple<char,float,float>> check;
         std::vector<std::pair<float,float>> mapCoord = {
-            {-1.0f, 0.53f},  {-0.35f, 0.53f},  {0.3f, 0.53f},
-            {-1.0f, -0.64f}, {-0.35f, -0.64f}, {0.3f, -0.64f},
-            {-1.0f, -1.81f}, {-0.35f, -1.81f}, {0.3f, -1.81f}
+            {-0.87f, 0.55f},  {-0.28f, 0.55f},  {0.31f, 0.55f},
+            {-0.87f, -0.52f}, {-0.28f, -0.52f}, {0.31f, -0.52f},
+            {-0.87f, -1.59f}, {-0.28f, -1.59f}, {0.31f, -1.59f}
         };
         
         GameMap map;
@@ -299,7 +299,6 @@ namespace Logic {
             // PVP MODE //
 
             // PVE MODE //
-
             void PVEhandlePlayersInput() {
                 if (isPlayerTurn) {
                     handlePlayerInput(InstPlay);
@@ -308,33 +307,156 @@ namespace Logic {
                 }
             }
 
+            // void handleAiInput(InstantiateEnemy& InstEnem) {
+            //     if(!isPlayerTurn){
+            //             int randomIndex = rand() % mapCoord.size();
+            //             float newX = mapCoord[randomIndex].first;
+            //             float newY = mapCoord[randomIndex].second;
+
+            //             if (!PositionTaken(newX, newY)) {
+            //                 check.emplace_back('E', newX, newY);
+            //                 updateBoard(board, 'E', newX, newY);
+            //                 Enemy enemy;
+            //                 enemy.BindAndLoad();
+            //                 enemy.UpdatePositionFromBorder(newX, newY);
+            //                 InstEnem.AddEnemy(enemy);
+
+            //                 isPlayerTurn = !isPlayerTurn;
+            //             }
+            //     }
+            // }
+
             void handleAiInput(InstantiateEnemy& InstEnem) {
-                if(!isPlayerTurn){
-                    float newX, newY;
-                    bool positionFound = false;
+                if (!isPlayerTurn) {
 
-                    while (!positionFound) {
-                        int randomIndex = rand() % mapCoord.size();
-                        newX = mapCoord[randomIndex].first;
-                        newY = mapCoord[randomIndex].second;
+                    const int depth = 3;
+                    // Initialize variables to store the best move
+                    float bestX = 0.0f;
+                    float bestY = 0.0f;
+                    int bestScore = std::numeric_limits<int>::min();
 
-                        std::cout << newX << " "<< newY << '\n';
-
+                    // Generate all possible moves for the AI player
+                    std::vector<std::tuple<float, float>> possibleMoves;
+                    for (const auto& coord : mapCoord) {
+                        float newX = std::get<0>(coord);
+                        float newY = std::get<1>(coord);
                         if (!PositionTaken(newX, newY)) {
-                            positionFound = true;
-                            check.emplace_back('E', newX, newY);
-                            updateBoard(board, 'E', newX, newY);
-                            Enemy enemy;
-                            enemy.BindAndLoad();
-                            enemy.UpdatePositionFromBorder(newX, newY);
-                            InstEnem.AddEnemy(enemy);
-
-                            isPlayerTurn = !isPlayerTurn;
+                            possibleMoves.emplace_back(newX, newY);
                         }
                     }
+
+                    // Iterate over each possible move
+                    for (const auto& move : possibleMoves) {
+                        float newX = std::get<0>(move);
+                        float newY = std::get<1>(move);
+
+                        // Emulate making the move
+                        updateBoard(board, 'E', newX, newY);
+
+                        // Call the Minimax algorithm to determine the score for this move
+                        int score = minimax(board, depth, false); 
+
+                        // Undo the move
+                        updateBoard(board, ' ', newX, newY);
+
+                        // Update the best move if this move has a higher score
+                        if (score > bestScore) {
+                            bestScore = score;
+                            bestX = newX;
+                            bestY = newY;
+                        }
+                    }
+
+                    // Make the best move
+                    check.emplace_back('E', bestX, bestY);
+                    updateBoard(board, 'E', bestX, bestY);
+                    Enemy enemy;
+                    enemy.BindAndLoad();
+                    enemy.UpdatePositionFromBorder(bestX, bestY);
+                    InstEnem.AddEnemy(enemy);
+
+                    isPlayerTurn = !isPlayerTurn; // Switch turns
                 }
             }
 
+            int minimax(std::array<std::array<char, BOARD_SIZE>, BOARD_SIZE>& board, int depth, bool maximizingPlayer) {
+                // Terminal condition: If game is over or maximum depth is reached
+                if (depth == 0 || gameIsOver(board)) {
+                    return evaluate(board);
+                }
+
+                if (maximizingPlayer) {
+                    int maxScore = std::numeric_limits<int>::min();
+                    for (auto& move : generateMoves(board)) {
+                        maxScore = std::max(maxScore, minimax(move, depth - 1, false));
+                    }
+                    return maxScore;
+                } else {
+                    int minScore = std::numeric_limits<int>::max();
+                    for (auto& move : generateMoves(board)) {
+                        minScore = std::min(minScore, minimax(move, depth - 1, true));
+                    }
+                    return minScore;
+                }
+            }
+
+            // Function to generate all possible moves
+            std::vector<std::array<std::array<char, BOARD_SIZE>, BOARD_SIZE>> generateMoves(std::array<std::array<char, BOARD_SIZE>, BOARD_SIZE>& board) {
+                std::vector<std::array<std::array<char, BOARD_SIZE>, BOARD_SIZE>> moves;
+                for (int i = 0; i < BOARD_SIZE; ++i) {
+                    for (int j = 0; j < BOARD_SIZE; ++j) {
+                        if (board[i][j] == ' ') {
+                            std::array<std::array<char, BOARD_SIZE>, BOARD_SIZE> newBoard = board;
+                            newBoard[i][j] = 'P'; // Assuming player is X
+                            moves.push_back(newBoard);
+                        }
+                    }
+                }
+                return moves;
+            }
+
+            // Function to evaluate game state
+            int evaluate(std::array<std::array<char, BOARD_SIZE>, BOARD_SIZE>& board) {
+                // Check rows
+                for (int i = 0; i < BOARD_SIZE; ++i) {
+                    if (board[i][0] == board[i][1] && board[i][1] == board[i][2]) {
+                        if (board[i][0] == 'P') return 10;
+                        else if (board[i][0] == 'E') return -10;
+                    }
+                }
+                // Check columns
+                for (int j = 0; j < BOARD_SIZE; ++j) {
+                    if (board[0][j] == board[1][j] && board[1][j] == board[2][j]) {
+                        if (board[0][j] == 'P') return 10;
+                        else if (board[0][j] == 'E') return -10;
+                    }
+                }
+                // Check diagonals
+                if (board[0][0] == board[1][1] && board[1][1] == board[2][2]) {
+                    if (board[0][0] == 'P') return 10;
+                    else if (board[0][0] == 'E') return -10;
+                }
+                if (board[0][2] == board[1][1] && board[1][1] == board[2][0]) {
+                    if (board[0][2] == 'P') return 10;
+                    else if (board[0][2] == 'E') return -10;
+                }
+                // If no winner, return 0
+                return 0;
+            }
+
+            bool gameIsOver(std::array<std::array<char, BOARD_SIZE>, BOARD_SIZE>& board) {
+                // Check if any player has won
+                int eval = evaluate(board);
+                if (eval == 10 || eval == -10) return true;
+
+                // Check if the board is full (draw)
+                for (int i = 0; i < BOARD_SIZE; ++i) {
+                    for (int j = 0; j < BOARD_SIZE; ++j) {
+                        if (board[i][j] == ' ') return false;
+                    }
+                }
+                return true;
+            }
 
             // PVE MODE // 
 
@@ -354,7 +476,8 @@ namespace Logic {
                 for (const auto& i : check) {
                     float val1 = std::get<1>(i);
                     float val2 = std::get<2>(i);
-                    if (val1 == x && val2 == y) {
+                    //std::cout << "Comparing (" << x << ", " << y << ") with (" << val1 << ", " << val2 << ")" << std::endl;
+                    if (std::abs(val1 - x) < 0.01f && std::abs(val2 - y) < 0.01f) {
                         return true;
                     }
                 }
