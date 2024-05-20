@@ -14,7 +14,7 @@
 
 struct ChooseMode {
     ChooseMode() : ChooseModeShader("../MapShader.vert", "../MapShader.frag"),
-                    PressEnterShader("../MapShader.vert", "../MapShader.frag") ,render(true) {}
+                    PressEnterShader("../MapShader.vert", "../MapShader.frag") ,render(false) {}
 
     ~ChooseMode(){
         glDeleteBuffers(1, &StartVBO);

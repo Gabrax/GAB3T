@@ -15,12 +15,11 @@ struct SelectBorder {
     SelectBorder() : BorderShader("../MapShader.vert", "../MapShader.frag"), SelectBorderTexture(0) {}
 
     float getNewX() const {
-        return newX;
+        return BorderVertices[0];
     }
     float getNewY() const {
-        return newY;
+        return BorderVertices[1];
     }
-    
 
     void BindAndLoad() {
         glGenVertexArrays(1, &BorderVAO);
@@ -61,14 +60,13 @@ struct SelectBorder {
         newY = BorderVertices[1] + y;
 
         // Check if the new position is within the bounds
-        if (newX >= -1.3f && newX <= 0.65f && newY >= -2.34f && newY <= 1.17f) {
+        if (newX >= -0.87f && newX <= 0.31f && newY >= -1.59f && newY <= 1.17f) {
             // Update position of the border vertices
             for (int i = 0; i < 20; i += 5) {
                 BorderVertices[i] += x;
                 BorderVertices[i + 1] += y;
             }
 
-            // Bind and update the vertex buffer object
             glBindBuffer(GL_ARRAY_BUFFER, BorderVBO);
             glBufferData(GL_ARRAY_BUFFER, sizeof(BorderVertices), BorderVertices, GL_STATIC_DRAW);
             glBindBuffer(GL_ARRAY_BUFFER, 0);

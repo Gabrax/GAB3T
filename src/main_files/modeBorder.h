@@ -12,7 +12,7 @@
 
 
 struct modeBorder {
-    modeBorder() : BorderShader("../MapShader.vert", "../MapShader.frag"), modeBorderTexture(0), render(true) {}
+    modeBorder() : BorderShader("../MapShader.vert", "../MapShader.frag"), modeBorderTexture(0), render(false) {}
 
     ~modeBorder(){
         glDeleteBuffers(1, &BorderVBO);
@@ -23,12 +23,11 @@ struct modeBorder {
     }
 
     float getNewX() const {
-        return newX;
+        return BorderVertices[0];
     }
     float getNewY() const {
-        return newY;
+        return BorderVertices[1];
     }
-    
 
     void BindAndLoad() {
         glGenVertexArrays(1, &BorderVAO);

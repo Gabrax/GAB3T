@@ -99,9 +99,7 @@ struct StartScreen {
     }
 
     void Delete() {
-        if (Input::KeyPressed(GAB_KEY_ENTER)){
            this->~StartScreen();
-		}
     }
 
 private:

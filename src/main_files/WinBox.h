@@ -14,7 +14,7 @@
 
 
 struct WinBox {
-    WinBox() : BoxShader("../MapShader.vert", "../MapShader.frag"), WinBoxTexture(0) {
+    WinBox() : BoxShader("../MapShader.vert", "../MapShader.frag"), WinBoxTexture(0), render(false) {
         textures["playerOwins"] = loadTexture("../playerOwins.png");
         textures["playerXwins"] = loadTexture("../playerXwins.png");
         textures["draw"] = loadTexture("../draw.png");
@@ -43,27 +43,31 @@ struct WinBox {
         glBindVertexArray(0);
     }
 
+    bool render;
+
     void Render() {
-        GLuint textureToUse = 0; // Default texture ID
+        if(render){
+            GLuint textureToUse = 0; // Default texture ID
 
-        if (Pwin) {
-        textureToUse = textures["playerOwins"];
-        }
-        if (Ewin) {
-            textureToUse = textures["playerXwins"];
-        }
-        if (Draw) {
-            textureToUse = textures["draw"];
-        }
+            if (Pwin) {
+            textureToUse = textures["playerOwins"];
+            }
+            if (Ewin) {
+                textureToUse = textures["playerXwins"];
+            }
+            if (Draw) {
+                textureToUse = textures["draw"];
+            }
 
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, textureToUse);
+            glActiveTexture(GL_TEXTURE0);
+            glBindTexture(GL_TEXTURE_2D, textureToUse);
 
-        BoxShader.Use();
-        BoxShader.setMat4("projection", MapProjection);
-        BoxShader.setInt("texture1", 0);
-        glBindVertexArray(BoxVAO);
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+            BoxShader.Use();
+            BoxShader.setMat4("projection", MapProjection);
+            BoxShader.setInt("texture1", 0);
+            glBindVertexArray(BoxVAO);
+            glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+        }
     }
 
 private:

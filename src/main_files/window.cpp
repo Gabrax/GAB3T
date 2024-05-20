@@ -131,7 +131,7 @@ void Window::CreateWindow(WindowMode windowMode)
         _currentWidth = _windowedWidth;
         _currentHeight = _windowedHeight;
         _window = glfwCreateWindow(_windowedWidth, _windowedHeight, "JD", NULL, NULL);
-        //glfwSetWindowPos(_window, windowPosX, windowPosY);
+        glfwSetWindowPos(_window, 100, 100);
     }
     else if (windowMode == FULLSCREEN)
     {
@@ -220,7 +220,7 @@ void Window::Init(int  width, int height)
         _currentWidth = _windowedWidth;
         _currentHeight = _windowedHeight;
         _window = glfwCreateWindow(_windowedWidth, _windowedHeight, "GAB", NULL, NULL);
-		glfwSetWindowPos(_window, 0, 0);
+		glfwSetWindowPos(_window, 100, 100);
     }
     
     if (_window == NULL)
@@ -278,7 +278,7 @@ void Window::ShowFPS()
     {
         std::string FPS = std::to_string((1.0 / timeDiff) * counter);
         std::string ms = std::to_string((timeDiff / counter) * 1000);
-        std::string newTitle = "OpenGL - " + FPS + "FPS / " + ms + "ms";
+        std::string newTitle = "Tic Tac Toe - " + FPS + "FPS";
         glfwSetWindowTitle(_window, newTitle.c_str());
         prevTime = crntTime;
         counter = 0;
