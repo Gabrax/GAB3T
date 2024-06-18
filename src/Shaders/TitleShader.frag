@@ -16,19 +16,8 @@ void main()
     vec3 color1 = vec3(1.0, 0.0, 0.0);  // Red
     vec3 color2 = vec3(0.0, 0.0, 1.0);  // Blue
 
-    // Calculate the gradient position based on time
-    float t = fract(time * 0.2); // Smooth transition between red and blue
-    float gradientPos;
-
-    // Transition from red to blue
-    if (time < 0.5) {
-        gradientPos = smoothstep(0.0, 1.0, t);
-    } 
-    // Transition from blue to red
-    else {
-        t = 1.0 - t; // Invert the time value
-        gradientPos = smoothstep(0.0, 1.0, t);
-    }
+    // Calculate the gradient position based on time, oscillating between 0 and 1
+    float gradientPos = 0.5 * (sin(time * 1.2) + 1.0); // Smooth oscillation between 0.0 and 1.0
 
     // Interpolate between the two colors based on the gradient position
     vec3 finalColor = mix(color1, color2, gradientPos);
