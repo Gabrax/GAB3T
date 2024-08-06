@@ -32,6 +32,9 @@ add_executable(app
     Background.h
 )
 
+if (WIN32)
+    target_link_options(app PRIVATE "/SUBSYSTEM:WINDOWS" "/ENTRY:mainCRTStartup")
+endif()
 
 target_link_libraries(app PRIVATE
     glad::glad

@@ -337,9 +337,6 @@ namespace Logic {
 
             void handleAiInput(InstantiateEnemy& InstEnem) {
                 if (!isPlayerTurn) {
-
-                    const int depth = 3;
-                    
                     float bestX = 0.0f;
                     float bestY = 0.0f;
                     int bestScore = std::numeric_limits<int>::min();
@@ -354,7 +351,6 @@ namespace Logic {
                         }
                     }
 
-                    
                     for (const auto& move : possibleMoves) {
                         float newX = std::get<0>(move);
                         float newY = std::get<1>(move);
@@ -362,8 +358,15 @@ namespace Logic {
                         // Emulate making the move
                         updateBoard(board, 'E', newX, newY);
 
-                        
-                        int score = minimax(board, depth, false); 
+                        // Debug: Print current board state
+                        std::cout << "Evaluating move: (" << newX << ", " << newY << ")\n";
+                        //printBoard(board);
+
+                        // Use maximum depth for Tic-Tac-Toe
+                        int score = minimax(board, 9, false);
+
+                        // Debug: Print score for the move
+                        std::cout << "Score for move (" << newX << ", " << newY << "): " << score << "\n";
 
                         // Undo the move
                         updateBoard(board, ' ', newX, newY);
@@ -376,6 +379,9 @@ namespace Logic {
                         }
                     }
 
+                    // Print the best move chosen
+                    std::cout << "Best move chosen: (" << bestX << ", " << bestY << ") with score " << bestScore << "\n";
+
                     // Make the best move
                     check.emplace_back('E', bestX, bestY);
                     updateBoard(board, 'E', bestX, bestY);
@@ -384,39 +390,37 @@ namespace Logic {
                     enemy.UpdatePositionFromBorder(bestX, bestY);
                     InstEnem.AddEnemy(enemy);
 
-                    isPlayerTurn = !isPlayerTurn; 
+                    isPlayerTurn = !isPlayerTurn;
                 }
             }
 
             int minimax(std::array<std::array<char, BOARD_SIZE>, BOARD_SIZE>& board, int depth, bool maximizingPlayer) {
-                
-                if (depth == 0 || gameIsOver(board)) {
-                    return evaluate(board);
-                }
+                int score = evaluate(board);
+                if (score == 10 || score == -10) return score;
+                if (depth == 0 || gameIsOver(board)) return 0;
 
                 if (maximizingPlayer) {
                     int maxScore = std::numeric_limits<int>::min();
-                    for (auto& move : generateMoves(board)) {
-                        maxScore = std::max(maxScore, minimax(move, depth - 1, false));
+                    for (auto& move : generateMoves(board, 'E')) {
+                        maxScore = std::max(maxScore, minimax(move, depth - 1, false) - depth);
                     }
                     return maxScore;
                 } else {
                     int minScore = std::numeric_limits<int>::max();
-                    for (auto& move : generateMoves(board)) {
-                        minScore = std::min(minScore, minimax(move, depth - 1, true));
+                    for (auto& move : generateMoves(board, 'P')) {
+                        minScore = std::min(minScore, minimax(move, depth - 1, true) + depth);
                     }
                     return minScore;
                 }
             }
 
-            
-            std::vector<std::array<std::array<char, BOARD_SIZE>, BOARD_SIZE>> generateMoves(std::array<std::array<char, BOARD_SIZE>, BOARD_SIZE>& board) {
+            std::vector<std::array<std::array<char, BOARD_SIZE>, BOARD_SIZE>> generateMoves(std::array<std::array<char, BOARD_SIZE>, BOARD_SIZE>& board, char player) {
                 std::vector<std::array<std::array<char, BOARD_SIZE>, BOARD_SIZE>> moves;
                 for (int i = 0; i < BOARD_SIZE; ++i) {
                     for (int j = 0; j < BOARD_SIZE; ++j) {
                         if (board[i][j] == ' ') {
                             std::array<std::array<char, BOARD_SIZE>, BOARD_SIZE> newBoard = board;
-                            newBoard[i][j] = 'E'; // Assuming player is X
+                            newBoard[i][j] = player;
                             moves.push_back(newBoard);
                         }
                     }
@@ -424,23 +428,19 @@ namespace Logic {
                 return moves;
             }
 
-            // Function to evaluate game state
             int evaluate(std::array<std::array<char, BOARD_SIZE>, BOARD_SIZE>& board) {
-                
+                // Check rows and columns for a win
                 for (int i = 0; i < BOARD_SIZE; ++i) {
                     if (board[i][0] == board[i][1] && board[i][1] == board[i][2]) {
                         if (board[i][0] == 'E') return 10;
                         else if (board[i][0] == 'P') return -10;
                     }
-                }
-                
-                for (int j = 0; j < BOARD_SIZE; ++j) {
-                    if (board[0][j] == board[1][j] && board[1][j] == board[2][j]) {
-                        if (board[0][j] == 'E') return 10;
-                        else if (board[0][j] == 'P') return -10;
+                    if (board[0][i] == board[1][i] && board[1][i] == board[2][i]) {
+                        if (board[0][i] == 'E') return 10;
+                        else if (board[0][i] == 'P') return -10;
                     }
                 }
-                
+                // Check diagonals for a win
                 if (board[0][0] == board[1][1] && board[1][1] == board[2][2]) {
                     if (board[0][0] == 'E') return 10;
                     else if (board[0][0] == 'P') return -10;
@@ -449,7 +449,7 @@ namespace Logic {
                     if (board[0][2] == 'E') return 10;
                     else if (board[0][2] == 'P') return -10;
                 }
-                
+                // If no winner, return 0
                 return 0;
             }
 
@@ -466,6 +466,7 @@ namespace Logic {
                 }
                 return true;
             }
+
 
             // PVE MODE // 
 
