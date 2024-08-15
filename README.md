@@ -1,7 +1,7 @@
 # TicTacToe
 
 <p align=center>
-  <img src=![TicTacToeLogo](https://github.com/user-attachments/assets/357b1469-a609-4616-9013-077093327d23)"">
+  ![TicTacToeLogo](https://github.com/user-attachments/assets/a8ab5974-5cb1-43a9-b66b-ec65409d00a9)
 </p>
 
 > [!WARNING]
