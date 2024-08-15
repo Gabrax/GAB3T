@@ -1,4 +1,11 @@
-# TicTacToe 
+# TicTacToe
+
+<p align=center>
+  <img src="">
+</p>
+
+> [!WARNING]
+> This software is unfinished. Keep your expectations low.
 
 The objective of this project is to gain experience in C++ and OpenGL development.
 
