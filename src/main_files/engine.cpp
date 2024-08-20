@@ -27,7 +27,7 @@ void Engine::Run(){
 
     while (Window::WindowIsOpen() && Window::WindowHasNotBeenForceClosed())
     {  
-        Window::ShowFPS();
+        //Window::ShowFPS();
 
         glClear(GL_COLOR_BUFFER_BIT);
 
@@ -49,6 +49,7 @@ void Engine::Run(){
         Window::SwapBuffersPollEvents();
     }
 
+    //DEBUG 
     //game.printMapCoord();
     //game.printTuple();
     //game.printBoard(Logic::board);

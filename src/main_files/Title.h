@@ -13,8 +13,8 @@
 
 
 struct StartScreen {
-    StartScreen() : StartScreenShader("../TitleShader.vert", "../TitleShader.frag"),
-                    PressEnterShader("../TitleEnterShader.vert", "../TitleEnterShader.frag") ,render(true){}
+    StartScreen() : StartScreenShader("Resources/TitleShader.vert", "Resources/TitleShader.frag"),
+                    PressEnterShader("Resources/TitleEnterShader.vert", "Resources/TitleEnterShader.frag") ,render(true){}
 
     ~StartScreen(){
         glDeleteBuffers(1, &StartVBO);
@@ -47,7 +47,7 @@ struct StartScreen {
         glBindBuffer(GL_ARRAY_BUFFER, 0);
         glBindVertexArray(0);
 
-        StartScreenTexture = loadTexture("../title.png");
+        StartScreenTexture = loadTexture("Resources/title.png");
 
         glGenVertexArrays(1, &EnterVAO);
         glGenBuffers(1, &EnterVBO);
@@ -66,7 +66,7 @@ struct StartScreen {
         glBindBuffer(GL_ARRAY_BUFFER, 0);
         glBindVertexArray(0);
 
-        PressEnterTexture = loadTexture("../pressEnter.png");
+        PressEnterTexture = loadTexture("Resources/pressEnter.png");
     }
     
     // flag for rendering

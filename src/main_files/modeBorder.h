@@ -12,7 +12,7 @@
 
 
 struct modeBorder {
-    modeBorder() : BorderShader("../MapShader.vert", "../MapShader.frag"), modeBorderTexture(0), render(false) {}
+    modeBorder() : BorderShader("Resources/MapShader.vert", "Resources/MapShader.frag"), modeBorderTexture(0), render(false) {}
 
     ~modeBorder(){
         glDeleteBuffers(1, &BorderVBO);
@@ -47,7 +47,7 @@ struct modeBorder {
         glBindBuffer(GL_ARRAY_BUFFER, 0);
         glBindVertexArray(0);
 
-        modeBorderTexture = loadTexture("../borderProto.png");
+        modeBorderTexture = loadTexture("Resources/borderProto.png");
     }
 
     // flag for rendering

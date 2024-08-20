@@ -13,8 +13,8 @@
 
 
 struct ChooseMode {
-    ChooseMode() : ChooseModeShader("../MapShader.vert", "../MapShader.frag"),
-                    PressEnterShader("../MapShader.vert", "../MapShader.frag") ,render(false) {}
+    ChooseMode() : ChooseModeShader("Resources/MapShader.vert", "Resources/MapShader.frag"),
+                    PressEnterShader("Resources/MapShader.vert", "Resources/MapShader.frag") ,render(false) {}
 
     ~ChooseMode(){
         glDeleteBuffers(1, &StartVBO);
@@ -47,7 +47,7 @@ struct ChooseMode {
         glBindBuffer(GL_ARRAY_BUFFER, 0);
         glBindVertexArray(0);
 
-        ChooseModeTexture = loadTexture("../pvp.png");
+        ChooseModeTexture = loadTexture("Resources/pvp.png");
 
         glGenVertexArrays(1, &EnterVAO);
         glGenBuffers(1, &EnterVBO);
@@ -66,7 +66,7 @@ struct ChooseMode {
         glBindBuffer(GL_ARRAY_BUFFER, 0);
         glBindVertexArray(0);
 
-        PressEnterTexture = loadTexture("../pve.png");
+        PressEnterTexture = loadTexture("Resources/pve.png");
     }
     
     // flag for rendering

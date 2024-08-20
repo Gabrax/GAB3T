@@ -11,7 +11,7 @@
 
 
 struct Player {
-    Player() : PlayerShader("../Player.vert", "../Player.frag"), PlayerTexture(0) {}
+    Player() : PlayerShader("Resources/Player.vert", "Resources/Player.frag"), PlayerTexture(0) {}
 
     float getNewX() const {
         return displacementX;
@@ -38,7 +38,7 @@ struct Player {
         glBindBuffer(GL_ARRAY_BUFFER, 0);
         glBindVertexArray(0);
 
-        PlayerTexture = loadTexture("../new_O.png");
+        PlayerTexture = loadTexture("Resources/new_O.png");
     }
 
     void Render() {

@@ -1,19 +1,20 @@
-file(COPY title.png DESTINATION ${CMAKE_BINARY_DIR}/src/main_files)
-file(COPY pressEnter.png DESTINATION ${CMAKE_BINARY_DIR}/src/main_files)
-file(COPY Ximage.png DESTINATION ${CMAKE_BINARY_DIR}/src/main_files)
-file(COPY playerOwins.png DESTINATION ${CMAKE_BINARY_DIR}/src/main_files)
-file(COPY playerXwins.png DESTINATION ${CMAKE_BINARY_DIR}/src/main_files)
-file(COPY draw.png DESTINATION ${CMAKE_BINARY_DIR}/src/main_files)
-file(COPY pve.png DESTINATION ${CMAKE_BINARY_DIR}/src/main_files)
-file(COPY pvp.png DESTINATION ${CMAKE_BINARY_DIR}/src/main_files)
-file(COPY borderProto.png DESTINATION ${CMAKE_BINARY_DIR}/src/main_files)
-file(COPY new_map.png DESTINATION ${CMAKE_BINARY_DIR}/src/main_files)
-file(COPY new_select_border.png DESTINATION ${CMAKE_BINARY_DIR}/src/main_files)
-file(COPY new_X.png DESTINATION ${CMAKE_BINARY_DIR}/src/main_files)
-file(COPY new_O.png DESTINATION ${CMAKE_BINARY_DIR}/src/main_files)
-file(COPY protoBackground.png DESTINATION ${CMAKE_BINARY_DIR}/src/main_files)
-
-
+file(COPY
+    title.png
+    pressEnter.png
+    Ximage.png
+    playerOwins.png
+    playerXwins.png
+    draw.png
+    pve.png
+    pvp.png
+    borderProto.png
+    new_map.png
+    new_select_border.png
+    new_X.png
+    new_O.png
+    protoBackground.png
+    icon.png
+DESTINATION ${CMAKE_BINARY_DIR}/Release/Resources)
 
 
 

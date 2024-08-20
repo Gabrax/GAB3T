@@ -3,6 +3,7 @@
 #include "glad/glad.h"
 //#include "engine.h"
 #include "camera.h"
+#include "stb_image.h"
 
 
 #include <iostream>
@@ -212,14 +213,14 @@ void Window::Init(int  width, int height)
     {
         _currentWidth = _fullscreenWidth;
         _currentHeight = _fullscreenHeight;
-        _window = glfwCreateWindow(_fullscreenWidth, _fullscreenHeight, "JD", _monitor, NULL);
+        _window = glfwCreateWindow(_fullscreenWidth, _fullscreenHeight, "Tic Tac Toe", _monitor, NULL);
     } 
 
     else
     {
         _currentWidth = _windowedWidth;
         _currentHeight = _windowedHeight;
-        _window = glfwCreateWindow(_windowedWidth, _windowedHeight, "GAB", NULL, NULL);
+        _window = glfwCreateWindow(_windowedWidth, _windowedHeight, "Tic Tac Toe", NULL, NULL);
 		glfwSetWindowPos(_window, 100, 100);
     }
     
@@ -228,6 +229,13 @@ void Window::Init(int  width, int height)
         std::cout << "Failed to create GLFW window" << std::endl;
         Cleanup();
         return;
+    }
+
+    GLFWimage images[1];
+    images[0].pixels = stbi_load("Resources/icon.png", &images[0].width, &images[0].height, 0, 4); // Ensure the image is in RGBA format
+    if (images[0].pixels) {
+        glfwSetWindowIcon(_window, 1, images);
+        stbi_image_free(images[0].pixels); // Free the image memory
     }
 
     glfwMakeContextCurrent(_window);

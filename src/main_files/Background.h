@@ -55,7 +55,7 @@ struct GIFCreator {
 };
 
 struct Background {
-    Background() : BackgroundShader("../MapShader.vert", "../MapShader.frag"), BackgroundTexture(0) {}
+    Background() : BackgroundShader("Resources/MapShader.vert", "Resources/MapShader.frag"), BackgroundTexture(0) {}
 
     void BindAndLoad() {
         glGenVertexArrays(1, &BackgroundVAO);
@@ -75,7 +75,7 @@ struct Background {
         glBindBuffer(GL_ARRAY_BUFFER, 0);
         glBindVertexArray(0);
 
-        BackgroundTexture = loadTexture("../protoBackground.png");
+        BackgroundTexture = loadTexture("Resources/protoBackground.png");
     }
 
     void Render() {

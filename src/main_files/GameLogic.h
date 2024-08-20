@@ -473,6 +473,11 @@ namespace Logic {
             // BOARD LOGIC //
             void ResetGame(bool reset){
                 if(reset = true){
+
+                    box.Pwin = false;
+                    box.Ewin = false;
+                    box.Draw = false;
+
                     isPlayerTurn = true;
                     isEnd = false;
                     board = createEmptyBoard();

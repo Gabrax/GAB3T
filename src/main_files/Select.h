@@ -12,7 +12,7 @@
 
 
 struct SelectBorder {
-    SelectBorder() : BorderShader("../MapShader.vert", "../MapShader.frag"), SelectBorderTexture(0) {}
+    SelectBorder() : BorderShader("Resources/MapShader.vert", "Resources/MapShader.frag"), SelectBorderTexture(0) {}
 
     float getNewX() const {
         return BorderVertices[0];
@@ -39,7 +39,7 @@ struct SelectBorder {
         glBindBuffer(GL_ARRAY_BUFFER, 0);
         glBindVertexArray(0);
 
-        SelectBorderTexture = loadTexture("../new_select_border.png");
+        SelectBorderTexture = loadTexture("Resources/new_select_border.png");
     }
 
     void Render() {

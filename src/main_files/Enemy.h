@@ -11,7 +11,7 @@
 
 
 struct Enemy {
-    Enemy() : enemieshader("../Player.vert", "../Player.frag"), EnemyTexture(0) {}
+    Enemy() : enemieshader("Resources/Player.vert", "Resources/Player.frag"), EnemyTexture(0) {}
 
     float getNewX() const {
         return displacementX;
@@ -38,7 +38,7 @@ struct Enemy {
         glBindBuffer(GL_ARRAY_BUFFER, 0);
         glBindVertexArray(0);
 
-        EnemyTexture = loadTexture("../new_X.png");
+        EnemyTexture = loadTexture("Resources/new_X.png");
     }
 
     void Render() {

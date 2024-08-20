@@ -5,6 +5,7 @@ find_package(glfw3 REQUIRED)
 find_package(glm REQUIRED)
 find_package(cgif REQUIRED)
 
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 
 add_executable(app 
     main.cpp 
@@ -30,10 +31,13 @@ add_executable(app
     ChooseMode.h
     modeBorder.h
     Background.h
+    app.o
 )
 
 if (WIN32)
     target_link_options(app PRIVATE "/SUBSYSTEM:WINDOWS" "/ENTRY:mainCRTStartup")
+else()
+    target_link_options(app PRIVATE "-mwindows")
 endif()
 
 target_link_libraries(app PRIVATE

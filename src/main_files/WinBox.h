@@ -14,10 +14,10 @@
 
 
 struct WinBox {
-    WinBox() : BoxShader("../MapShader.vert", "../MapShader.frag"), WinBoxTexture(0), render(false) {
-        textures["playerOwins"] = loadTexture("../playerOwins.png");
-        textures["playerXwins"] = loadTexture("../playerXwins.png");
-        textures["draw"] = loadTexture("../draw.png");
+    WinBox() : BoxShader("Resources/MapShader.vert", "Resources/MapShader.frag"), WinBoxTexture(0), render(false) {
+        textures["playerOwins"] = loadTexture("Resources/playerOwins.png");
+        textures["playerXwins"] = loadTexture("Resources/playerXwins.png");
+        textures["draw"] = loadTexture("Resources/draw.png");
     }
 
     bool Pwin = false;
