@@ -1,11 +1,11 @@
 # TicTacToe
 
-<p align=center>
-  <img src="">
+ <p align="center">
+    <img src="https://github.com/user-attachments/assets/a8ab5974-5cb1-43a9-b66b-ec65409d00a9" alt="TicTacToeLogo" width="200"/>
 </p>
 
 > [!WARNING]
-> This software is unfinished. Keep your expectations low.
+> Game is not polished. Keep your expectations low.
 
 The objective of this project is to gain experience in C++ and OpenGL development.
 
