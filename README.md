@@ -1,13 +1,17 @@
 # TicTacToe
 
  <p align="center">
-    <img src="https://github.com/user-attachments/assets/a8ab5974-5cb1-43a9-b66b-ec65409d00a9" alt="TicTacToeLogo" width="200"/>
+    <img src="https://github.com/user-attachments/assets/85913b55-2e9e-4ac9-9420-e1818a095fe3" alt="TicTacToeLogo" width="200"/>
 </p>
 
-> [!WARNING]
-> Game is not polished. Keep your expectations low.
-
 The objective of this project is to gain experience in C++ and OpenGL development.
+
+## ⌨️ KeyMap
+- Enter - move to mode selection, choose mode, put your choice on board
+- Arrows - move around mode selection, and around board cells
+- Alt - go back from board to mode selection
+- R - reset the state of the board
+- Esc - quit the game
 
 ## 💬 To run this project, Conan 2.0 and Cmake needs to be installed
 
