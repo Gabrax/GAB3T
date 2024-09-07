@@ -11,7 +11,8 @@ The objective of this project is to gain experience in C++ and OpenGL developmen
 - Arrows - move around mode selection, and around board cells
 - Alt - go back from board to mode selection
 - R - reset the state of the board
-- Esc - quit the game
+- F - toggle fullscreen/windowed mode
+- Esc - close application
 
 ## 💬 To run this project, Conan 2.0 and Cmake needs to be installed
 
