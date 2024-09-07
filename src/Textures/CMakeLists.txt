@@ -14,6 +14,8 @@ file(COPY
     new_O.png
     protoBackground.png
     icon.png
+    backgroundsheet.png
+    background.gif
 DESTINATION ${CMAKE_BINARY_DIR}/Release/Resources)
 
 

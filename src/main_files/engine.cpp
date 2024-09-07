@@ -13,8 +13,7 @@
 
 void Engine::Run(){
 
-    Window::Init(1920 * 1.5f, 1080 * 1.5f);
-    glfwSwapInterval(0);
+    Window::Init((int)(1920 * 0.75f),(int)(1920 * 0.75f));
     stbi_set_flip_vertically_on_load(true);
 
     glEnable(GL_BLEND);

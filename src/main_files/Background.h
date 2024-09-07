@@ -76,6 +76,7 @@ struct Background {
         glBindVertexArray(0);
 
         BackgroundTexture = loadTexture("Resources/protoBackground.png");
+        //BackgroundTexture = loadTexture("Resources/backgroundsheet.png");
     }
 
     void Render() {
@@ -112,5 +113,6 @@ private:
         2, 3, 0    // second triangle
     };
 };
+
 
 

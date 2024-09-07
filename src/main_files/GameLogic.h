@@ -58,7 +58,7 @@ namespace Logic {
         void update() {
 
             background.Render();
-
+            
             switch (currentState) {
                 case TITLE:
                     title.Render();
@@ -203,7 +203,6 @@ namespace Logic {
             {-0.87f, -0.52f}, {-0.28f, -0.52f}, {0.31f, -0.52f},
             {-0.87f, -1.59f}, {-0.28f, -1.59f}, {0.31f, -1.59f}
         };
-        
         Background background;
         GameMap map;
         StartScreen title;

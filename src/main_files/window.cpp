@@ -96,10 +96,13 @@ GLenum glCheckError_(const char* file, int line) {
 
 void Window::ToggleFullscreen()
 {
-    if (_windowMode == WINDOWED)
+    if (_windowMode == WINDOWED){
         SetWindowMode(FULLSCREEN);
-    else
+        glfwSetInputMode(_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+    }else{
         SetWindowMode(WINDOWED);
+        glfwSetInputMode(_window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+    }
 }
 
 void Window::ToggleWireframe()
@@ -131,14 +134,19 @@ void Window::CreateWindow(WindowMode windowMode)
     {
         _currentWidth = _windowedWidth;
         _currentHeight = _windowedHeight;
-        _window = glfwCreateWindow(_windowedWidth, _windowedHeight, "JD", NULL, NULL);
+        _window = glfwCreateWindow(_windowedWidth, _windowedHeight, "TicTacToe", NULL, NULL);
         glfwSetWindowPos(_window, 100, 100);
+        if (_mode != NULL) {
+                int xpos = (_mode->width - _currentWidth) / 2;
+                int ypos = (_mode->height - _currentHeight) / 2;
+                glfwSetWindowPos(_window, xpos, ypos);
+            }
     }
     else if (windowMode == FULLSCREEN)
     {
         _currentWidth = _fullscreenWidth;
         _currentHeight = _fullscreenHeight;
-        _window = glfwCreateWindow(_fullscreenWidth, _fullscreenHeight, "GAB", _monitor, NULL);
+        _window = glfwCreateWindow(_fullscreenWidth, _fullscreenHeight, "TicTacToe", _monitor, NULL);
     }
     _windowMode = windowMode;
 }
@@ -150,6 +158,11 @@ void Window::SetWindowMode(WindowMode windowMode)
         _currentWidth = _windowedWidth;
         _currentHeight = _windowedHeight;
         glfwSetWindowMonitor(_window, nullptr, 0, 0, _windowedWidth, _windowedHeight, 0);
+        if (_mode != NULL) {
+                int xpos = (_mode->width - _currentWidth) / 2;
+                int ypos = (_mode->height - _currentHeight) / 2;
+                glfwSetWindowPos(_window, xpos, ypos);
+            }
     } 
     else if (windowMode == FULLSCREEN)
     {
@@ -205,24 +218,12 @@ void Window::Init(int  width, int height)
 
 	if (_windowedWidth > _fullscreenWidth || _windowedHeight > _fullscreenHeight)
     {
-		_windowedWidth = _fullscreenWidth * 0.75f;
-		_windowedHeight = _fullscreenHeight * 0.75f;
+		_windowedWidth = static_cast<int>(_fullscreenWidth * 0.75f);
+		_windowedHeight = static_cast<int>(_fullscreenHeight * 0.75f);
 	}
 
-    if (_windowMode == FULLSCREEN)
-    {
-        _currentWidth = _fullscreenWidth;
-        _currentHeight = _fullscreenHeight;
-        _window = glfwCreateWindow(_fullscreenWidth, _fullscreenHeight, "Tic Tac Toe", _monitor, NULL);
-    } 
-
-    else
-    {
-        _currentWidth = _windowedWidth;
-        _currentHeight = _windowedHeight;
-        _window = glfwCreateWindow(_windowedWidth, _windowedHeight, "Tic Tac Toe", NULL, NULL);
-		glfwSetWindowPos(_window, 100, 100);
-    }
+    CreateWindow(WINDOWED);
+    
     
     if (_window == NULL)
     {
@@ -239,11 +240,11 @@ void Window::Init(int  width, int height)
     }
 
     glfwMakeContextCurrent(_window);
+    glfwSwapInterval(1);
     glfwSetFramebufferSizeCallback(_window, framebuffer_size_callback);
+    
+    //DisableCursor();
     glfwSetWindowFocusCallback(_window, window_focus_callback);
-    //glfwSetCursorPosCallback(_window, Engine::mouse_callback);
-    //glfwSetScrollCallback(_window, Engine::scroll_callback);
-    DisableCursor();
 
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
         std::cout << "Failed to initialize GLAD" << std::endl;
@@ -271,7 +272,7 @@ void Window::Init(int  width, int height)
         std::cout << "Debug GL context not available\n";
     }*/    
 
-    // Clear screen to black
+    
     glClearColor(0.0f, 0.0f, 0.1f, 0.0f);
     glClear(GL_COLOR_BUFFER_BIT);
     
@@ -403,10 +404,12 @@ void Window::window_focus_callback(GLFWwindow* window, int focused)
     if (focused)
     {
         Window::_windowHasFocus = true;
+        //glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
     }
     else
     {
         Window::_windowHasFocus = false;
+        //glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
     }
 }
 
