@@ -1,10 +1,8 @@
-# TicTacToe
-
  <p align="center">
     <img src="https://github.com/user-attachments/assets/85913b55-2e9e-4ac9-9420-e1818a095fe3" alt="TicTacToeLogo" width="200"/>
 </p>
 
-The objective of this project is to gain experience in C++ and OpenGL development.
+2D Tic Tac Toe game in OpenGl and C++ using MinMax Algorithm for AI
 
 ## ⌨️ KeyMap
 - Enter - move to mode selection, choose mode, put your choice on board
@@ -14,36 +12,21 @@ The objective of this project is to gain experience in C++ and OpenGL developmen
 - F - toggle fullscreen/windowed mode
 - Esc - close application
 
-## 💬 To run this project, Conan 2.0 and Cmake needs to be installed
+> [!WARNING]
+> To run this project, CMake needs to be installed
+> Only build this project through the scripts, project is setup to move exe to root directory to with assets
 
-- First, choose which libraries build type u want:
+
 ```bash
-conan install . -sbuild_type=Release -of="conan/rel" -s compiler.cppstd=20 --build=missing
-```
-```bash
-conan install . -sbuild_type=Debug -of="conan/deb" -s compiler.cppstd=20 --build=missing
-```
-- Then, show the presets to choose from 
-```bash
-cmake --list-presets 
-```
-- Choose the build type (choose build type of libraries you've chosen in previous step)
-```bash
-cmake . --preset "<name-of-preset>"
-```
-- Lastly, build the project
-```bash
-cmake --build --preset "<name-of-preset>"
+sh build.sh
 ```
 
 ## 👨‍💻 Tech stack
-- C++
-- GLFW
-- GLAD
-- stb_image
-- GLSL
-- CMake
-- Conan
+- [GLFW](https://github.com/glfw/glfw)
+- [GLAD](https://github.com/Dav1dde/glad)
+- [GLM](https://github.com/g-truc/glm)
+- [stb_image](https://github.com/nothings/stb/blob/master/stb_image.h)
+- [glText](https://github.com/vallentin/glText)
 
 
 
