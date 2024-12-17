@@ -1,11 +1,8 @@
 #include "Shader.h"
 #include "Util.hpp"
 #include "glm/ext/matrix_clip_space.hpp"
-#include "window.h"
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
-#define GLT_IMPLEMENTATION
-#include "gltext.h"
 
 struct Background {
     Background() : BackgroundShader("res/shaders/MapShader.vert", "res/shaders/MapShader.frag"), BackgroundTexture(0) {}
@@ -30,8 +27,6 @@ struct Background {
         glBindVertexArray(0);
 
         BackgroundTexture = Util::loadTexture("res/textures/protoBackground.png");
-        gltInit();
-            gltSetText(text, "Tic Tac Toe");
     }
 
     void Render()
@@ -44,22 +39,10 @@ struct Background {
         BackgroundShader.setInt("texture1", 0);
         glBindVertexArray(BackgroundVAO);
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-
-    gltBeginDraw();
-
-    // Draw any amount of text between begin and end
-    gltColor(1.0f, 1.0f, 1.0f, 1.0f);
-    gltDrawText2D(text, (Window::GetWindowWidth()/2.0f) - 250.0f, 100, 5);
-
-    // Finish drawing text
-    gltEndDraw();
-
-
     }
 
 private:
 
-    GLTtext* text = gltCreateText();
     float viewportWidth = 1920.0f;
     float viewportHeight = 1080.0f;
     float aspectRatio = viewportWidth / viewportHeight;
