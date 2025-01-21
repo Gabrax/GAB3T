@@ -4,7 +4,7 @@
 #include <tuple>
 #include <cmath>
 
-#include "../Input/Input.h"
+#include "../../Input/Input.h"
 #include "GameMap.h"
 #include "Select.h"
 #include "Player.h"
@@ -12,7 +12,7 @@
 #include "ChooseMode.h"
 #include "modeBorder.h"
 #include "Background.h"
-#include "window.h"
+#include "../Backend/window.h"
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>

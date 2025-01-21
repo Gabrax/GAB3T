@@ -1,7 +1,7 @@
 #pragma once
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
-
+#include "Camera.h"
 
 namespace Window
 {
@@ -25,7 +25,7 @@ namespace Window
 	bool WindowHasFocus();
 	bool WindowHasNotBeenForceClosed();
 	void ForceCloseWindow();
-
+  float getAspectRatio();
 	enum WindowMode { WINDOWED, FULLSCREEN };
 	enum RenderMode { WIREFRAME, NORMAL };
 	void CreateWindow(WindowMode windowMode);
@@ -38,5 +38,9 @@ namespace Window
 	void processInput(GLFWwindow* window);
 	void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 	void window_focus_callback(GLFWwindow* window, int focused);
-	
+	// camera
+  inline Camera _camera;
+  inline float _lastX = static_cast<float>(GetWindowWidth()) / 2.0f;
+  inline float _lastY = static_cast<float>(GetWindowHeight()) / 2.0f;
+  inline bool _firstMouse = true;
 }

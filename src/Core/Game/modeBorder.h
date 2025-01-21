@@ -3,8 +3,8 @@
 #include <array>
 
 
-#include "Shader.h"
-#include "Util.hpp"
+#include "../Backend/Shader.h"
+#include "../Backend/Util.hpp"
 
 #include "glad/glad.h"
 #include "GLFW/glfw3.h"
@@ -12,7 +12,7 @@
 
 
 struct modeBorder {
-    modeBorder() : BorderShader("res/shaders/MapShader.vert", "res/shaders/MapShader.frag"), modeBorderTexture(0), render(false) {}
+    modeBorder() :  modeBorderTexture(0), render(false) {}
 
     ~modeBorder(){
         glDeleteBuffers(1, &BorderVBO);
@@ -99,7 +99,7 @@ private:
     glm::mat4 Projection = glm::ortho(-aspectRatio, aspectRatio, -1.0f, 1.0f);
 
 
-    Shader BorderShader;
+    Shader BorderShader = Util::g_shaders.basic;
     unsigned int modeBorderTexture;
     unsigned int BorderVAO, BorderVBO, BorderEBO;
     float BorderVertices[20] = { // Define array size explicitly

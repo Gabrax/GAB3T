@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Shader.h"
-#include "Util.hpp"
+#include "../Backend/Shader.h"
+#include "../Backend/Util.hpp"
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
@@ -10,7 +10,7 @@
 #include "glm/ext/matrix_clip_space.hpp"
 
 struct GameMap {
-    GameMap() : MapShader("res/shaders/MapShader.vert", "res/shaders/MapShader.frag"), GameMapTexture(0), render(true) {}
+    GameMap() : GameMapTexture(0), render(true) {}
 
     ~GameMap(){
         glDeleteBuffers(1, &MapVBO);
@@ -67,7 +67,7 @@ private:
     glm::mat4 MapProjection = glm::ortho(-aspectRatio, aspectRatio, -1.0f, 1.0f);
 
 
-    Shader MapShader;
+    Shader& MapShader = Util::g_shaders.basic;
     unsigned int GameMapTexture;
     unsigned int MapVAO, MapVBO, MapEBO;
     float MapVertices[20] = { // Define array size explicitly

@@ -3,8 +3,8 @@
 #include <array>
 #include <vector>
 
-#include "Shader.h"
-#include "Util.hpp"
+#include "../Backend/Shader.h"
+#include "../Backend/Util.hpp"
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
@@ -12,7 +12,7 @@
 
 
 struct Enemy {
-    Enemy() : enemieshader("res/shaders/Player.vert", "res/shaders/Player.frag"), EnemyTexture(0) {}
+    Enemy() :  EnemyTexture(0) {}
 
     float getNewX() const {
         return displacementX;
@@ -93,7 +93,7 @@ private:
     glm::mat4 MapProjection = glm::ortho(-aspectRatio, aspectRatio, -1.0f, 1.0f);
 
 
-    Shader enemieshader;
+    Shader& enemieshader = Util::g_shaders.basic;
     unsigned int EnemyTexture;
     unsigned int EnemyVAO, EnemyVBO, EnemyEBO;
     float EnemyVertices[20] = { // Define array size explicitly

@@ -2,7 +2,7 @@
 #include "GLFW/glfw3.h"
 #include "glad/glad.h"
 #include <stb_image.h>
-#include "../Input/Input.h"
+#include "../../Input/Input.h"
 #define GLT_IMPLEMENTATION
 #include "gltext.h"
 
@@ -382,7 +382,10 @@ void Window::ForceCloseWindow()
     _forceCloseWindow = true;
 }
 
-
+float Window::getAspectRatio()  
+{
+  return static_cast<float>(_windowedWidth) / static_cast<float>(_windowedHeight);
+}
 
 void Window::processInput(GLFWwindow* window)
 {

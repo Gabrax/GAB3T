@@ -2,12 +2,10 @@ cmake_minimum_required(VERSION 3.5)
 
 include(FetchContent)
 
-# Set this to false if you don’t use clangd
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 # Compiler settings for Clang, MSVC, and GCC
 if(MSVC)
-    # Set the MSVC runtime library to static multithreading for Release configuration
     set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:RelWithDebInfo>:RelWithDebInfo>")
     add_compile_options(/MP)
     target_compile_definitions("${CMAKE_PROJECT_NAME}" PUBLIC _CRT_SECURE_NO_WARNINGS)
@@ -30,6 +28,21 @@ elseif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
     )
 endif()
 
+# Assimp 
+FetchContent_Declare(
+    assimp
+    GIT_REPOSITORY https://github.com/assimp/assimp.git
+    GIT_TAG v5.3.0
+)
+set(ASSIMP_BUILD_TESTS OFF CACHE BOOL "Disable Assimp tests" FORCE)
+
+# Meshoptimizer
+FetchContent_Declare(
+    meshoptimizer
+    GIT_REPOSITORY https://github.com/zeux/meshoptimizer.git
+    GIT_TAG v0.18
+)
+FetchContent_MakeAvailable(assimp meshoptimizer)
 project(tictactoe)
 
 set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
@@ -58,9 +71,8 @@ target_sources("${CMAKE_PROJECT_NAME}" PRIVATE ${ICON_FILE})
 
 option(RELEASE "Enable Windows subsystem for the application" OFF)
 
-if(RELEASE)
+if(DEBUG)
     set_target_properties("${CMAKE_PROJECT_NAME}" PROPERTIES LINK_FLAGS "/SUBSYSTEM:WINDOWS /ENTRY:mainCRTStartup")
 endif()
 
-# Target link libraries
-target_link_libraries("${CMAKE_PROJECT_NAME}" PRIVATE glm glfw glad stb_image glText)
+target_link_libraries("${CMAKE_PROJECT_NAME}" PRIVATE glm glfw glad stb_image assimp meshoptimizer glText)

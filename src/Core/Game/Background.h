@@ -1,11 +1,11 @@
-#include "Shader.h"
-#include "Util.hpp"
+#include "../Backend/Shader.h"
+#include "../Backend/Util.hpp"
 #include "glm/ext/matrix_clip_space.hpp"
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
 struct Background {
-    Background() : BackgroundShader("res/shaders/MapShader.vert", "res/shaders/MapShader.frag"), BackgroundTexture(0) {}
+    Background() : BackgroundTexture(0) {}
 
     void BindAndLoad()
     {
@@ -49,7 +49,7 @@ private:
     glm::mat4 Projection = glm::ortho(-aspectRatio, aspectRatio, -1.0f, 1.0f);
 
 
-    Shader BackgroundShader;
+    Shader& BackgroundShader = Util::g_shaders.basic;
     unsigned int BackgroundTexture;
     unsigned int BackgroundVAO, BackgroundVBO, BackgroundEBO;
     float BackgroundVertices[20] = { // Define array size explicitly

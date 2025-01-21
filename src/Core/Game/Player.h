@@ -2,8 +2,8 @@
 #include <iostream>
 #include <array>
 
-#include "Shader.h"
-#include "Util.hpp"
+#include "../Backend/Shader.h"
+#include "../Backend/Util.hpp"
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
@@ -11,7 +11,7 @@
 
 
 struct Player {
-    Player() : PlayerShader("res/shaders/Player.vert", "res/shaders/Player.frag"), PlayerTexture(0) {}
+    Player() : PlayerTexture(0) {}
 
     float getNewX() const {
         return displacementX;
@@ -93,7 +93,7 @@ private:
     glm::mat4 MapProjection = glm::ortho(-aspectRatio, aspectRatio, -1.0f, 1.0f);
 
 
-    Shader PlayerShader;
+    Shader& PlayerShader = Util::g_shaders.basic;
     unsigned int PlayerTexture;
     unsigned int PlayerVAO, PlayerVBO, PlayerEBO;
     float PlayerVertices[20] = { // Define array size explicitly

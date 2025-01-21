@@ -2,8 +2,8 @@
 #include <iostream>
 #include <array>
 
-#include "Shader.h"
-#include "Util.hpp"
+#include "../Backend/Shader.h"
+#include "../Backend/Util.hpp"
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
@@ -11,8 +11,7 @@
 
 
 struct ChooseMode {
-    ChooseMode() : ChooseModeShader("res/shaders/MapShader.vert", "res/shaders/MapShader.frag"),
-                    PressEnterShader("res/shaders/MapShader.vert", "res/shaders/MapShader.frag") ,render(false) {}
+    ChooseMode() : render(false) {}
 
     ~ChooseMode(){
         glDeleteBuffers(1, &StartVBO);
@@ -85,9 +84,7 @@ struct ChooseMode {
             glActiveTexture(GL_TEXTURE1);
             glBindTexture(GL_TEXTURE_2D, PressEnterTexture);
 
-            PressEnterShader.Use();
-            PressEnterShader.setMat4("projection", projection);
-            PressEnterShader.setInt("texture1", 1);
+            ChooseModeShader.setInt("texture1", 1);
             glBindVertexArray(EnterVAO);
             glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
         }
@@ -104,8 +101,7 @@ private:
     float aspectRatio = viewportWidth / viewportHeight;
     glm::mat4 projection = glm::ortho(-aspectRatio, aspectRatio, -1.0f, 1.0f);
 
-
-    Shader ChooseModeShader;
+    Shader& ChooseModeShader = Util::g_shaders.basic;
     unsigned int ChooseModeTexture;
     unsigned int StartVAO, StartVBO, StartEBO;
     float TitleVertices[20] = { 
@@ -120,7 +116,6 @@ private:
         2, 3, 0    // second triangle
     };
 
-    Shader PressEnterShader;
     unsigned int PressEnterTexture;
     unsigned int EnterVAO, EnterVBO, EnterEBO;
 

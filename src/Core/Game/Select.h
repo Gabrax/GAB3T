@@ -2,16 +2,15 @@
 #include <iostream>
 #include <array>
 
-#include "Shader.h"
-#include "Util.hpp"
+#include "../Backend/Shader.h"
+#include "../Backend/Util.hpp"
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
 
-
 struct SelectBorder {
-    SelectBorder() : BorderShader("res/shaders/MapShader.vert", "res/shaders/MapShader.frag"), SelectBorderTexture(0) {}
+    SelectBorder() : SelectBorderTexture(0) {}
 
     float getNewX() const {
         return BorderVertices[0];
@@ -99,7 +98,7 @@ private:
     glm::mat4 Projection = glm::ortho(-aspectRatio, aspectRatio, -1.0f, 1.0f);
 
 
-    Shader BorderShader;
+    Shader& BorderShader = Util::g_shaders.basic;
     unsigned int SelectBorderTexture;
     unsigned int BorderVAO, BorderVBO, BorderEBO;
     float BorderVertices[20] = { // Define array size explicitly
