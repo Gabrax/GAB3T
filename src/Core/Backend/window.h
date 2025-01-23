@@ -39,7 +39,7 @@ namespace Window
 	void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 	void window_focus_callback(GLFWwindow* window, int focused);
 	// camera
-  inline Camera _camera;
+  inline Camera _camera(glm::vec3(0.0f,0.0f,15.0f));
   inline float _lastX = static_cast<float>(GetWindowWidth()) / 2.0f;
   inline float _lastY = static_cast<float>(GetWindowHeight()) / 2.0f;
   inline bool _firstMouse = true;

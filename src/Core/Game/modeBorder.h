@@ -55,12 +55,12 @@ struct modeBorder {
 
     void Render() {
         if(render){
-            glActiveTexture(GL_TEXTURE0);
+            glActiveTexture(GL_TEXTURE2);
             glBindTexture(GL_TEXTURE_2D, modeBorderTexture);
 
             BorderShader.Use();
             BorderShader.setMat4("projection", Projection);
-            BorderShader.setInt("texture1", 0);
+            BorderShader.setInt("texture1", 2);
             glBindVertexArray(BorderVAO);
             glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
         }
@@ -99,7 +99,7 @@ private:
     glm::mat4 Projection = glm::ortho(-aspectRatio, aspectRatio, -1.0f, 1.0f);
 
 
-    Shader BorderShader = Util::g_shaders.basic;
+    Shader& BorderShader = Util::g_shaders.basic;
     unsigned int modeBorderTexture;
     unsigned int BorderVAO, BorderVBO, BorderEBO;
     float BorderVertices[20] = { // Define array size explicitly

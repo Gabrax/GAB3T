@@ -6,8 +6,8 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include "window.h"
+#include "Util.hpp"
 #include "stb_image.h"
-#include "../Utilities.hpp"
 #include <array>
 #include <string>
 
@@ -34,12 +34,12 @@ struct EnvironmentMap {
 
         std::array<std::string,6> faces
         {
-            "../res/skybox/NightSky_Right.png",
-            "../res/skybox/NightSky_Left.png",
-            "../res/skybox/NightSky_Top.png",
-            "../res/skybox/NightSky_Bottom.png",
-            "../res/skybox/NightSky_Front.png",
-            "../res/skybox/NightSky_Back.png"
+            "res/skybox/NightSky_Right.png",
+            "res/skybox/NightSky_Left.png",
+            "res/skybox/NightSky_Top.png",
+            "res/skybox/NightSky_Bottom.png",
+            "res/skybox/NightSky_Front.png",
+            "res/skybox/NightSky_Back.png"
         };
         stbi_set_flip_vertically_on_load(false);
         _texture = loadCubemap(faces);
@@ -70,7 +70,7 @@ private:
     GLuint _VBO, _VAO;
     GLuint _texture;
     Camera& _camera = Window::_camera;
-    Shader& _shader = Utilities::g_shaders.skybox;
+    Shader& _shader = Util::g_shaders.skybox;
     // loads a cubemap texture from 6 individual texture faces
     // order:
     // +X (right)

@@ -14,15 +14,17 @@ namespace Util {
   {
     Shader model;
     Shader basic;
-    Shader background;
-    Shader select;
+    Shader light;
+    Shader skybox;
   };
   inline Shaders g_shaders;
 
   inline void BakeShaders()
   {
-    /*g_shaders.model.Load("../res/shaders/model.glsl");*/
+    g_shaders.model.Load("res/shaders/model.glsl");
     g_shaders.basic.Load("res/shaders/Player.vert","res/shaders/Player.frag");
+    g_shaders.light.Load("res/shaders/light.glsl");
+    g_shaders.skybox.Load("res/shaders/skybox.glsl");
   }
 
   inline void HotReloadShaders()
