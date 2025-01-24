@@ -213,6 +213,71 @@ void main() {
     FragColor = vec4(result, 1.0);
 }
 
+#type GEOMETRY
+#version 330 core
+layout (triangles) in;
+layout (triangle_strip, max_vertices = 3) out;
+
+in VS_OUT {
+    vec2 texCoords;
+    vec3 Normal;
+    vec3 FragPos;
+    vec3 TBN_FragPos;
+    mat3 TBN;
+} gs_in[];
+
+out vec2 TexCoords;
+
+uniform float time;  // Time factor for controlling the explosion effect
+uniform bool explode;  // Boolean to control whether the explosion occurs
+
+// Function to compute explosion displacement
+vec4 explodeEffect(vec4 position, vec3 normal)
+{
+    float magnitude = 2.0;
+    vec3 direction = normal * ((time + 1.0) / 20.0) * magnitude; 
+    return position + vec4(direction, 0.0);
+}
+
+// Function to calculate the normal of the triangle
+vec3 GetNormal()
+{
+    // Calculate the normal using the vertices of the triangle
+    vec3 a = vec3(gl_in[0].gl_Position) - vec3(gl_in[1].gl_Position);
+    vec3 b = vec3(gl_in[2].gl_Position) - vec3(gl_in[1].gl_Position);
+    return normalize(cross(a, b));  // Normalize the resulting normal
+}
+
+void main() {    
+    // Compute the normal of the triangle
+    vec3 normal = GetNormal();
+
+    if (explode) {
+        gl_Position = explodeEffect(gl_in[0].gl_Position, normal);
+    } else {
+        gl_Position = gl_in[0].gl_Position;
+    }
+    TexCoords = gs_in[0].texCoords;
+    EmitVertex();
+
+    if (explode) {
+        gl_Position = explodeEffect(gl_in[1].gl_Position, normal);
+    } else {
+        gl_Position = gl_in[1].gl_Position;
+    }
+    TexCoords = gs_in[1].texCoords;
+    EmitVertex();
+
+    if (explode) {
+        gl_Position = explodeEffect(gl_in[2].gl_Position, normal);
+    } else {
+        gl_Position = gl_in[2].gl_Position;
+    }
+    TexCoords = gs_in[2].texCoords;
+    EmitVertex();
+
+    EndPrimitive();  // End the triangle primitive
+}
 // void main() {
 //     vec3 totalAmbient = vec3(0.0);
 //     vec3 totalDiffuse = vec3(0.0);

@@ -4,6 +4,7 @@
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include "GLFW/glfw3.h"
 #include "stb_image.h"
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
@@ -21,7 +22,6 @@
 
 
 struct StaticModel {
-
     StaticModel() = default;
 
     StaticModel(const std::string& modelpath, bool gamma = false) : gammaCorrection(gamma)
@@ -31,30 +31,37 @@ struct StaticModel {
 
     ~StaticModel() noexcept = default;
 
-    void Render(const glm::vec3& position, const glm::vec3& rotation = glm::vec3(0.0f), const glm::vec3& scale = glm::vec3(1.0f))
+    void Render(const glm::vec3& position, const glm::vec3& rotation = glm::vec3(0.0f), const glm::vec3& scale = glm::vec3(1.0f), bool explode = false, float explosionTime = 0.0f, const glm::vec3& explosionCenter = glm::vec3(0.0f))
     {
         _shader.Use();
         _shader.setVec3("viewPos", this->_camera.Position);
 
-        // light properties
+        // Light properties
         _shader.setFloat("light.constant", 1.0f);
         _shader.setFloat("light.linear", 0.09f);
         _shader.setFloat("light.quadratic", 0.032f);
 
-        // material properties
+        // Material properties
         _shader.setFloat("material.shininess", 32.0f);
-        
+
+        // Projection and view matrices
         glm::mat4 projection = glm::perspective(glm::radians(this->_camera.Zoom), Window::getAspectRatio(), 0.001f, 2000.0f);
         _shader.setMat4("projection", projection);
-
         _shader.setMat4("view", this->_camera.GetViewMatrix());
 
+        // Model transformation
         Util::Transform transform;
         transform.position = position;
         transform.rotation = rotation;
         transform.scale = scale;
 
         _shader.setMat4("model", transform.to_mat4());
+
+        // Explosion state
+        _shader.setBool("explode", explode);
+        _shader.setFloat("time", glfwGetTime());
+
+        // Draw the model
         DrawModel(_shader);
     }
 

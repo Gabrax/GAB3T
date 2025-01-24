@@ -5,7 +5,6 @@ Game::Game() : isPlayerTurn(true) {
         Util::BakeShaders();
         board = createEmptyBoard();
         background.BindAndLoad();
-        border.BindAndLoad();
         mode.BindAndLoad();
         modeBorder.BindAndLoad();
         gltInit();
@@ -68,8 +67,11 @@ void Game::Update()
         isEnd = true;
         gltBeginDraw();
         gltColor(1.0f, 1.0f, 1.0f, 1.0f);
-        gltDrawText2D(Owins, (Window::GetWindowWidth()/2.0f) - 250.0f, 100, 5);
+        gltDrawText2D(Owins, (Window::GetWindowWidth()/2.0f) - 250.0f, 50, 5);
         gltEndDraw();
+        for (auto& cross : crosses) {
+          cross.SetExplosion(true);
+        }
       }
 
       Ewins = checkifEwins(board);
@@ -77,16 +79,25 @@ void Game::Update()
         isEnd = true;
         gltBeginDraw();
         gltColor(1.0f, 1.0f, 1.0f, 1.0f);
-        gltDrawText2D(Xwins, (Window::GetWindowWidth()/2.0f) - 250.0f, 100, 5);
+        gltDrawText2D(Xwins, (Window::GetWindowWidth()/2.0f) - 250.0f, 50, 5);
         gltEndDraw();
+        for (auto& circle : circles) {
+          circle.SetExplosion(true);
+        }
       }
 
       if (Pwins != 'P' && Ewins != 'E' && score == 9) {
         isEnd = true;
         gltBeginDraw();
         gltColor(1.0f, 1.0f, 1.0f, 1.0f);
-        gltDrawText2D(Draw, (Window::GetWindowWidth()/2.0f) - 250.0f, 100, 5);
+        gltDrawText2D(Draw, (Window::GetWindowWidth()/2.0f) - 100.0f, 50, 5);
         gltEndDraw();
+        for (auto& cross : crosses) {
+          cross.SetExplosion(true);
+        }
+        for (auto& circle : circles) {
+          circle.SetExplosion(true);
+        }
       }
 
       if (Input::KeyPressed(GAB_KEY_R)) {
@@ -127,6 +138,9 @@ void Game::Update()
         gltColor(1.0f, 1.0f, 1.0f, 1.0f);
         gltDrawText2D(Owins, (Window::GetWindowWidth()/2.0f) - 250.0f, 50, 5);
         gltEndDraw();
+        for (auto& cross : crosses) {
+          cross.SetExplosion(true);
+        }
       }
 
       Ewins = checkifEwins(board);
@@ -136,6 +150,9 @@ void Game::Update()
         gltColor(1.0f, 1.0f, 1.0f, 1.0f);
         gltDrawText2D(Xwins, (Window::GetWindowWidth()/2.0f) - 250.0f, 50, 5);
         gltEndDraw();
+        for (auto& circle : circles) {
+          circle.SetExplosion(true);
+        }
       }
 
       if (Pwins != 'P' && Ewins != 'E' && score == 9) {
@@ -144,6 +161,12 @@ void Game::Update()
         gltColor(1.0f, 1.0f, 1.0f, 1.0f);
         gltDrawText2D(Draw, (Window::GetWindowWidth()/2.0f) - 100.0f, 50, 5);
         gltEndDraw();
+        for (auto& cross : crosses) {
+          cross.SetExplosion(true);
+        }
+        for (auto& circle : circles) {
+          circle.SetExplosion(true);
+        }
       }
 
       if (Input::KeyPressed(GAB_KEY_R)) {

@@ -8,7 +8,6 @@
 #include <cmath>
 
 #include "../../Input/Input.h"
-#include "Select.h"
 #include "Players.h"
 #include "ChooseMode.h"
 #include "modeBorder.h"
@@ -78,7 +77,6 @@ private:
     LightManager manager;
     EnvironmentMap envMap;
     Background background;
-    SelectBorder border;
     ChooseMode mode;
     modeBorder modeBorder; 
     bool isPlayerTurn;

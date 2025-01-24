@@ -13,30 +13,38 @@
 #include <memory>
 
 struct Circle {
-
     Circle(std::shared_ptr<StaticModel> model, const glm::vec3& position)
-        : model(std::move(model)), position(position) {}
+        : model(std::move(model)), position(position), explode(false) {}
 
     void Render() const {
-        model->Render(position);
+        model->Render(position, glm::vec3(0.0f), glm::vec3(1.0f), explode);
+    }
+
+    void SetExplosion(bool shouldExplode) {
+        explode = shouldExplode;
     }
 
     glm::vec3& GetPosition() {
         return position;
-    }  
+    }
 
 private:
     std::shared_ptr<StaticModel> model;
     glm::vec3 position;
+
+    bool explode;               // Explosion state
 };
 
 struct Cross {
-
     Cross(std::shared_ptr<StaticModel> model, const glm::vec3& position)
-        : model(std::move(model)), position(position) {}
+        : model(std::move(model)), position(position), explode(false) {}
 
     void Render() const {
-        model->Render(position);
+        model->Render(position, glm::vec3(0.0f), glm::vec3(1.0f), explode);
+    }
+
+    void SetExplosion(bool shouldExplode, float time = 0.0f) {
+        explode = shouldExplode;
     }
 
     glm::vec3& GetPosition() {
@@ -46,4 +54,6 @@ struct Cross {
 private:
     std::shared_ptr<StaticModel> model;
     glm::vec3 position;
+
+    bool explode;               // Explosion state
 };
