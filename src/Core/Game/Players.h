@@ -21,6 +21,10 @@ struct Circle {
         model->Render(position);
     }
 
+    glm::vec3& GetPosition() {
+        return position;
+    }  
+
 private:
     std::shared_ptr<StaticModel> model;
     glm::vec3 position;
@@ -33,6 +37,10 @@ struct Cross {
 
     void Render() const {
         model->Render(position);
+    }
+
+    glm::vec3& GetPosition() {
+        return position;
     }
 
 private:

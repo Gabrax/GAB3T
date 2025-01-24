@@ -8,7 +8,6 @@
 #include <cmath>
 
 #include "../../Input/Input.h"
-#include "GameMap.h"
 #include "Select.h"
 #include "Players.h"
 #include "ChooseMode.h"
@@ -23,10 +22,11 @@
 #include <GLFW/glfw3.h>
 #define GLT_IMPLEMENTATION
 #include "gltext.h"
+#include <chrono>
 
 
-constexpr float changeX = 0.59f;
-constexpr float changeY = 1.07f;
+constexpr float changeX = 2.1f;
+constexpr float changeY = 2.1f;
 constexpr int BOARD_SIZE = 3;
 static bool isEnd = false;
 static bool PvPmode = false;
@@ -62,9 +62,9 @@ private:
 
     std::vector<std::tuple<char,float,float>> check;
     std::array<std::pair<float, float>, 9> mapCoord = {
-        std::make_pair(-0.87f, 0.55f), std::make_pair(-0.28f, 0.55f), std::make_pair(0.31f, 0.55f),
-        std::make_pair(-0.87f, -0.52f), std::make_pair(-0.28f, -0.52f), std::make_pair(0.31f, -0.52f),
-        std::make_pair(-0.87f, -1.59f), std::make_pair(-0.28f, -1.59f), std::make_pair(0.31f, -1.59f)
+        std::make_pair(-2.1f, 2.1f), std::make_pair(0, 2.1f), std::make_pair(2.1f, 2.1f),
+        std::make_pair(-2.1f, 0), std::make_pair(0, 0), std::make_pair(2.1f, 0),
+        std::make_pair(-2.1f, -2.1f), std::make_pair(0, -2.1f), std::make_pair(2.1f, -2.1f)
     };
 
     glm::vec3 selectPos = glm::vec3(0.0f);
@@ -78,12 +78,15 @@ private:
     LightManager manager;
     EnvironmentMap envMap;
     Background background;
-    GameMap map;
     SelectBorder border;
     ChooseMode mode;
     modeBorder modeBorder; 
     bool isPlayerTurn;
-
+    bool isAnimating = false;
+    float animationZ = 2.5f;  // Starting Z position for animation
+    const float animationSpeed = 0.05f;  // Speed of sliding animation
+    std::chrono::time_point<std::chrono::steady_clock> animationStart;
+    void handleAnimation();
     // MENU INPUT //     
     void handleBorderInput();
     void goBack();

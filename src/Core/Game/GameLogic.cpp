@@ -5,7 +5,6 @@ Game::Game() : isPlayerTurn(true) {
         Util::BakeShaders();
         board = createEmptyBoard();
         background.BindAndLoad();
-        map.BindAndLoad();
         border.BindAndLoad();
         mode.BindAndLoad();
         modeBorder.BindAndLoad();
@@ -24,8 +23,8 @@ void Game::Update()
   switch (currentState) {
 
     case MENU:
-      background.Render();
       // MENU //
+      background.Render();
       gltBeginDraw();
       gltColor(1.0f, 1.0f, 1.0f, 1.0f);
       gltDrawText2D(title, (Window::GetWindowWidth()/2.0f) - 250.0f, 100, 5);
@@ -44,10 +43,13 @@ void Game::Update()
     case PVP_MODE:
       // PVP PVP PVP //
       glEnable(GL_DEPTH_TEST);
-      manager.RenderLights();
-      envMap.Render();
-      boardModel->Render(glm::vec3(0.0f));
-      border.Render();
+        manager.RenderLights();
+        envMap.Render();
+        boardModel->Render(glm::vec3(0.0f));
+        if (!isAnimating) {
+          selectModel->Render(selectPos);
+        }
+
       if (!isEnd) {
         PVPhandlePlayersInput();
       }
@@ -63,35 +65,35 @@ void Game::Update()
 
       Pwins = checkifPwins(board);
       if (Pwins == 'P') {
-      isEnd = true;
-      gltBeginDraw();
-      gltColor(1.0f, 1.0f, 1.0f, 1.0f);
-      gltDrawText2D(Owins, (Window::GetWindowWidth()/2.0f) - 250.0f, 100, 5);
-      gltEndDraw();
+        isEnd = true;
+        gltBeginDraw();
+        gltColor(1.0f, 1.0f, 1.0f, 1.0f);
+        gltDrawText2D(Owins, (Window::GetWindowWidth()/2.0f) - 250.0f, 100, 5);
+        gltEndDraw();
       }
 
       Ewins = checkifEwins(board);
       if (Ewins == 'E') {
-      isEnd = true;
-      gltBeginDraw();
-      gltColor(1.0f, 1.0f, 1.0f, 1.0f);
-      gltDrawText2D(Xwins, (Window::GetWindowWidth()/2.0f) - 250.0f, 100, 5);
-      gltEndDraw();
+        isEnd = true;
+        gltBeginDraw();
+        gltColor(1.0f, 1.0f, 1.0f, 1.0f);
+        gltDrawText2D(Xwins, (Window::GetWindowWidth()/2.0f) - 250.0f, 100, 5);
+        gltEndDraw();
       }
 
       if (Pwins != 'P' && Ewins != 'E' && score == 9) {
-      isEnd = true;
-      gltBeginDraw();
-      gltColor(1.0f, 1.0f, 1.0f, 1.0f);
-      gltDrawText2D(Draw, (Window::GetWindowWidth()/2.0f) - 250.0f, 100, 5);
-      gltEndDraw();
+        isEnd = true;
+        gltBeginDraw();
+        gltColor(1.0f, 1.0f, 1.0f, 1.0f);
+        gltDrawText2D(Draw, (Window::GetWindowWidth()/2.0f) - 250.0f, 100, 5);
+        gltEndDraw();
       }
 
       if (Input::KeyPressed(GAB_KEY_R)) {
-      ResetGame(isEnd);
+        ResetGame(isEnd);
       } else if (Input::KeyPressed(GAB_KEY_RIGHT_CONTROL)) {
-      goBack();
-      currentState = MENU;
+        goBack();
+        currentState = MENU;
       }
       // PVP PVP PVP //
   break;
@@ -99,12 +101,14 @@ void Game::Update()
     case PVE_MODE:
       // PVE PVE PVE //
       glEnable(GL_DEPTH_TEST);
-      manager.RenderLights();
-      envMap.Render();
-      boardModel->Render(glm::vec3(0.0f));
-      border.Render();
+        manager.RenderLights();
+        envMap.Render();
+        boardModel->Render(glm::vec3(0.0f));
+        if (!isAnimating && isPlayerTurn) {
+          selectModel->Render(selectPos);
+        }
       if (!isEnd) {
-      PVEhandlePlayersInput();
+        PVEhandlePlayersInput();
       }
 
       for (const auto& circle : circles) {
@@ -118,35 +122,35 @@ void Game::Update()
 
       Pwins = checkifPwins(board);
       if (Pwins == 'P') {
-      isEnd = true;
-      gltBeginDraw();
-      gltColor(1.0f, 1.0f, 1.0f, 1.0f);
-      gltDrawText2D(Owins, (Window::GetWindowWidth()/2.0f) - 250.0f, 50, 5);
-      gltEndDraw();
+        isEnd = true;
+        gltBeginDraw();
+        gltColor(1.0f, 1.0f, 1.0f, 1.0f);
+        gltDrawText2D(Owins, (Window::GetWindowWidth()/2.0f) - 250.0f, 50, 5);
+        gltEndDraw();
       }
 
       Ewins = checkifEwins(board);
       if (Ewins == 'E') {
-      isEnd = true;
-      gltBeginDraw();
-      gltColor(1.0f, 1.0f, 1.0f, 1.0f);
-      gltDrawText2D(Xwins, (Window::GetWindowWidth()/2.0f) - 250.0f, 50, 5);
-      gltEndDraw();
+        isEnd = true;
+        gltBeginDraw();
+        gltColor(1.0f, 1.0f, 1.0f, 1.0f);
+        gltDrawText2D(Xwins, (Window::GetWindowWidth()/2.0f) - 250.0f, 50, 5);
+        gltEndDraw();
       }
 
       if (Pwins != 'P' && Ewins != 'E' && score == 9) {
-      isEnd = true;
-      gltBeginDraw();
-      gltColor(1.0f, 1.0f, 1.0f, 1.0f);
-      gltDrawText2D(Draw, (Window::GetWindowWidth()/2.0f) - 100.0f, 50, 5);
-      gltEndDraw();
+        isEnd = true;
+        gltBeginDraw();
+        gltColor(1.0f, 1.0f, 1.0f, 1.0f);
+        gltDrawText2D(Draw, (Window::GetWindowWidth()/2.0f) - 100.0f, 50, 5);
+        gltEndDraw();
       }
 
       if (Input::KeyPressed(GAB_KEY_R)) {
-      ResetGame(isEnd);
+        ResetGame(isEnd);
       } else if (Input::KeyPressed(GAB_KEY_RIGHT_CONTROL)) {
-      goBack();
-      currentState = MENU;
+        goBack();
+        currentState = MENU;
       }
       // PVE PVE PVE //
       break;
@@ -190,13 +194,11 @@ void Game::handleBorderInput(){
       if(std::abs(modeBorder.getNewY() + 0.1f) >= 1.0f){
           currentState = PVP_MODE;
           PvPmode = true;
-          map.render = true;
           mode.render = false;
           modeBorder.render = false;
       }else if(std::abs(modeBorder.getNewY() + 0.1f) < 0.001f){
           currentState = PVE_MODE;
           PvEmode = true;
-          map.render = true;
           mode.render = false;
           modeBorder.render = false;
       }
@@ -210,7 +212,6 @@ void Game::goBack(){
 
   PvPmode = false;
   PvEmode = false;
-  map.render = false;
   isPlayerTurn = true;
   isEnd = false;
   
@@ -218,70 +219,107 @@ void Game::goBack(){
   crosses.clear();
   circles.clear();
   ClearBoard();
-  border.ResetPosition();
+  selectPos = glm::vec3(0.0f);
 }
 // MENU INPUT //
 
-void Game::HandlePlayerMoving(){
-  if (Input::KeyPressed(GAB_KEY_UP)) {
-      border.UpdatePosition(0.0f, changeY);
-  } else if (Input::KeyPressed(GAB_KEY_DOWN)) {
-      border.UpdatePosition(0.0f, -changeY);
-  } else if (Input::KeyPressed(GAB_KEY_LEFT)) {
-      border.UpdatePosition(-changeX, 0.0f);
-  } else if (Input::KeyPressed(GAB_KEY_RIGHT)) {
-      border.UpdatePosition(changeX, 0.0f);
-  }
+void Game::HandlePlayerMoving() {
+    if (Input::KeyPressed(GAB_KEY_UP)) {
+        if (selectPos.y + changeY <= 2.1f) {
+            selectPos.y += changeY;
+        }
+    } else if (Input::KeyPressed(GAB_KEY_DOWN)) {
+        if (selectPos.y - changeY >= -2.1f) {
+            selectPos.y -= changeY;
+        }
+    } else if (Input::KeyPressed(GAB_KEY_LEFT)) {
+        if (selectPos.x - changeX >= -2.1f) {
+            selectPos.x -= changeX;
+        }
+    } else if (Input::KeyPressed(GAB_KEY_RIGHT)) {
+        if (selectPos.x + changeX <= 2.1f) {
+            selectPos.x += changeX;
+        }
+    }
 }
 
 // PVP MODE //
 void Game::PVPhandlePlayersInput() {
-  if (isPlayerTurn) {
-      handlePlayerInput();
-  } else {
-      handleEnemyInput();
-  }
+    if (isAnimating) {
+        handleAnimation();
+        return; // Block input while animation is running
+    }
+
+    if (isPlayerTurn) {
+        handlePlayerInput();
+    } else {
+        handleEnemyInput();
+    }
 }
 
 void Game::handlePlayerInput() {
-  
-  HandlePlayerMoving();
+    HandlePlayerMoving();
 
-  if(Input::KeyPressed(GAB_KEY_ENTER)) {
-      float newX = border.getNewX();
-      float newY = border.getNewY();
-
-      if (!PositionTaken(newX, newY)) {
-          check.emplace_back('P',newX, newY);
-          updateBoard(board, 'P', newX, newY);
-          crosses.emplace_back(circleModel, glm::vec3(newX, newY, 0.0f));
-
-          isPlayerTurn = !isPlayerTurn;
-      }
-  }
+    if (Input::KeyPressed(GAB_KEY_ENTER)) {
+        if (!PositionTaken(selectPos.x, selectPos.y)) {
+            // Start animation for circle
+            check.emplace_back('P', selectPos.x, selectPos.y);
+            updateBoard(board, 'P', selectPos.x, selectPos.y);
+            circles.emplace_back(circleModel, glm::vec3(selectPos.x, selectPos.y, animationZ));
+            animationZ = 2.5f;
+            isAnimating = true;
+            animationStart = std::chrono::steady_clock::now();
+        }
+    }
 }
 
 void Game::handleEnemyInput() {
+    HandlePlayerMoving();
 
-  HandlePlayerMoving();
-
-  if(Input::KeyPressed(GAB_KEY_ENTER)) {
-      float newX = border.getNewX();
-      float newY = border.getNewY();
-
-      if (!PositionTaken(newX, newY)) {
-          check.emplace_back('E',newX, newY);
-          updateBoard(board, 'E', newX, newY);
-          crosses.emplace_back(crossModel, glm::vec3(newX, newY, 0.0f));
-
-          isPlayerTurn = !isPlayerTurn;
-      }
-  }
+    if (Input::KeyPressed(GAB_KEY_ENTER)) {
+        if (!PositionTaken(selectPos.x, selectPos.y)) {
+            // Start animation for cross
+            check.emplace_back('E', selectPos.x, selectPos.y);
+            updateBoard(board, 'E', selectPos.x, selectPos.y);
+            crosses.emplace_back(crossModel, glm::vec3(selectPos.x, selectPos.y, animationZ));
+            animationZ = 2.5f;
+            isAnimating = true;
+            animationStart = std::chrono::steady_clock::now();
+        }
+    }
 }
 // PVP MODE //
+void Game::handleAnimation() {
+    // Calculate time elapsed since animation started
+    auto now = std::chrono::steady_clock::now();
+    float elapsedTime = std::chrono::duration<float>(now - animationStart).count();
 
+    // Calculate the current Z position based on elapsed time and animation speed
+    animationZ -= animationSpeed * elapsedTime;
+
+    // Ensure it doesn't overshoot Z = 0.0f
+    if (animationZ <= 0.0f) {
+        animationZ = 0.0f;
+        isAnimating = false; // Animation is complete
+        isPlayerTurn = !isPlayerTurn; // Switch turns
+        return;
+    }
+
+    // Update the Z position of the last added object
+    if (!circles.empty() && std::get<0>(check.back()) == 'P') {
+        circles.back().GetPosition().z = animationZ;
+    } else if (!crosses.empty() && std::get<0>(check.back()) == 'E') {
+        crosses.back().GetPosition().z = animationZ;
+    }
+}
 // PVE MODE //
 void Game::PVEhandlePlayersInput() {
+
+  if (isAnimating) {
+      handleAnimation();
+      return; 
+  }
+
   if (isPlayerTurn) {
       handlePlayerInput();
   } else {
@@ -296,12 +334,12 @@ void Game::handleAiInput() {
       int bestScore = std::numeric_limits<int>::min();
 
       // Generate all possible moves for the AI player
-      std::vector<std::tuple<float, float>> possibleMoves;
+      std::vector<std::tuple<float, float, float>> possibleMoves;
       for (const auto& coord : mapCoord) {
           float newX = std::get<0>(coord);
           float newY = std::get<1>(coord);
           if (!PositionTaken(newX, newY)) {
-              possibleMoves.emplace_back(newX, newY);
+              possibleMoves.emplace_back(newX, newY, 0.0f);
           }
       }
 
@@ -332,9 +370,10 @@ void Game::handleAiInput() {
       // Make the best move
       check.emplace_back('E', bestX, bestY);
       updateBoard(board, 'E', bestX, bestY);
-      crosses.emplace_back(crossModel, glm::vec3(bestX, bestY, 0.0f));
-
-      isPlayerTurn = !isPlayerTurn;
+      crosses.emplace_back(crossModel, glm::vec3(bestX, bestY, animationZ));
+      animationZ = 2.5f;
+      isAnimating = true;
+      animationStart = std::chrono::steady_clock::now();
   }
 }
 
@@ -418,6 +457,7 @@ bool Game::gameIsOver(std::array<std::array<char, BOARD_SIZE>, BOARD_SIZE>& boar
 void Game::ResetGame(bool reset){
   if(reset){
 
+      isAnimating = false;
       isPlayerTurn = true;
       isEnd = false;
       board = createEmptyBoard();
