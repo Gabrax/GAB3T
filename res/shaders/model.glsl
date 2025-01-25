@@ -1,5 +1,6 @@
 #type VERTEX
 #version 330 core
+
 layout (location = 0) in vec3 aPos;
 layout (location = 1) in vec3 aNormal;
 layout (location = 2) in vec2 aTexCoords;
@@ -9,8 +10,10 @@ layout (location = 4) in vec3 bitangent;
 uniform mat4 model;
 uniform mat4 view;
 uniform mat4 projection;
+uniform bool explode; 
+uniform float time;  // Time factor for explosion effect
 
-out VS_OUT{
+out VS_OUT {
     vec2 TexCoords;
     vec3 Normal;
     vec3 FragPos;
@@ -20,8 +23,19 @@ out VS_OUT{
 
 void main()
 {
-    vs_out.FragPos = vec3(model * vec4(aPos, 1.0));
-    vs_out.Normal = mat3(transpose(inverse(model))) * aNormal;  
+    // Calculate world-space position
+    vec3 worldPosition = aPos;
+
+    // Apply explosion effect if enabled
+    if (explode) {
+        float magnitude = 2.0; // Explosion magnitude
+        vec3 displacement = aNormal * sin(time) * magnitude; // Displacement based on normal
+        worldPosition += displacement;
+    }
+
+    // Calculate the fragment position in world space
+    vs_out.FragPos = vec3(model * vec4(worldPosition, 1.0));
+    vs_out.Normal = mat3(transpose(inverse(model))) * aNormal;
 
     // Tangent space matrix (TBN)
     vec3 T = normalize(mat3(model) * tangent);
@@ -32,10 +46,10 @@ void main()
     // Tangent-space position for fragment shader
     vs_out.TBN_FragPos = vs_out.TBN * vs_out.FragPos;
 
+    // Transform the vertex position into clip space
     gl_Position = projection * view * vec4(vs_out.FragPos, 1.0);
     vs_out.TexCoords = aTexCoords;
 }
-
 #type FRAGMENT
 #version 430 core
 
@@ -147,7 +161,7 @@ vec3 calculatePointLight(Light light, vec3 fragPos, vec3 normal, vec3 viewDir, v
     vec3 diffuse = light.diffuse * diff * color * attenuation;
     vec3 specular = light.specular * spec * material.specular * attenuation;
 
-    return ambient + diffuse + specular;
+    return 5.0f * (ambient + diffuse + specular);
 }
 
 vec3 calculateSpotlight(Light light, vec3 fragPos, vec3 normal, vec3 viewDir, vec3 color) {
@@ -185,7 +199,7 @@ void main() {
         currentLight.constant = 1.0;
         currentLight.linear = 0.09;
         currentLight.quadratic = 0.032;
-        currentLight.direction = vec3(0.0f,-1.0f,0.0f);
+        currentLight.direction = vec3(-5.0f,0.0f,5.0f);
         currentLight.cutOff = cos(radians(12.5));
         currentLight.outerCutOff = cos(radians(17.5));
         
@@ -213,71 +227,6 @@ void main() {
     FragColor = vec4(result, 1.0);
 }
 
-#type GEOMETRY
-#version 330 core
-layout (triangles) in;
-layout (triangle_strip, max_vertices = 3) out;
-
-in VS_OUT {
-    vec2 texCoords;
-    vec3 Normal;
-    vec3 FragPos;
-    vec3 TBN_FragPos;
-    mat3 TBN;
-} gs_in[];
-
-out vec2 TexCoords;
-
-uniform float time;  // Time factor for controlling the explosion effect
-uniform bool explode;  // Boolean to control whether the explosion occurs
-
-// Function to compute explosion displacement
-vec4 explodeEffect(vec4 position, vec3 normal)
-{
-    float magnitude = 2.0;
-    vec3 direction = normal * ((time + 1.0) / 20.0) * magnitude; 
-    return position + vec4(direction, 0.0);
-}
-
-// Function to calculate the normal of the triangle
-vec3 GetNormal()
-{
-    // Calculate the normal using the vertices of the triangle
-    vec3 a = vec3(gl_in[0].gl_Position) - vec3(gl_in[1].gl_Position);
-    vec3 b = vec3(gl_in[2].gl_Position) - vec3(gl_in[1].gl_Position);
-    return normalize(cross(a, b));  // Normalize the resulting normal
-}
-
-void main() {    
-    // Compute the normal of the triangle
-    vec3 normal = GetNormal();
-
-    if (explode) {
-        gl_Position = explodeEffect(gl_in[0].gl_Position, normal);
-    } else {
-        gl_Position = gl_in[0].gl_Position;
-    }
-    TexCoords = gs_in[0].texCoords;
-    EmitVertex();
-
-    if (explode) {
-        gl_Position = explodeEffect(gl_in[1].gl_Position, normal);
-    } else {
-        gl_Position = gl_in[1].gl_Position;
-    }
-    TexCoords = gs_in[1].texCoords;
-    EmitVertex();
-
-    if (explode) {
-        gl_Position = explodeEffect(gl_in[2].gl_Position, normal);
-    } else {
-        gl_Position = gl_in[2].gl_Position;
-    }
-    TexCoords = gs_in[2].texCoords;
-    EmitVertex();
-
-    EndPrimitive();  // End the triangle primitive
-}
 // void main() {
 //     vec3 totalAmbient = vec3(0.0);
 //     vec3 totalDiffuse = vec3(0.0);

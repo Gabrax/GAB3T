@@ -53,6 +53,18 @@ struct Game {
     void printBoard(const std::array<std::array<char, BOARD_SIZE>, BOARD_SIZE>& board);
         
 private:
+    float orbitRadius = 5.0f; // Radius of the orbit
+    float orbitSpeed = 1.0f;  // Speed of the orbit (radians per second)
+
+    // Update light position based on time
+    float time;// Get elapsed time from GLFW or any other timer
+    float x;
+    float y; 
+    glm::vec3 lightPosition = glm::vec3(0.0f);
+    float red;  
+    float green;
+    float blue;
+    glm::vec4 gradientColor = glm::vec4(0.0f);
 
     GLTtext* title = gltCreateText();
     GLTtext* Owins = gltCreateText();

@@ -13,7 +13,7 @@ Game::Game() : isPlayerTurn(true) {
         gltSetText(Xwins, "PLAYER X WINS");
         gltSetText(Draw, "DRAW");
         envMap.Bake();
-        manager.AddLight(LightType::POINT, glm::vec4(1.0f), glm::vec3(5.0f,0.0f,5.0f));
+        manager.AddLight(LightType::POINT, glm::vec4(1.0f), lightPosition);
     }
 
 void Game::Update()
@@ -43,6 +43,15 @@ void Game::Update()
       // PVP PVP PVP //
       glEnable(GL_DEPTH_TEST);
         manager.RenderLights();
+        time = glfwGetTime(); 
+        x = orbitRadius * cos(orbitSpeed * time);
+        y = orbitRadius * sin(orbitSpeed * time);
+        lightPosition = glm::vec3(x, y, 0.0f); 
+        red = (sin(time * 0.5f) + 1.0f) * 0.5f;  
+        green = (sin(time * 0.7f) + 1.0f) * 0.5f;
+        blue = (sin(time * 1.0f) + 1.0f) * 0.5f;
+        gradientColor = glm::vec4(red, green, blue, 1.0f);
+        manager.EditLight(0,gradientColor,lightPosition);
         envMap.Render();
         boardModel->Render(glm::vec3(0.0f));
         if (!isAnimating) {
@@ -113,6 +122,15 @@ void Game::Update()
       // PVE PVE PVE //
       glEnable(GL_DEPTH_TEST);
         manager.RenderLights();
+        time = glfwGetTime(); 
+        x = orbitRadius * cos(orbitSpeed * time);
+        y = orbitRadius * sin(orbitSpeed * time);
+        lightPosition = glm::vec3(x, y, 2.0f);
+        red = (sin(time * 0.5f) + 1.0f) * 0.5f;  // Oscillates between 0 and 1
+        green = (sin(time * 0.7f) + 1.0f) * 0.5f;
+        blue = (sin(time * 1.0f) + 1.0f) * 0.5f;
+        gradientColor = glm::vec4(red, green, blue, 1.0f);
+        manager.EditLight(0,gradientColor,lightPosition);
         envMap.Render();
         boardModel->Render(glm::vec3(0.0f));
         if (!isAnimating && isPlayerTurn) {
