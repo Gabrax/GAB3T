@@ -7,6 +7,7 @@
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
 #include "../Backend/window.h"
+#include "../Backend/Util.hpp"
 
 struct ChooseMode
 {
@@ -65,23 +66,31 @@ struct ChooseMode
         PressEnterTexture = Util::loadTexture("res/textures/pve.png");
     }
     
-    void Render()
+    void Render(const glm::vec3& position, const glm::vec3& rotation = glm::vec3(0.0f), const glm::vec3& scale = glm::vec3(1.0f))
     {
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, ChooseModeTexture);
 
-        ChooseModeShader.Use();
-        glm::mat4 projection = glm::ortho(-Window::getAspectRatio(), Window::getAspectRatio(), -1.0f, 1.0f);
-        ChooseModeShader.setMat4("projection", projection);
-        ChooseModeShader.setInt("texture1", 0);
-        ChooseModeShader.setFloat("time",glfwGetTime());
+        _shader.Use();
+        _shader.setVec3("viewPos", this->_camera.Position);
+        glm::mat4 projection = glm::perspective(glm::radians(this->_camera.Zoom), Window::getAspectRatio(), 0.001f, 2000.0f);
+        _shader.setMat4("projection", projection);
+        _shader.setMat4("view", this->_camera.GetViewMatrix());
+        // Model transformation
+        Util::Transform transform;
+        transform.position = position;
+        transform.rotation = rotation;
+        transform.scale = scale;
+
+        _shader.setMat4("model", transform.to_mat4());
+        _shader.setInt("texture1", 0);
         glBindVertexArray(StartVAO);
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
         glActiveTexture(GL_TEXTURE1);
         glBindTexture(GL_TEXTURE_2D, PressEnterTexture);
 
-        ChooseModeShader.setInt("texture1", 1);
+        _shader.setInt("texture1", 1);
         glBindVertexArray(EnterVAO);
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
     }
@@ -93,7 +102,8 @@ struct ChooseMode
 
 private:
 
-    Shader& ChooseModeShader = Util::g_shaders.basic;
+    Shader& _shader = Util::g_shaders.basic;
+    Camera& _camera = Window::_camera;
     unsigned int ChooseModeTexture;
     unsigned int StartVAO, StartVBO, StartEBO;
 

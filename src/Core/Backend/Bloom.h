@@ -5,7 +5,7 @@
 struct FrameBuffer
 {
 
-	FrameBuffer() : mInit(false) {}
+	FrameBuffer() : mInit(false) { Init(); }
 	~FrameBuffer() = default;
 	bool Init();
 	void Destroy();

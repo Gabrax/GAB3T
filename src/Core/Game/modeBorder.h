@@ -9,17 +9,17 @@
 #include "glad/glad.h"
 #include "GLFW/glfw3.h"
 #include <glm/glm.hpp>
+#include "../Backend/window.h"
+#include "../Backend/Util.hpp"
 
-
-struct modeBorder {
-    modeBorder() :  modeBorderTexture(0), render(false) {}
+struct modeBorder
+{
+    modeBorder() = default; 
 
     ~modeBorder(){
         glDeleteBuffers(1, &BorderVBO);
         glDeleteBuffers(1, &BorderEBO);
         glDeleteVertexArrays(1, &BorderVAO);
-
-        render = false;
     }
 
     float getNewX() const {
@@ -50,20 +50,26 @@ struct modeBorder {
         modeBorderTexture = Util::loadTexture("res/textures/borderProto.png");
     }
 
-    // flag for rendering
-    bool render;
+    void Render(const glm::vec3& position, const glm::vec3& rotation = glm::vec3(0.0f), const glm::vec3& scale = glm::vec3(1.0f)) {
+        glActiveTexture(GL_TEXTURE2);
+        glBindTexture(GL_TEXTURE_2D, modeBorderTexture);
 
-    void Render() {
-        if(render){
-            glActiveTexture(GL_TEXTURE2);
-            glBindTexture(GL_TEXTURE_2D, modeBorderTexture);
+        _shader.Use();
+        _shader.setVec3("viewPos", this->_camera.Position);
+        glm::mat4 projection = glm::perspective(glm::radians(this->_camera.Zoom), Window::getAspectRatio(), 0.001f, 2000.0f);
+        _shader.setMat4("projection", projection);
+        _shader.setMat4("view", this->_camera.GetViewMatrix());
+        // Model transformation
+        Util::Transform transform;
+        transform.position = position;
+        transform.rotation = rotation;
+        transform.scale = scale;
 
-            BorderShader.Use();
-            BorderShader.setMat4("projection", Projection);
-            BorderShader.setInt("texture1", 2);
-            glBindVertexArray(BorderVAO);
-            glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-        }
+        _shader.setMat4("model", transform.to_mat4());
+
+        _shader.setInt("texture1", 2);
+        glBindVertexArray(BorderVAO);
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
     }
 
 
@@ -93,13 +99,8 @@ private:
     float newX;
     float newY;
 
-    float viewportWidth = 1920.0f;
-    float viewportHeight = 1080.0f;
-    float aspectRatio = viewportWidth / viewportHeight;
-    glm::mat4 Projection = glm::ortho(-aspectRatio, aspectRatio, -1.0f, 1.0f);
-
-
-    Shader& BorderShader = Util::g_shaders.basic;
+    Shader& _shader = Util::g_shaders.basic;
+    Camera& _camera = Window::_camera;
     unsigned int modeBorderTexture;
     unsigned int BorderVAO, BorderVBO, BorderEBO;
     float BorderVertices[20] = { // Define array size explicitly

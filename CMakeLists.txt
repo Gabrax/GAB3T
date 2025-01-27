@@ -45,6 +45,7 @@ FetchContent_Declare(
     GIT_TAG v0.18
 )
 FetchContent_MakeAvailable(assimp meshoptimizer)
+
 project(tictactoe)
 
 set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
@@ -71,10 +72,14 @@ target_sources("${CMAKE_PROJECT_NAME}" PRIVATE ${MY_SOURCES})
 set(ICON_FILE "${CMAKE_CURRENT_SOURCE_DIR}/res/app.rc")
 target_sources("${CMAKE_PROJECT_NAME}" PRIVATE ${ICON_FILE})
 
-option(RELEASE "Enable Windows subsystem for the application" OFF)
-
-if(DEBUG)
+if(RELEASE)
+  if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+    set_target_properties("${CMAKE_PROJECT_NAME}" PROPERTIES LINK_FLAGS "-Wl,-subsystem:windows -Wl,-entry:mainCRTStartup")
+  else()
     set_target_properties("${CMAKE_PROJECT_NAME}" PROPERTIES LINK_FLAGS "/SUBSYSTEM:WINDOWS /ENTRY:mainCRTStartup")
+  endif()
+else()
+    add_compile_definitions(DEBUG)
 endif()
 
 target_link_libraries("${CMAKE_PROJECT_NAME}" PRIVATE glm glfw glad stb_image assimp meshoptimizer glText)

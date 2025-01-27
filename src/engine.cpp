@@ -6,8 +6,8 @@
 #include <glm/glm.hpp>
 #include "Core/Backend/Bloom.h"
 
-void Engine::Run(){
-
+void Engine::Run()
+{
     Window::Init((int)(1920 * 0.75f),(int)(1920 * 0.75f));
 
     glEnable(GL_BLEND);
@@ -15,25 +15,23 @@ void Engine::Run(){
 
     Game game;
     FrameBuffer fb;
-    fb.Init();
 
     while (Window::WindowIsOpen() && Window::WindowHasNotBeenForceClosed())
     {  
         Window::BeginFrame();
-        //Window::ShowFPS();
-        fb.Bind(); 
+
+          fb.Bind(); 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        game.Update();
-        fb.RenderBloomTexture(0.005f);
-        fb.UnBind();
+          game.Update();
+          fb.RenderBloomTexture(0.005f);
+          fb.UnBind();
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        fb.Render();
+          fb.Render();
 
         Window::EndFrame();
     }
 
-    //DEBUG 
-    //game.printMapCoord();
-    //game.printTuple();
-    //game.printBoard(Logic::board);
+#ifdef DEBUG
+    game.printTuple();
+#endif
 }

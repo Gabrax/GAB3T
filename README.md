@@ -2,7 +2,7 @@
     <img src="https://github.com/user-attachments/assets/85913b55-2e9e-4ac9-9420-e1818a095fe3" alt="TicTacToeLogo" width="200"/>
 </p>
 
-<p align="center"> 3D Tic Tac Toe game in OpenGl and C++ using MinMax Algorithm for AI </p>
+<p align="center"> 3D Tic Tac Toe game in OpenGL and C++ using MinMax Algorithm for AI </p>
 
 ## ⌨️ KeyMap
 - Enter - move to mode selection, choose mode, put your choice on board
@@ -14,7 +14,7 @@
 
 > [!WARNING]
 > To run this project Git and CMake are needed<br>
-> On Windows use Git interpreter to run script
+> On Windows use Git interpreter to run script<br>
 > Only build this project through the scripts, project is setup to move exe to root directory to with assets
 
 

@@ -29,15 +29,11 @@ void Game::Update()
       gltDrawText2D(title, (Window::GetWindowWidth()/2.0f) - 250.0f, 100, 5);
       gltEndDraw();
 
-      mode.render = true;
-      mode.Render();
-      modeBorder.render = true;
-      modeBorder.Render();
+      mode.Render(glm::vec3(0),glm::vec3(0),glm::vec3(3.0f,2.0f,2.0f));
+      modeBorder.Render(glm::vec3(0),glm::vec3(0),glm::vec3(3.0f,2.0f,2.0f));
       glDisable(GL_BLEND);
 
-      if (modeBorder.render && mode.render) {
-        handleBorderInput();
-      }
+      handleBorderInput();
   break;
 
     case PVP_MODE:
@@ -244,21 +240,15 @@ void Game::handleBorderInput(){
       if(std::abs(modeBorder.getNewY() + 0.1f) >= 1.0f){
           currentState = PVP_MODE;
           PvPmode = true;
-          mode.render = false;
-          modeBorder.render = false;
       }else if(std::abs(modeBorder.getNewY() + 0.1f) < 0.001f){
           currentState = PVE_MODE;
           PvEmode = true;
-          mode.render = false;
-          modeBorder.render = false;
       }
   }
 }
 
 void Game::goBack(){
   glDisable(GL_DEPTH_TEST);
-  mode.render = true;
-  modeBorder.render = true;
 
   PvPmode = false;
   PvEmode = false;
