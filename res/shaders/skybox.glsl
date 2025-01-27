@@ -38,7 +38,8 @@ vec3 toneMappingACES(vec3 color) {
 void main()
 {
     vec3 skyTexture = texture(skybox, TexCoords).rgb;
-    vec3 result = toneMappingACES(skyTexture);
+    vec3 darkentext = skyTexture * 0.25;
+    vec3 result = toneMappingACES(darkentext);
 
     FragColor = vec4(result, 1.0);
 }

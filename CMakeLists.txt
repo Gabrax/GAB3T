@@ -34,7 +34,9 @@ FetchContent_Declare(
     GIT_REPOSITORY https://github.com/assimp/assimp.git
     GIT_TAG v5.3.0
 )
+set(BUILD_SHARED_LIBS OFF CACHE BOOL "Build static libraries only" FORCE)
 set(ASSIMP_BUILD_TESTS OFF CACHE BOOL "Disable Assimp tests" FORCE)
+set(ASSIMP_BUILD_DOCS OFF CACHE BOOL "Disable Assimp documentation" FORCE)
 
 # Meshoptimizer
 FetchContent_Declare(

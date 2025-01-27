@@ -4,7 +4,6 @@
 Game::Game() : isPlayerTurn(true) {
         Util::BakeShaders();
         board = createEmptyBoard();
-        background.BindAndLoad();
         mode.BindAndLoad();
         modeBorder.BindAndLoad();
         gltInit();
@@ -23,7 +22,8 @@ void Game::Update()
 
     case MENU:
       // MENU //
-      background.Render();
+      glEnable(GL_BLEND);
+      glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
       gltBeginDraw();
       gltColor(1.0f, 1.0f, 1.0f, 1.0f);
       gltDrawText2D(title, (Window::GetWindowWidth()/2.0f) - 250.0f, 100, 5);
@@ -33,6 +33,7 @@ void Game::Update()
       mode.Render();
       modeBorder.render = true;
       modeBorder.Render();
+      glDisable(GL_BLEND);
 
       if (modeBorder.render && mode.render) {
         handleBorderInput();
@@ -46,8 +47,8 @@ void Game::Update()
         time = glfwGetTime(); 
         x = orbitRadius * cos(orbitSpeed * time);
         y = orbitRadius * sin(orbitSpeed * time);
-        lightPosition = glm::vec3(x, y, 0.0f); 
-        red = (sin(time * 0.5f) + 1.0f) * 0.5f;  
+        lightPosition = glm::vec3(x, y, 2.0f);
+        red = (sin(time * 0.5f) + 1.0f) * 0.5f;  // Oscillates between 0 and 1
         green = (sin(time * 0.7f) + 1.0f) * 0.5f;
         blue = (sin(time * 1.0f) + 1.0f) * 0.5f;
         gradientColor = glm::vec4(red, green, blue, 1.0f);
@@ -71,6 +72,8 @@ void Game::Update()
 
       score = countPlayers(board);
 
+      glEnable(GL_BLEND);
+      glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
       Pwins = checkifPwins(board);
       if (Pwins == 'P') {
         isEnd = true;
@@ -108,6 +111,7 @@ void Game::Update()
           circle.SetExplosion(true);
         }
       }
+      glDisable(GL_BLEND);
 
       if (Input::KeyPressed(GAB_KEY_R)) {
         ResetGame(isEnd);
@@ -149,6 +153,8 @@ void Game::Update()
 
       score = countPlayers(board);
 
+      glEnable(GL_BLEND);
+      glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
       Pwins = checkifPwins(board);
       if (Pwins == 'P') {
         isEnd = true;
@@ -186,6 +192,7 @@ void Game::Update()
           circle.SetExplosion(true);
         }
       }
+      glDisable(GL_BLEND);
 
       if (Input::KeyPressed(GAB_KEY_R)) {
         ResetGame(isEnd);
@@ -199,6 +206,7 @@ void Game::Update()
 
 }
 
+#ifdef DEBUG
 void Game::printTuple() {
     std::cout << "-----------" << '\n';
     for (const auto& tuple : check) {
@@ -225,6 +233,7 @@ void Game::printBoard(const std::array<std::array<char, BOARD_SIZE>, BOARD_SIZE>
         }
     }
 }
+#endif
 
 void Game::handleBorderInput(){
   if (Input::KeyPressed(GAB_KEY_UP)) {
@@ -389,12 +398,14 @@ void Game::handleAiInput() {
           float newY = std::get<1>(move);
 
           updateBoard(board, 'E', newX, newY);
-
+#ifdef DEBUG
           std::cout << "Evaluating move: (" << newX << ", " << newY << ")\n";
+#endif 
 
           int score = minimax(board, 9, false);
-
+#ifdef DEBUG
           std::cout << "Score for move (" << newX << ", " << newY << "): " << score << "\n";
+#endif 
 
           updateBoard(board, ' ', newX, newY);
 
@@ -405,9 +416,9 @@ void Game::handleAiInput() {
           }
       }
 
-      // Print the best move chosen
+#ifdef DEBUG
       std::cout << "Best move chosen: (" << bestX << ", " << bestY << ") with score " << bestScore << "\n";
-
+#endif
       // Make the best move
       check.emplace_back('E', bestX, bestY);
       updateBoard(board, 'E', bestX, bestY);

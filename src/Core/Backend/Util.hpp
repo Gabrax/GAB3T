@@ -15,6 +15,9 @@ namespace Util {
     Shader model;
     Shader basic;
     Shader light;
+    Shader bloom_downsample; 
+    Shader bloom_upsample;
+    Shader bloom_final;   
     Shader skybox;
   };
   inline Shaders g_shaders;
@@ -22,9 +25,12 @@ namespace Util {
   inline void BakeShaders()
   {
     g_shaders.model.Load("res/shaders/model.glsl");
-    g_shaders.basic.Load("res/shaders/Player.vert","res/shaders/Player.frag");
+    g_shaders.basic.Load("res/shaders/2D.glsl");
     g_shaders.light.Load("res/shaders/light.glsl");
     g_shaders.skybox.Load("res/shaders/skybox.glsl");
+    g_shaders.bloom_downsample.Load("res/shaders/bloom_downsample.glsl");
+    g_shaders.bloom_upsample.Load("res/shaders/bloom_upsample.glsl");
+    g_shaders.bloom_final.Load("res/shaders/bloom_final.glsl");
   }
 
   inline void HotReloadShaders()

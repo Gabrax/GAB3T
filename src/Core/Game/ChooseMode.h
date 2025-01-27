@@ -1,6 +1,4 @@
 #pragma once
-#include <iostream>
-#include <array>
 
 #include "../Backend/Shader.h"
 #include "../Backend/Util.hpp"
@@ -8,12 +6,14 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
+#include "../Backend/window.h"
 
+struct ChooseMode
+{
+    ChooseMode() = default;
 
-struct ChooseMode {
-    ChooseMode() : render(false) {}
-
-    ~ChooseMode(){
+    ~ChooseMode()
+    {
         glDeleteBuffers(1, &StartVBO);
         glDeleteBuffers(1, &StartEBO);
         glDeleteVertexArrays(1, &StartVAO);
@@ -21,12 +21,11 @@ struct ChooseMode {
         glDeleteBuffers(1, &EnterVBO);
         glDeleteBuffers(1, &EnterEBO);
         glDeleteVertexArrays(1, &EnterVAO);
-
-        render = false;
     }
     
 
-    void BindAndLoad() {
+    void BindAndLoad()
+    {
         glGenVertexArrays(1, &StartVAO);
         glGenBuffers(1, &StartVBO);
         glGenBuffers(1, &StartEBO);
@@ -66,44 +65,38 @@ struct ChooseMode {
         PressEnterTexture = Util::loadTexture("res/textures/pve.png");
     }
     
-    // flag for rendering
-    bool render;
+    void Render()
+    {
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, ChooseModeTexture);
 
-    void Render() {
-        if(render){
-            glActiveTexture(GL_TEXTURE0);
-            glBindTexture(GL_TEXTURE_2D, ChooseModeTexture);
+        ChooseModeShader.Use();
+        glm::mat4 projection = glm::ortho(-Window::getAspectRatio(), Window::getAspectRatio(), -1.0f, 1.0f);
+        ChooseModeShader.setMat4("projection", projection);
+        ChooseModeShader.setInt("texture1", 0);
+        ChooseModeShader.setFloat("time",glfwGetTime());
+        glBindVertexArray(StartVAO);
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
-            ChooseModeShader.Use();
-            ChooseModeShader.setMat4("projection", projection);
-            ChooseModeShader.setInt("texture1", 0);
-            ChooseModeShader.setFloat("time",glfwGetTime());
-            glBindVertexArray(StartVAO);
-            glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+        glActiveTexture(GL_TEXTURE1);
+        glBindTexture(GL_TEXTURE_2D, PressEnterTexture);
 
-            glActiveTexture(GL_TEXTURE1);
-            glBindTexture(GL_TEXTURE_2D, PressEnterTexture);
-
-            ChooseModeShader.setInt("texture1", 1);
-            glBindVertexArray(EnterVAO);
-            glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-        }
+        ChooseModeShader.setInt("texture1", 1);
+        glBindVertexArray(EnterVAO);
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
     }
 
-    void Delete() {
-           this->~ChooseMode();
+    void Delete()
+    {
+       this->~ChooseMode();
     }
 
 private:
 
-    float viewportWidth = 1920.0f;
-    float viewportHeight = 1080.0f;
-    float aspectRatio = viewportWidth / viewportHeight;
-    glm::mat4 projection = glm::ortho(-aspectRatio, aspectRatio, -1.0f, 1.0f);
-
     Shader& ChooseModeShader = Util::g_shaders.basic;
     unsigned int ChooseModeTexture;
     unsigned int StartVAO, StartVBO, StartEBO;
+
     float TitleVertices[20] = { 
         // Positions           // Texture Coordinates
         -0.5f, -1.0f, 0.0f,    0.0f, 0.0f, // Vertex 1: Bottom-left

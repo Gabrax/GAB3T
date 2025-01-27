@@ -11,7 +11,6 @@
 #include "Players.h"
 #include "ChooseMode.h"
 #include "modeBorder.h"
-#include "Background.h"
 #include "../Backend/window.h"
 
 #include "../Backend/LightManager.h"
@@ -88,7 +87,6 @@ private:
     std::shared_ptr<StaticModel> selectModel = std::make_shared<StaticModel>("res/models/Select.obj");
     LightManager manager;
     EnvironmentMap envMap;
-    Background background;
     ChooseMode mode;
     modeBorder modeBorder; 
     bool isPlayerTurn;
