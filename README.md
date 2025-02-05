@@ -17,10 +17,16 @@
 > On Windows use Git interpreter to run script<br>
 > Only build this project through the scripts, project is setup to move exe to root directory to with assets
 
-
+```bash
+git clone https://github.com/Gabrax/TicTacToe.git
+```
 ```bash
 sh build.sh
 ```
+
+
+https://github.com/user-attachments/assets/b1c9b0e6-a6dc-43e5-8568-73c7a68832a6
+
 
 ## 👨‍💻 Tech stack
 - [GLFW](https://github.com/glfw/glfw)
