@@ -8,7 +8,7 @@
 
 void Engine::Run()
 {
-    Window::Init((int)(1920 * 0.75f),(int)(1920 * 0.75f));
+    Window::Init((int)(800),(int)(600));
 
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);

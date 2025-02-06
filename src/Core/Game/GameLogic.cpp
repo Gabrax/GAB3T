@@ -3,14 +3,15 @@
 
 Game::Game() : isPlayerTurn(true) {
         Util::BakeShaders();
-        board = createEmptyBoard();
-        mode.BindAndLoad();
-        modeBorder.BindAndLoad();
         gltInit();
         gltSetText(title, "Tic Tac Toe");
         gltSetText(Owins, "PLAYER 0 WINS");
         gltSetText(Xwins, "PLAYER X WINS");
         gltSetText(Draw, "DRAW");
+        gltSetText(PvsAI, "PvsAI");
+        gltSetText(Local, "Local");
+        gltSetText(Multiplayer, "Multiplayer");
+        board = createEmptyBoard();
         envMap.Bake();
         manager.AddLight(LightType::POINT, glm::vec4(1.0f), lightPosition);
     }
@@ -24,16 +25,47 @@ void Game::Update()
       // MENU //
       glEnable(GL_BLEND);
       glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+      static int selectedIndex = 0;
+      if (Input::KeyPressed(GAB_KEY_UP) || Input::KeyPressed(GAB_KEY_W)) {
+          selectedIndex = (selectedIndex - 1 + 3) % 3; 
+      }
+      if (Input::KeyPressed(GAB_KEY_DOWN) || Input::KeyPressed(GAB_KEY_S)) {
+          selectedIndex = (selectedIndex + 1) % 3; 
+      }
+      if(Input::KeyPressed(GAB_KEY_ENTER) || Input::KeyPressed(GAB_KEY_SPACE)) {
+        if (selectedIndex == 0) currentState = PVE_MODE;
+        else if (selectedIndex == 1) currentState = PVP_MODE;
+
+      }
+
       gltBeginDraw();
-      gltColor(1.0f, 1.0f, 1.0f, 1.0f);
-      gltDrawText2D(title, (Window::GetWindowWidth()/2.0f) - 250.0f, 100, 5);
+      // Title
+      time = glfwGetTime(); 
+      red = (sin(time * 0.5f) + 1.0f) * 0.5f;  // Oscillates between 0 and 1
+      green = (sin(time * 0.7f) + 1.0f) * 0.5f;
+      blue = (sin(time * 1.0f) + 1.0f) * 0.5f;
+
+      gltColor(red, green, blue, 1.0f);
+      gltDrawText2D(title, (Window::GetWindowWidth()/2.0f) - 220.0f, 100, 5);
+
+      // Draw menu items with different colors based on selection
+      if (selectedIndex == 0) gltColor(1.0f, 0.0f, 0.0f, 1.0f); // Red if selected
+      else gltColor(1.0f, 1.0f, 1.0f, 1.0f); // White otherwise
+      gltDrawText2D(PvsAI, (Window::GetWindowWidth()/2.0f) - 80.0f, 250, 4);
+
+      if (selectedIndex == 1) gltColor(0.0f, 1.0f, 0.0f, 1.0f);
+      else gltColor(1.0f, 1.0f, 1.0f, 1.0f);
+      gltDrawText2D(Local, (Window::GetWindowWidth()/2.0f) - 80.0f, 320, 4);
+
+      if (selectedIndex == 2) gltColor(0.0f, 1.0f, 1.0f, 1.0f);
+      else gltColor(1.0f, 1.0f, 1.0f, 1.0f);
+      gltDrawText2D(Multiplayer, (Window::GetWindowWidth()/2.0f) - 190.0f, 390, 4);
+
       gltEndDraw();
 
-      mode.Render(glm::vec3(0),glm::vec3(0),glm::vec3(3.0f,2.0f,2.0f));
-      modeBorder.Render(glm::vec3(0),glm::vec3(0),glm::vec3(3.0f,2.0f,2.0f));
       glDisable(GL_BLEND);
 
-      handleBorderInput();
   break;
 
     case PVP_MODE:
@@ -51,11 +83,9 @@ void Game::Update()
         manager.EditLight(0,gradientColor,lightPosition);
         envMap.Render();
         boardModel->Render(glm::vec3(0.0f));
-        if (!isAnimating) {
-          selectModel->Render(selectPos);
-        }
 
       if (!isEnd) {
+        selectModel->Render(selectPos);
         PVPhandlePlayersInput();
       }
 
@@ -71,7 +101,7 @@ void Game::Update()
       glEnable(GL_BLEND);
       glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
       Pwins = checkifPwins(board);
-      if (Pwins == 'P') {
+      if (Pwins == 'P' && !isAnimating) {
         isEnd = true;
         gltBeginDraw();
         gltColor(1.0f, 1.0f, 1.0f, 1.0f);
@@ -83,7 +113,7 @@ void Game::Update()
       }
 
       Ewins = checkifEwins(board);
-      if (Ewins == 'E') {
+      if (Ewins == 'E' && !isAnimating) {
         isEnd = true;
         gltBeginDraw();
         gltColor(1.0f, 1.0f, 1.0f, 1.0f);
@@ -94,7 +124,7 @@ void Game::Update()
         }
       }
 
-      if (Pwins != 'P' && Ewins != 'E' && score == 9) {
+      if (Pwins != 'P' && Ewins != 'E' && score == 9 && !isAnimating) {
         isEnd = true;
         gltBeginDraw();
         gltColor(1.0f, 1.0f, 1.0f, 1.0f);
@@ -111,7 +141,7 @@ void Game::Update()
 
       if (Input::KeyPressed(GAB_KEY_R)) {
         ResetGame(isEnd);
-      } else if (Input::KeyPressed(GAB_KEY_RIGHT_CONTROL)) {
+      } else if (Input::KeyPressed(GAB_KEY_RIGHT_CONTROL) || Input::KeyPressed(GAB_KEY_LEFT_CONTROL)) {
         goBack();
         currentState = MENU;
       }
@@ -133,10 +163,8 @@ void Game::Update()
         manager.EditLight(0,gradientColor,lightPosition);
         envMap.Render();
         boardModel->Render(glm::vec3(0.0f));
-        if (!isAnimating && isPlayerTurn) {
-          selectModel->Render(selectPos);
-        }
       if (!isEnd) {
+        selectModel->Render(selectPos);
         PVEhandlePlayersInput();
       }
 
@@ -151,8 +179,9 @@ void Game::Update()
 
       glEnable(GL_BLEND);
       glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
       Pwins = checkifPwins(board);
-      if (Pwins == 'P') {
+      if (Pwins == 'P' && !isAnimating) {
         isEnd = true;
         gltBeginDraw();
         gltColor(1.0f, 1.0f, 1.0f, 1.0f);
@@ -164,7 +193,7 @@ void Game::Update()
       }
 
       Ewins = checkifEwins(board);
-      if (Ewins == 'E') {
+      if (Ewins == 'E' && !isAnimating) {
         isEnd = true;
         gltBeginDraw();
         gltColor(1.0f, 1.0f, 1.0f, 1.0f);
@@ -175,7 +204,7 @@ void Game::Update()
         }
       }
 
-      if (Pwins != 'P' && Ewins != 'E' && score == 9) {
+      if (Pwins != 'P' && Ewins != 'E' && score == 9 && !isAnimating) {
         isEnd = true;
         gltBeginDraw();
         gltColor(1.0f, 1.0f, 1.0f, 1.0f);
@@ -192,12 +221,17 @@ void Game::Update()
 
       if (Input::KeyPressed(GAB_KEY_R)) {
         ResetGame(isEnd);
-      } else if (Input::KeyPressed(GAB_KEY_RIGHT_CONTROL)) {
+      } else if (Input::KeyPressed(GAB_KEY_RIGHT_CONTROL) || Input::KeyPressed(GAB_KEY_LEFT_CONTROL)) {
         goBack();
         currentState = MENU;
       }
       // PVE PVE PVE //
       break;
+
+    case MULTI_MODE:
+
+      break;
+
       }
 
 }
@@ -231,27 +265,9 @@ void Game::printBoard(const std::array<std::array<char, BOARD_SIZE>, BOARD_SIZE>
 }
 #endif
 
-void Game::handleBorderInput(){
-  if (Input::KeyPressed(GAB_KEY_UP)) {
-      modeBorder.UpdatePosition(0.0f, 1.0f);
-  } else if (Input::KeyPressed(GAB_KEY_DOWN)) {
-      modeBorder.UpdatePosition(0.0f, -1.0f);
-  }else if (Input::KeyPressed(GAB_KEY_ENTER)){
-      if(std::abs(modeBorder.getNewY() + 0.1f) >= 1.0f){
-          currentState = PVP_MODE;
-          PvPmode = true;
-      }else if(std::abs(modeBorder.getNewY() + 0.1f) < 0.001f){
-          currentState = PVE_MODE;
-          PvEmode = true;
-      }
-  }
-}
-
 void Game::goBack(){
   glDisable(GL_DEPTH_TEST);
-
-  PvPmode = false;
-  PvEmode = false;
+  currentState = MENU;
   isPlayerTurn = true;
   isEnd = false;
   
@@ -264,22 +280,14 @@ void Game::goBack(){
 // MENU INPUT //
 
 void Game::HandlePlayerMoving() {
-    if (Input::KeyPressed(GAB_KEY_UP)) {
-        if (selectPos.y + changeY <= 2.1f) {
-            selectPos.y += changeY;
-        }
-    } else if (Input::KeyPressed(GAB_KEY_DOWN)) {
-        if (selectPos.y - changeY >= -2.1f) {
-            selectPos.y -= changeY;
-        }
-    } else if (Input::KeyPressed(GAB_KEY_LEFT)) {
-        if (selectPos.x - changeX >= -2.1f) {
-            selectPos.x -= changeX;
-        }
-    } else if (Input::KeyPressed(GAB_KEY_RIGHT)) {
-        if (selectPos.x + changeX <= 2.1f) {
-            selectPos.x += changeX;
-        }
+    if (Input::KeyPressed(GAB_KEY_UP) || Input::KeyPressed(GAB_KEY_W)) {
+        if (selectPos.y + changeY <= 2.1f) selectPos.y += changeY;
+    } else if (Input::KeyPressed(GAB_KEY_DOWN) || Input::KeyPressed(GAB_KEY_S)) {
+        if (selectPos.y - changeY >= -2.1f) selectPos.y -= changeY;
+    } else if (Input::KeyPressed(GAB_KEY_LEFT) || Input::KeyPressed(GAB_KEY_A)) {
+        if (selectPos.x - changeX >= -2.1f) selectPos.x -= changeX;
+    } else if (Input::KeyPressed(GAB_KEY_RIGHT) || Input::KeyPressed(GAB_KEY_D)) {
+        if (selectPos.x + changeX <= 2.1f) selectPos.x += changeX;
     }
 }
 
@@ -300,7 +308,7 @@ void Game::PVPhandlePlayersInput() {
 void Game::handlePlayerInput() {
     HandlePlayerMoving();
 
-    if (Input::KeyPressed(GAB_KEY_ENTER)) {
+    if (Input::KeyPressed(GAB_KEY_ENTER) || Input::KeyPressed(GAB_KEY_SPACE)) {
         if (!PositionTaken(selectPos.x, selectPos.y)) {
             // Start animation for circle
             check.emplace_back('P', selectPos.x, selectPos.y);
@@ -316,7 +324,7 @@ void Game::handlePlayerInput() {
 void Game::handleEnemyInput() {
     HandlePlayerMoving();
 
-    if (Input::KeyPressed(GAB_KEY_ENTER)) {
+    if (Input::KeyPressed(GAB_KEY_ENTER) || Input::KeyPressed(GAB_KEY_SPACE)) {
         if (!PositionTaken(selectPos.x, selectPos.y)) {
             // Start animation for cross
             check.emplace_back('E', selectPos.x, selectPos.y);
@@ -498,7 +506,6 @@ bool Game::gameIsOver(std::array<std::array<char, BOARD_SIZE>, BOARD_SIZE>& boar
 // BOARD LOGIC //
 void Game::ResetGame(bool reset){
   if(reset){
-
       isAnimating = false;
       isPlayerTurn = true;
       isEnd = false;
@@ -506,6 +513,7 @@ void Game::ResetGame(bool reset){
       check.clear();
       crosses.clear();
       circles.clear();
+      selectPos = glm::vec3(0.0f);
   }
 }
 

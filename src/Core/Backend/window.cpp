@@ -219,6 +219,7 @@ void Window::Init(int  width, int height)
       _windowedHeight = static_cast<int>(_fullscreenHeight * 0.75f);
     }
 
+    glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
     CreateWindow(WINDOWED);
     
     
@@ -239,7 +240,9 @@ void Window::Init(int  width, int height)
     glfwMakeContextCurrent(_window);
     glfwSwapInterval(1);
     glfwSetFramebufferSizeCallback(_window, framebuffer_size_callback);
+    glfwSetCursorPosCallback(_window, mouse_callback);
     glfwSetWindowFocusCallback(_window, window_focus_callback);
+    
 
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
         std::cout << "Failed to initialize GLAD" << std::endl;
@@ -365,6 +368,25 @@ int Window::GetCursorScreenX()
 int Window::GetCursorScreenY()
 {
     return _mouseScreenY;
+}
+
+void Window::mouse_callback(GLFWwindow* window, double xposIn, double yposIn)
+{
+    float xpos = static_cast<float>(xposIn);
+    float ypos = static_cast<float>(yposIn);
+
+    if (_firstMouse)
+    {
+        _lastX = xpos;
+        _lastY = ypos;
+        _firstMouse = false;
+    }
+
+    float xoffset = xpos - _lastX;
+    float yoffset = _lastY - ypos; // reversed since y-coordinates go from bottom to top
+
+    _lastX = xpos;
+    _lastY = ypos;
 }
 
 bool Window::WindowHasFocus()

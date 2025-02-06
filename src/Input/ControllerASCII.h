@@ -114,7 +114,7 @@
 #define GAB_KEY_KP_ENTER           335
 #define GAB_KEY_KP_EQUAL           336
 #define GAB_KEY_LEFT_SHIFT         340 //16
-#define GAB_KEY_LEFT_CONTROL       17//341
+#define GAB_KEY_LEFT_CONTROL       341 //17
 #define GAB_KEY_LEFT_ALT           342
 #define GAB_KEY_LEFT_SUPER         343
 #define GAB_KEY_RIGHT_SHIFT        344

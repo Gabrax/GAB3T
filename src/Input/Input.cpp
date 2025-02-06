@@ -89,14 +89,9 @@ void Input::Update()
     if (_rightMousePressed)
         _preventRightMouseHoldTillNextClick = false;
 
-    if (KeyPressed(GAB_KEY_F))
-		{
-			Window::ToggleFullscreen();   
-		}
-		if (KeyPressed(GAB_KEY_H))
-		{
-			Window::ToggleWireframe();
-    }
+    /*if (KeyPressed(GAB_KEY_F)) Window::ToggleFullscreen();*/
+
+		/*if (KeyPressed(GAB_KEY_H)) Window::ToggleWireframe();*/
 
 }
 

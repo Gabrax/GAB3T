@@ -19,6 +19,7 @@ namespace Window
 	void DisableCursor();
 	void HideCursor();
 	void ShowCursor();
+  void mouse_callback(GLFWwindow* window, double xposIn, double yposIn);
 	GLFWwindow* GetWindowPtr();
 	int GetCursorScreenX();
 	int GetCursorScreenY();

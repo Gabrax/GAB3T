@@ -9,8 +9,6 @@
 
 #include "../../Input/Input.h"
 #include "Players.h"
-#include "ChooseMode.h"
-#include "modeBorder.h"
 #include "../Backend/window.h"
 
 #include "../Backend/LightManager.h"
@@ -38,7 +36,8 @@ static std::array<std::array<char, BOARD_SIZE>, BOARD_SIZE> board;
 enum GameState {
     MENU,
     PVP_MODE,
-    PVE_MODE
+    PVE_MODE,
+    MULTI_MODE
 };
 
 static GameState currentState = MENU;
@@ -69,6 +68,9 @@ private:
     GLTtext* Owins = gltCreateText();
     GLTtext* Xwins = gltCreateText();
     GLTtext* Draw = gltCreateText();
+    GLTtext* PvsAI = gltCreateText();
+    GLTtext* Local = gltCreateText();
+    GLTtext* Multiplayer = gltCreateText();
 
     std::vector<std::tuple<char,float,float>> check;
     std::array<std::pair<float, float>, 9> mapCoord = {
@@ -87,8 +89,6 @@ private:
     std::shared_ptr<StaticModel> selectModel = std::make_shared<StaticModel>("res/models/Select.obj");
     LightManager manager;
     EnvironmentMap envMap;
-    ChooseMode mode;
-    modeBorder modeBorder; 
     bool isPlayerTurn;
     bool isAnimating = false;
     float animationZ = 2.5f;  // Starting Z position for animation
