@@ -51,11 +51,10 @@ struct Game {
     void printBoard(const std::array<std::array<char, BOARD_SIZE>, BOARD_SIZE>& board);
         
 private:
-    float orbitRadius = 5.0f; // Radius of the orbit
-    float orbitSpeed = 1.0f;  // Speed of the orbit (radians per second)
+    float orbitRadius = 5.0f; 
+    float orbitSpeed = 1.0f;  
 
-    // Update light position based on time
-    float time;// Get elapsed time from GLFW or any other timer
+    float time;
     float x;
     float y; 
     glm::vec3 lightPosition = glm::vec3(0.0f);
@@ -71,6 +70,11 @@ private:
     GLTtext* PvsAI = gltCreateText();
     GLTtext* Local = gltCreateText();
     GLTtext* Multiplayer = gltCreateText();
+    GLTtext* Host = gltCreateText();
+    GLTtext* Client = gltCreateText();
+    GLTtext* Connected = gltCreateText();
+    GLTtext* Disconnected = gltCreateText();
+    GLTtext* Host_Adress = gltCreateText();
 
     std::vector<std::tuple<char,float,float>> check;
     std::array<std::pair<float, float>, 9> mapCoord = {
@@ -97,7 +101,7 @@ private:
     void handleAnimation();
     // MENU INPUT //     
     void handleBorderInput();
-    void goBack();
+    void ReturnToMenu();
     // MENU INPUT //
     void HandlePlayerMoving();
     // PVP MODE //
@@ -116,7 +120,7 @@ private:
     // PVE MODE // 
 
     // BOARD LOGIC //
-    void ResetGame(bool reset);
+    void ResetGame();
     bool PositionTaken(float x, float y);
     void updateBoard(std::array<std::array<char, BOARD_SIZE>, BOARD_SIZE>& board, char player, float x, float y);
     unsigned int countPlayers(std::array<std::array<char, BOARD_SIZE>, BOARD_SIZE>& board);

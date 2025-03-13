@@ -44,6 +44,7 @@ FetchContent_Declare(
     GIT_REPOSITORY https://github.com/zeux/meshoptimizer.git
     GIT_TAG v0.18
 )
+
 FetchContent_MakeAvailable(assimp meshoptimizer)
 
 project(tictactoe)
@@ -59,6 +60,7 @@ add_subdirectory(vendor/glad)
 add_subdirectory(vendor/stb_image)
 add_subdirectory(vendor/glm)
 add_subdirectory(vendor/glText)
+add_subdirectory(vendor/enet-1.3.17)
 
 file(GLOB_RECURSE MY_SOURCES CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp")
 
@@ -73,13 +75,13 @@ set(ICON_FILE "${CMAKE_CURRENT_SOURCE_DIR}/res/app.rc")
 target_sources("${CMAKE_PROJECT_NAME}" PRIVATE ${ICON_FILE})
 
 if(RELEASE)
-  if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
-    set_target_properties("${CMAKE_PROJECT_NAME}" PROPERTIES LINK_FLAGS "-Wl,-subsystem:windows -Wl,-entry:mainCRTStartup")
-  else()
-    set_target_properties("${CMAKE_PROJECT_NAME}" PROPERTIES LINK_FLAGS "/SUBSYSTEM:WINDOWS /ENTRY:mainCRTStartup")
-  endif()
+  # if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+  #   set_target_properties("${CMAKE_PROJECT_NAME}" PROPERTIES LINK_FLAGS "-Wl,-subsystem:windows -Wl,-entry:mainCRTStartup")
+  # else()
+  #   set_target_properties("${CMAKE_PROJECT_NAME}" PROPERTIES LINK_FLAGS "/SUBSYSTEM:WINDOWS /ENTRY:mainCRTStartup")
+  # endif()
 else()
     add_compile_definitions(DEBUG)
 endif()
 
-target_link_libraries("${CMAKE_PROJECT_NAME}" PRIVATE glm glfw glad stb_image assimp meshoptimizer glText)
+target_link_libraries("${CMAKE_PROJECT_NAME}" PRIVATE glm glfw glad stb_image assimp meshoptimizer glText enet)

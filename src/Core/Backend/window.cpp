@@ -231,10 +231,10 @@ void Window::Init(int  width, int height)
     }
 
     GLFWimage images[1];
-    images[0].pixels = stbi_load("res/Textures/icon.png", &images[0].width, &images[0].height, 0, 4); // Ensure the image is in RGBA format
+    images[0].pixels = stbi_load("res/Textures/icon.png", &images[0].width, &images[0].height, 0, 4); 
     if (images[0].pixels) {
         glfwSetWindowIcon(_window, 1, images);
-        stbi_image_free(images[0].pixels); // Free the image memory
+        stbi_image_free(images[0].pixels); 
     }
 
     glfwMakeContextCurrent(_window);

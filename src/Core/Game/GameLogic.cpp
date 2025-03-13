@@ -1,5 +1,7 @@
 #include "GameLogic.h"
 #include "glad/glad.h"
+#include "../Backend/Multiplayer.h"
+#include <limits>
 
 Game::Game() : isPlayerTurn(true) {
         Util::BakeShaders();
@@ -11,6 +13,11 @@ Game::Game() : isPlayerTurn(true) {
         gltSetText(PvsAI, "PvsAI");
         gltSetText(Local, "Local");
         gltSetText(Multiplayer, "Multiplayer");
+        gltSetText(Host, "Host");
+        gltSetText(Client, "Client");
+        gltSetText(Connected, "Connected");
+        gltSetText(Disconnected, "Disconnected");
+        gltSetText(Host_Adress, "Connect to:");
         board = createEmptyBoard();
         envMap.Bake();
         manager.AddLight(LightType::POINT, glm::vec4(1.0f), lightPosition);
@@ -36,22 +43,22 @@ void Game::Update()
       if(Input::KeyPressed(GAB_KEY_ENTER) || Input::KeyPressed(GAB_KEY_SPACE)) {
         if (selectedIndex == 0) currentState = PVE_MODE;
         else if (selectedIndex == 1) currentState = PVP_MODE;
+        else if (selectedIndex == 2) currentState = MULTI_MODE;
 
       }
 
       gltBeginDraw();
       // Title
       time = glfwGetTime(); 
-      red = (sin(time * 0.5f) + 1.0f) * 0.5f;  // Oscillates between 0 and 1
+      red = (sin(time * 0.5f) + 1.0f) * 0.5f;  
       green = (sin(time * 0.7f) + 1.0f) * 0.5f;
       blue = (sin(time * 1.0f) + 1.0f) * 0.5f;
 
       gltColor(red, green, blue, 1.0f);
       gltDrawText2D(title, (Window::GetWindowWidth()/2.0f) - 220.0f, 100, 5);
 
-      // Draw menu items with different colors based on selection
-      if (selectedIndex == 0) gltColor(1.0f, 0.0f, 0.0f, 1.0f); // Red if selected
-      else gltColor(1.0f, 1.0f, 1.0f, 1.0f); // White otherwise
+      if (selectedIndex == 0) gltColor(1.0f, 0.0f, 0.0f, 1.0f); 
+      else gltColor(1.0f, 1.0f, 1.0f, 1.0f); 
       gltDrawText2D(PvsAI, (Window::GetWindowWidth()/2.0f) - 80.0f, 250, 4);
 
       if (selectedIndex == 1) gltColor(0.0f, 1.0f, 0.0f, 1.0f);
@@ -66,7 +73,7 @@ void Game::Update()
 
       glDisable(GL_BLEND);
 
-  break;
+    break;
 
     case PVP_MODE:
       // PVP PVP PVP //
@@ -76,7 +83,7 @@ void Game::Update()
         x = orbitRadius * cos(orbitSpeed * time);
         y = orbitRadius * sin(orbitSpeed * time);
         lightPosition = glm::vec3(x, y, 2.0f);
-        red = (sin(time * 0.5f) + 1.0f) * 0.5f;  // Oscillates between 0 and 1
+        red = (sin(time * 0.5f) + 1.0f) * 0.5f;  
         green = (sin(time * 0.7f) + 1.0f) * 0.5f;
         blue = (sin(time * 1.0f) + 1.0f) * 0.5f;
         gradientColor = glm::vec4(red, green, blue, 1.0f);
@@ -89,12 +96,8 @@ void Game::Update()
         PVPhandlePlayersInput();
       }
 
-      for (const auto& circle : circles) {
-        circle.Render();
-      }
-      for (const auto& cross : crosses) {
-        cross.Render();
-      }
+      for (const auto& circle : circles) circle.Render();
+      for (const auto& cross : crosses) cross.Render();
 
       score = countPlayers(board);
 
@@ -107,9 +110,7 @@ void Game::Update()
         gltColor(1.0f, 1.0f, 1.0f, 1.0f);
         gltDrawText2D(Owins, (Window::GetWindowWidth()/2.0f) - 250.0f, 50, 5);
         gltEndDraw();
-        for (auto& cross : crosses) {
-          cross.SetExplosion(true);
-        }
+        for (auto& cross : crosses) cross.SetExplosion(true);
       }
 
       Ewins = checkifEwins(board);
@@ -119,9 +120,7 @@ void Game::Update()
         gltColor(1.0f, 1.0f, 1.0f, 1.0f);
         gltDrawText2D(Xwins, (Window::GetWindowWidth()/2.0f) - 250.0f, 50, 5);
         gltEndDraw();
-        for (auto& circle : circles) {
-          circle.SetExplosion(true);
-        }
+        for (auto& circle : circles) circle.SetExplosion(true);
       }
 
       if (Pwins != 'P' && Ewins != 'E' && score == 9 && !isAnimating) {
@@ -130,23 +129,18 @@ void Game::Update()
         gltColor(1.0f, 1.0f, 1.0f, 1.0f);
         gltDrawText2D(Draw, (Window::GetWindowWidth()/2.0f) - 100.0f, 50, 5);
         gltEndDraw();
-        for (auto& cross : crosses) {
-          cross.SetExplosion(true);
-        }
-        for (auto& circle : circles) {
-          circle.SetExplosion(true);
-        }
+        for (auto& cross : crosses) cross.SetExplosion(true);
+        for (auto& circle : circles) circle.SetExplosion(true);
       }
       glDisable(GL_BLEND);
 
-      if (Input::KeyPressed(GAB_KEY_R)) {
-        ResetGame(isEnd);
+      if (Input::KeyPressed(GAB_KEY_R) && isEnd) {
+        ResetGame();
       } else if (Input::KeyPressed(GAB_KEY_RIGHT_CONTROL) || Input::KeyPressed(GAB_KEY_LEFT_CONTROL)) {
-        goBack();
-        currentState = MENU;
+        ReturnToMenu();
       }
       // PVP PVP PVP //
-  break;
+    break;
 
     case PVE_MODE:
       // PVE PVE PVE //
@@ -168,12 +162,8 @@ void Game::Update()
         PVEhandlePlayersInput();
       }
 
-      for (const auto& circle : circles) {
-        circle.Render();
-      }
-      for (const auto& cross : crosses) {
-        cross.Render();
-      }
+      for (const auto& circle : circles) circle.Render();
+      for (const auto& cross : crosses) cross.Render();
 
       score = countPlayers(board);
 
@@ -187,9 +177,7 @@ void Game::Update()
         gltColor(1.0f, 1.0f, 1.0f, 1.0f);
         gltDrawText2D(Owins, (Window::GetWindowWidth()/2.0f) - 250.0f, 50, 5);
         gltEndDraw();
-        for (auto& cross : crosses) {
-          cross.SetExplosion(true);
-        }
+        for (auto& cross : crosses) cross.SetExplosion(true);
       }
 
       Ewins = checkifEwins(board);
@@ -199,9 +187,7 @@ void Game::Update()
         gltColor(1.0f, 1.0f, 1.0f, 1.0f);
         gltDrawText2D(Xwins, (Window::GetWindowWidth()/2.0f) - 250.0f, 50, 5);
         gltEndDraw();
-        for (auto& circle : circles) {
-          circle.SetExplosion(true);
-        }
+        for (auto& circle : circles) circle.SetExplosion(true);
       }
 
       if (Pwins != 'P' && Ewins != 'E' && score == 9 && !isAnimating) {
@@ -210,29 +196,143 @@ void Game::Update()
         gltColor(1.0f, 1.0f, 1.0f, 1.0f);
         gltDrawText2D(Draw, (Window::GetWindowWidth()/2.0f) - 100.0f, 50, 5);
         gltEndDraw();
-        for (auto& cross : crosses) {
-          cross.SetExplosion(true);
-        }
-        for (auto& circle : circles) {
-          circle.SetExplosion(true);
-        }
+        for (auto& cross : crosses) cross.SetExplosion(true);
+        for (auto& circle : circles) circle.SetExplosion(true);
       }
       glDisable(GL_BLEND);
 
-      if (Input::KeyPressed(GAB_KEY_R)) {
-        ResetGame(isEnd);
+      if (Input::KeyPressed(GAB_KEY_R) && isEnd) {
+        ResetGame();
       } else if (Input::KeyPressed(GAB_KEY_RIGHT_CONTROL) || Input::KeyPressed(GAB_KEY_LEFT_CONTROL)) {
-        goBack();
-        currentState = MENU;
+        ReturnToMenu();
       }
       // PVE PVE PVE //
-      break;
+    break;
 
+    
     case MULTI_MODE:
+      glEnable(GL_BLEND);
+      glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-      break;
+      static int selectedIndex1 = 0;
 
+      if (!MP::_Host && !MP::_Client) {
+          if (Input::KeyPressed(GAB_KEY_UP) || Input::KeyPressed(GAB_KEY_W)) {
+              selectedIndex1 = (selectedIndex1 - 1 + 2) % 2; 
+          }
+          if (Input::KeyPressed(GAB_KEY_DOWN) || Input::KeyPressed(GAB_KEY_S)) {
+              selectedIndex1 = (selectedIndex1 + 1) % 2; 
+          }
+          if (Input::KeyPressed(GAB_KEY_ENTER) || Input::KeyPressed(GAB_KEY_SPACE)) {
+              if (selectedIndex1 == 0) MP::_Host = true;
+              else if (selectedIndex1 == 1) MP::_Client = true;
+              MP::hasTriedConnecting = false;
+              MP::isConnected = false;
+          }
+
+          gltBeginDraw();
+          time = glfwGetTime(); 
+          red = (sin(time * 0.5f) + 1.0f) * 0.5f;  
+          green = (sin(time * 0.7f) + 1.0f) * 0.5f;
+          blue = (sin(time * 1.0f) + 1.0f) * 0.5f;
+
+          gltColor(red, green, blue, 1.0f);
+          gltDrawText2D(title, (Window::GetWindowWidth()/2.0f) - 220.0f, 100, 5);
+
+          gltColor(selectedIndex1 == 0 ? 1.0f : 1.0f, selectedIndex1 == 0 ? 0.0f : 1.0f, 0.0f, 1.0f);
+          gltDrawText2D(Host, (Window::GetWindowWidth()/2.0f) - 80.0f, 250, 4);
+
+          gltColor(selectedIndex1 == 1 ? 0.0f : 1.0f, selectedIndex1 == 1 ? 1.0f : 1.0f, 0.0f, 1.0f);
+          gltDrawText2D(Client, (Window::GetWindowWidth()/2.0f) - 80.0f, 320, 4);
+          gltEndDraw();
       }
+
+      if (MP::_Host && !MP::hasTriedConnecting) {
+          MP::hasTriedConnecting = true;
+          MP::isConnected = MP::Init_Host();
+      } 
+      else if (MP::_Client && !MP::hasTriedConnecting) {
+          MP::hasTriedConnecting = true;
+          MP::isConnected = MP::Join_Client();
+      }
+
+      if (MP::_Host) MP::Update_Host();
+      if (MP::_Client) MP::Update_Client();
+
+      if (MP::isConnected) { 
+          if (!isEnd) {
+              selectModel->Render(selectPos);
+              PVPhandlePlayersInput();
+          }
+
+          score = countPlayers(board);
+          Pwins = checkifPwins(board);
+          Ewins = checkifEwins(board);
+
+          if (Pwins == 'P' && !isAnimating) {
+              isEnd = true;
+              for (auto& cross : crosses) cross.SetExplosion(true);
+          }
+          if (Ewins == 'E' && !isAnimating) {
+              isEnd = true;
+              for (auto& circle : circles) circle.SetExplosion(true);
+          }
+          if (Pwins != 'P' && Ewins != 'E' && score == 9 && !isAnimating) {
+              isEnd = true;
+              for (auto& cross : crosses) cross.SetExplosion(true);
+              for (auto& circle : circles) circle.SetExplosion(true);
+          }
+
+          glEnable(GL_DEPTH_TEST);
+          manager.RenderLights();
+
+          time = glfwGetTime();
+          x = orbitRadius * cos(orbitSpeed * time);
+          y = orbitRadius * sin(orbitSpeed * time);
+          lightPosition = glm::vec3(x, y, 2.0f);
+          red = (sin(time * 0.5f) + 1.0f) * 0.5f;
+          green = (sin(time * 0.7f) + 1.0f) * 0.5f;
+          blue = (sin(time * 1.0f) + 1.0f) * 0.5f;
+          gradientColor = glm::vec4(red, green, blue, 1.0f);
+          manager.EditLight(0, gradientColor, lightPosition);
+          envMap.Render();
+          boardModel->Render(glm::vec3(0.0f));
+
+          for (const auto& circle : circles) circle.Render();
+          for (const auto& cross : crosses) cross.Render();
+
+          gltBeginDraw();
+          gltColor(1.0f, 1.0f, 1.0f, 1.0f);  
+          gltDrawText2D(MP::isConnected ? Connected : Disconnected, 10.0f, Window::GetWindowHeight()-60.0f, 4);    
+          gltEndDraw();
+      }
+
+      if (isEnd) {
+          gltBeginDraw();
+          gltColor(1.0f, 1.0f, 1.0f, 1.0f);
+          if (Pwins == 'P') gltDrawText2D(Owins, (Window::GetWindowWidth()/2.0f) - 250.0f, 50, 5);
+          if (Ewins == 'E') gltDrawText2D(Xwins, (Window::GetWindowWidth()/2.0f) - 250.0f, 50, 5);
+          if (score == 9) gltDrawText2D(Draw, (Window::GetWindowWidth()/2.0f) - 100.0f, 50, 5);
+          gltEndDraw();
+      }
+
+      glDisable(GL_BLEND);
+
+      if (Input::KeyPressed(GAB_KEY_RIGHT_CONTROL) || Input::KeyPressed(GAB_KEY_LEFT_CONTROL)) {
+          MP::Cleanup();
+          MP::_Host = false;
+          MP::_Client = false;
+          MP::hasTriedConnecting = false;
+          MP::isConnected = false;
+          ReturnToMenu();
+      }
+      if (Input::KeyPressed(GAB_KEY_R) && isEnd) {
+          ResetGame();
+      }
+
+    break;
+
+  }
 
 }
 
@@ -265,7 +365,7 @@ void Game::printBoard(const std::array<std::array<char, BOARD_SIZE>, BOARD_SIZE>
 }
 #endif
 
-void Game::goBack(){
+void Game::ReturnToMenu(){
   glDisable(GL_DEPTH_TEST);
   currentState = MENU;
   isPlayerTurn = true;
@@ -310,7 +410,6 @@ void Game::handlePlayerInput() {
 
     if (Input::KeyPressed(GAB_KEY_ENTER) || Input::KeyPressed(GAB_KEY_SPACE)) {
         if (!PositionTaken(selectPos.x, selectPos.y)) {
-            // Start animation for circle
             check.emplace_back('P', selectPos.x, selectPos.y);
             updateBoard(board, 'P', selectPos.x, selectPos.y);
             circles.emplace_back(circleModel, glm::vec3(selectPos.x, selectPos.y, animationZ));
@@ -326,7 +425,6 @@ void Game::handleEnemyInput() {
 
     if (Input::KeyPressed(GAB_KEY_ENTER) || Input::KeyPressed(GAB_KEY_SPACE)) {
         if (!PositionTaken(selectPos.x, selectPos.y)) {
-            // Start animation for cross
             check.emplace_back('E', selectPos.x, selectPos.y);
             updateBoard(board, 'E', selectPos.x, selectPos.y);
             crosses.emplace_back(crossModel, glm::vec3(selectPos.x, selectPos.y, animationZ));
@@ -338,7 +436,6 @@ void Game::handleEnemyInput() {
 }
 // PVP MODE //
 void Game::handleAnimation() {
-    // Calculate time elapsed since animation started
     auto now = std::chrono::steady_clock::now();
     float elapsedTime = std::chrono::duration<float>(now - animationStart).count();
 
@@ -353,7 +450,6 @@ void Game::handleAnimation() {
         return;
     }
 
-    // Update the Z position of the last added object
     if (!circles.empty() && std::get<0>(check.back()) == 'P') {
         circles.back().GetPosition().z = animationZ;
     } else if (!crosses.empty() && std::get<0>(check.back()) == 'E') {
@@ -504,17 +600,15 @@ bool Game::gameIsOver(std::array<std::array<char, BOARD_SIZE>, BOARD_SIZE>& boar
 // PVE MODE // 
 
 // BOARD LOGIC //
-void Game::ResetGame(bool reset){
-  if(reset){
-      isAnimating = false;
-      isPlayerTurn = true;
-      isEnd = false;
-      board = createEmptyBoard();
-      check.clear();
-      crosses.clear();
-      circles.clear();
-      selectPos = glm::vec3(0.0f);
-  }
+void Game::ResetGame(){
+    isAnimating = false;
+    isPlayerTurn = true;
+    isEnd = false;
+    board = createEmptyBoard();
+    check.clear();
+    crosses.clear();
+    circles.clear();
+    selectPos = glm::vec3(0.0f);
 }
 
 bool Game::PositionTaken(float x, float y) {
