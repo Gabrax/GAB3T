@@ -18,6 +18,7 @@ Game::Game() : isPlayerTurn(true) {
         gltSetText(Connected, "Connected");
         gltSetText(Disconnected, "Disconnected");
         gltSetText(Host_Adress, "Connect to:");
+        gltSetText(Waiting, "Waiting for client...");
         board = createEmptyBoard();
         envMap.Bake();
         manager.AddLight(LightType::POINT, glm::vec4(1.0f), lightPosition);
@@ -211,127 +212,130 @@ void Game::Update()
 
     
     case MULTI_MODE:
-      glEnable(GL_BLEND);
-      glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-      static int selectedIndex1 = 0;
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-      if (!MP::_Host && !MP::_Client) {
-          if (Input::KeyPressed(GAB_KEY_UP) || Input::KeyPressed(GAB_KEY_W)) {
-              selectedIndex1 = (selectedIndex1 - 1 + 2) % 2; 
-          }
-          if (Input::KeyPressed(GAB_KEY_DOWN) || Input::KeyPressed(GAB_KEY_S)) {
-              selectedIndex1 = (selectedIndex1 + 1) % 2; 
-          }
-          if (Input::KeyPressed(GAB_KEY_ENTER) || Input::KeyPressed(GAB_KEY_SPACE)) {
-              if (selectedIndex1 == 0) MP::_Host = true;
-              else if (selectedIndex1 == 1) MP::_Client = true;
-              MP::hasTriedConnecting = false;
-              MP::isConnected = false;
-          }
+    static int selectedIndex1 = 0;
 
-          gltBeginDraw();
-          time = glfwGetTime(); 
-          red = (sin(time * 0.5f) + 1.0f) * 0.5f;  
-          green = (sin(time * 0.7f) + 1.0f) * 0.5f;
-          blue = (sin(time * 1.0f) + 1.0f) * 0.5f;
+    if (!MP::_Host && !MP::_Client) {
+        if (Input::KeyPressed(GAB_KEY_UP) || Input::KeyPressed(GAB_KEY_W)) {
+            selectedIndex1 = (selectedIndex1 - 1 + 2) % 2; 
+        }
+        if (Input::KeyPressed(GAB_KEY_DOWN) || Input::KeyPressed(GAB_KEY_S)) {
+            selectedIndex1 = (selectedIndex1 + 1) % 2; 
+        }
+        if (Input::KeyPressed(GAB_KEY_ENTER) || Input::KeyPressed(GAB_KEY_SPACE)) {
+            if (selectedIndex1 == 0) MP::_Host = true;
+            else if (selectedIndex1 == 1) MP::_Client = true;
+            MP::hasTriedConnecting = false;
+            MP::isConnected = false;
+        }
 
-          gltColor(red, green, blue, 1.0f);
-          gltDrawText2D(title, (Window::GetWindowWidth()/2.0f) - 220.0f, 100, 5);
+        gltBeginDraw();
+        time = glfwGetTime();
+        red = (sin(time * 0.5f) + 1.0f) * 0.5f;  
+        green = (sin(time * 0.7f) + 1.0f) * 0.5f;
+        blue = (sin(time * 1.0f) + 1.0f) * 0.5f;
 
-          gltColor(selectedIndex1 == 0 ? 1.0f : 1.0f, selectedIndex1 == 0 ? 0.0f : 1.0f, 0.0f, 1.0f);
-          gltDrawText2D(Host, (Window::GetWindowWidth()/2.0f) - 80.0f, 250, 4);
+        gltColor(red, green, blue, 1.0f);
+        gltDrawText2D(title, (Window::GetWindowWidth()/2.0f) - 220.0f, 100, 5);
 
-          gltColor(selectedIndex1 == 1 ? 0.0f : 1.0f, selectedIndex1 == 1 ? 1.0f : 1.0f, 0.0f, 1.0f);
-          gltDrawText2D(Client, (Window::GetWindowWidth()/2.0f) - 80.0f, 320, 4);
-          gltEndDraw();
-      }
+        gltColor(selectedIndex1 == 0 ? 1.0f : 1.0f, selectedIndex1 == 0 ? 0.0f : 1.0f, 1.0f, 1.0f);
+        gltDrawText2D(Host, (Window::GetWindowWidth()/2.0f) - 80.0f, 250, 4);
 
-      if (MP::_Host && !MP::hasTriedConnecting) {
-          MP::hasTriedConnecting = true;
-          MP::isConnected = MP::Init_Host();
-      } 
-      else if (MP::_Client && !MP::hasTriedConnecting) {
-          MP::hasTriedConnecting = true;
-          MP::isConnected = MP::Join_Client();
-      }
+        gltColor(selectedIndex1 == 1 ? 0.0f : 1.0f, selectedIndex1 == 1 ? 1.0f : 1.0f, 1.0f, 1.0f);
+        gltDrawText2D(Client, (Window::GetWindowWidth()/2.0f) - 80.0f, 320, 4);
+        gltEndDraw();
+    }
 
-      if (MP::_Host) MP::Update_Host();
-      if (MP::_Client) MP::Update_Client();
+    if (MP::_Host && !MP::hasTriedConnecting) {
+        MP::hasTriedConnecting = true;
+        MP::isConnected = MP::Init_Host();
+    } 
+    else if (MP::_Client && !MP::hasTriedConnecting) {
+        MP::hasTriedConnecting = true;
+        MP::isConnected = MP::Join_Client();
+    }
 
-      if (MP::isConnected) { 
-          if (!isEnd) {
-              selectModel->Render(selectPos);
-              PVPhandlePlayersInput();
-          }
+    if (MP::_Host) UpdateHost();
+    if (MP::_Client) UpdateClient();
 
-          score = countPlayers(board);
-          Pwins = checkifPwins(board);
-          Ewins = checkifEwins(board);
+    if (MP::_Client && !MP::isConnected) {
+        MP::Cleanup();
+        MP::_Client = false;
+        MP::hasTriedConnecting = false;
+        ReturnToMenu();
+        break;
+    }
 
-          if (Pwins == 'P' && !isAnimating) {
-              isEnd = true;
-              for (auto& cross : crosses) cross.SetExplosion(true);
-          }
-          if (Ewins == 'E' && !isAnimating) {
-              isEnd = true;
-              for (auto& circle : circles) circle.SetExplosion(true);
-          }
-          if (Pwins != 'P' && Ewins != 'E' && score == 9 && !isAnimating) {
-              isEnd = true;
-              for (auto& cross : crosses) cross.SetExplosion(true);
-              for (auto& circle : circles) circle.SetExplosion(true);
-          }
+    if (MP::isConnected) { 
+        if (!isEnd) {
+            if (MP::_Client || (MP::_Host && MP::HasClientConnected())) { 
+                selectModel->Render(selectPos);
+                MULTIhandlePlayersInput();
+            }
+        }
 
-          glEnable(GL_DEPTH_TEST);
-          manager.RenderLights();
+        score = countPlayers(board);
+        Pwins = checkifPwins(board);
+        Ewins = checkifEwins(board);
 
-          time = glfwGetTime();
-          x = orbitRadius * cos(orbitSpeed * time);
-          y = orbitRadius * sin(orbitSpeed * time);
-          lightPosition = glm::vec3(x, y, 2.0f);
-          red = (sin(time * 0.5f) + 1.0f) * 0.5f;
-          green = (sin(time * 0.7f) + 1.0f) * 0.5f;
-          blue = (sin(time * 1.0f) + 1.0f) * 0.5f;
-          gradientColor = glm::vec4(red, green, blue, 1.0f);
-          manager.EditLight(0, gradientColor, lightPosition);
-          envMap.Render();
-          boardModel->Render(glm::vec3(0.0f));
+        if (Pwins == 'P' && !isAnimating) {
+            isEnd = true;
+            for (auto& cross : crosses) cross.SetExplosion(true);
+        }
+        if (Ewins == 'E' && !isAnimating) {
+            isEnd = true;
+            for (auto& circle : circles) circle.SetExplosion(true);
+        }
+        if (Pwins != 'P' && Ewins != 'E' && score == 9 && !isAnimating) {
+            isEnd = true;
+            for (auto& cross : crosses) cross.SetExplosion(true);
+            for (auto& circle : circles) circle.SetExplosion(true);
+        }
 
-          for (const auto& circle : circles) circle.Render();
-          for (const auto& cross : crosses) cross.Render();
+        glEnable(GL_DEPTH_TEST);
+        manager.RenderLights();
 
-          gltBeginDraw();
-          gltColor(1.0f, 1.0f, 1.0f, 1.0f);  
-          gltDrawText2D(MP::isConnected ? Connected : Disconnected, 10.0f, Window::GetWindowHeight()-60.0f, 4);    
-          gltEndDraw();
-      }
+        time = glfwGetTime();
+        x = orbitRadius * cos(orbitSpeed * time);
+        y = orbitRadius * sin(orbitSpeed * time);
+        lightPosition = glm::vec3(x, y, 2.0f);
+        red = (sin(time * 0.5f) + 1.0f) * 0.5f;
+        green = (sin(time * 0.7f) + 1.0f) * 0.5f;
+        blue = (sin(time * 1.0f) + 1.0f) * 0.5f;
+        gradientColor = glm::vec4(red, green, blue, 1.0f);
+        manager.EditLight(0, gradientColor, lightPosition);
+        envMap.Render();
+        boardModel->Render(glm::vec3(0.0f));
 
-      if (isEnd) {
-          gltBeginDraw();
-          gltColor(1.0f, 1.0f, 1.0f, 1.0f);
-          if (Pwins == 'P') gltDrawText2D(Owins, (Window::GetWindowWidth()/2.0f) - 250.0f, 50, 5);
-          if (Ewins == 'E') gltDrawText2D(Xwins, (Window::GetWindowWidth()/2.0f) - 250.0f, 50, 5);
-          if (score == 9) gltDrawText2D(Draw, (Window::GetWindowWidth()/2.0f) - 100.0f, 50, 5);
-          gltEndDraw();
-      }
+        for (const auto& circle : circles) circle.Render();
+        for (const auto& cross : crosses) cross.Render();
 
-      glDisable(GL_BLEND);
+        gltBeginDraw();
+        gltColor(1.0f, 1.0f, 1.0f, 1.0f);
+        gltDrawText2D((MP::_Host && !MP::HasClientConnected()) ? Waiting : 
+                      (MP::isConnected ? Connected : Disconnected), 10.0f, Window::GetWindowHeight()-60.0f, 4);    
+        gltEndDraw();
+    }
 
-      if (Input::KeyPressed(GAB_KEY_RIGHT_CONTROL) || Input::KeyPressed(GAB_KEY_LEFT_CONTROL)) {
-          MP::Cleanup();
-          MP::_Host = false;
-          MP::_Client = false;
-          MP::hasTriedConnecting = false;
-          MP::isConnected = false;
-          ReturnToMenu();
-      }
-      if (Input::KeyPressed(GAB_KEY_R) && isEnd) {
-          ResetGame();
-      }
+    glDisable(GL_BLEND);
 
-    break;
+    if (Input::KeyPressed(GAB_KEY_RIGHT_CONTROL) || Input::KeyPressed(GAB_KEY_LEFT_CONTROL)) {
+        MP::Cleanup();
+        MP::_Host = false;
+        MP::_Client = false;
+        MP::hasTriedConnecting = false;
+        MP::isConnected = false;
+        ReturnToMenu();
+    }
 
+    if (Input::KeyPressed(GAB_KEY_R) && isEnd) {
+        ResetGame();
+    }
+
+    break;  
   }
 
 }
@@ -405,6 +409,18 @@ void Game::PVPhandlePlayersInput() {
     }
 }
 
+void Game::MULTIhandlePlayersInput() {
+    if (isAnimating) {
+        handleAnimation();
+        return; // Block input while animation is running
+    }
+
+    if (MP::_Host)  
+        handlePlayerInput();
+    if (MP::_Client)  
+        handleEnemyInput();
+}
+
 void Game::handlePlayerInput() {
     HandlePlayerMoving();
 
@@ -416,6 +432,8 @@ void Game::handlePlayerInput() {
             animationZ = 2.5f;
             isAnimating = true;
             animationStart = std::chrono::steady_clock::now();
+            if (MP::_Host) SendMoveToClient(selectPos.x, selectPos.y, 'P'); puts("SEND TO CLIENT"); 
+
         }
     }
 }
@@ -431,6 +449,7 @@ void Game::handleEnemyInput() {
             animationZ = 2.5f;
             isAnimating = true;
             animationStart = std::chrono::steady_clock::now();
+            if (MP::_Client) SendMoveToHost(selectPos.x, selectPos.y, 'E'); puts("SEND TO HOST"); 
         }
     }
 }
@@ -623,24 +642,130 @@ bool Game::PositionTaken(float x, float y) {
   return false;
 }
 
+void Game::SendMoveToClient(int row, int col, char player) {
+    if (!MP::_Host || !MP::clientConnected) return;
+
+    std::string moveMessage = "MOVE|" + std::to_string(player) + "|" + std::to_string(row) + "|" + std::to_string(col);
+    ENetPacket* packet = enet_packet_create(moveMessage.c_str(), moveMessage.size() + 1, ENET_PACKET_FLAG_RELIABLE);
+    enet_peer_send(MP::serverPeer, 0, packet);
+    enet_host_flush(MP::server);
+}
+
+void Game::SendMoveToHost(int row, int col, char player) {
+    if (!MP::_Client || !MP::isConnected) return;
+
+    std::string moveMessage = "MOVE|" + std::to_string(player) + "|" + std::to_string(row) + "|" + std::to_string(col);
+    ENetPacket* packet = enet_packet_create(moveMessage.c_str(), moveMessage.size() + 1, ENET_PACKET_FLAG_RELIABLE);
+    enet_peer_send(MP::clientPeer, 0, packet);
+    enet_host_flush(MP::client);
+}
+
 void Game::updateBoard(std::array<std::array<char, BOARD_SIZE>, BOARD_SIZE>& board, char player, float x, float y) {
   // Find the closest coordinates in mapCoord
   float minDist = std::numeric_limits<float>::max();
   int closestIndex = -1;
   for (size_t i = 0; i < mapCoord.size(); ++i) {
-      float dist = std::hypot(x - mapCoord[i].first, y - mapCoord[i].second); //Computes the square root of the sum of the squares of x and y
+      float dist = std::hypot(x - mapCoord[i].first, y - mapCoord[i].second); 
       if (dist < minDist) {
           minDist = dist;
           closestIndex = static_cast<int>(i);
       }
   }
 
-  // Map the closest coordinates to the corresponding cell on the board
   if (closestIndex != -1) {
       int row = closestIndex / BOARD_SIZE;
       int col = closestIndex % BOARD_SIZE;
       board[row][col] = player;
+
+
   }
+}
+
+void Game::UpdateHost()
+{
+    if (!MP::server) return;
+
+    ENetEvent event;
+    while (enet_host_service(MP::server, &event, 0) > 0)
+    {
+        switch (event.type)
+        {
+            case ENET_EVENT_TYPE_CONNECT:
+                MP::serverPeer = event.peer;
+                MP::clientConnected = true;
+                std::cout << "Client connected from " 
+                          << event.peer->address.host << ":" 
+                          << event.peer->address.port << "\n";
+                break;
+
+            case ENET_EVENT_TYPE_DISCONNECT:
+                std::cout << "Client disconnected.\n";
+                MP::clientConnected = false;
+                MP::serverPeer = nullptr;
+                break;
+
+            case ENET_EVENT_TYPE_RECEIVE:
+            {
+                std::string data(reinterpret_cast<char*>(event.packet->data));
+                enet_packet_destroy(event.packet);
+
+                if (data.rfind("MOVE", 0) == 0) { 
+                    int playerID, row, col;
+                    sscanf_s(data.c_str(), "MOVE|%d|%d|%d", &playerID, &row, &col);
+                    
+                    updateBoard(board, 'E', row, col);
+                    crosses.emplace_back(crossModel, glm::vec3(selectPos.x, selectPos.y, animationZ));
+
+                    std::cout << "Received Move from Client: Player " << playerID << " at (" << row << ", " << col << ")\n";
+
+                    ENetPacket* packet = enet_packet_create(data.c_str(), data.size() + 1, ENET_PACKET_FLAG_RELIABLE);
+                    enet_peer_send(MP::serverPeer, 0, packet);
+                }
+                break;
+            }
+
+            default:
+                break;
+        }
+    }
+}
+
+void Game::UpdateClient()
+{
+    if (!MP::client) return;
+
+    ENetEvent event;
+    while (enet_host_service(MP::client, &event, 0) > 0)
+    {
+        switch (event.type)
+        {
+            case ENET_EVENT_TYPE_DISCONNECT:
+                std::cout << "Disconnected from server.\n";
+                MP::isConnected = false;
+                MP::clientPeer = nullptr;
+                break;
+
+            case ENET_EVENT_TYPE_RECEIVE:
+            {
+                std::string data(reinterpret_cast<char*>(event.packet->data));
+                enet_packet_destroy(event.packet);
+
+                if (data.rfind("MOVE", 0) == 0) {
+                    int playerID, row, col;
+                    sscanf_s(data.c_str(), "MOVE|%d|%d|%d", &playerID, &row, &col);
+
+                    updateBoard(board, 'P', row, col);
+                    circles.emplace_back(circleModel, glm::vec3(selectPos.x, selectPos.y, animationZ));
+
+                    std::cout << "Received Move from Host: Player " << playerID << " at (" << row << ", " << col << ")\n";
+                }
+                break;
+            }
+
+            default:
+                break;
+        }
+    }
 }
 
 unsigned int Game::countPlayers(std::array<std::array<char, BOARD_SIZE>, BOARD_SIZE>& board){

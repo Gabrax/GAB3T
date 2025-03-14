@@ -11,6 +11,23 @@ namespace MP {
     inline bool isConnected = false; 
     inline ENetHost* server = nullptr;
     inline ENetHost* client = nullptr;
+    inline ENetPeer* serverPeer = nullptr;
+    inline ENetPeer* clientPeer = nullptr;
+    inline bool clientConnected = false;
+
+    inline bool HasClientConnected() {
+        return clientConnected;
+    }
+
+    inline void OnClientJoin() { 
+        clientConnected = true;
+        std::cout << "Client has joined the game.\n";
+    }
+
+    inline void OnClientLeave() { 
+        clientConnected = false;
+        std::cout << "Client has disconnected.\n";
+    }
 
     inline bool Init_Host()
     {
@@ -58,8 +75,8 @@ namespace MP {
         enet_address_set_host(&address, "127.0.0.1");
         address.port = 1234;
 
-        ENetPeer* peer = enet_host_connect(client, &address, 2, 0);
-        if (peer == nullptr)
+        clientPeer = enet_host_connect(client, &address, 2, 0);
+        if (clientPeer == nullptr)
         {
             std::cerr << "No available peers for initiating connection.\n";
             enet_host_destroy(client);
@@ -68,85 +85,33 @@ namespace MP {
         }
 
         ENetEvent event;
-        int retries = 5;  // Retry up to 5 times
-        while (retries-- > 0) {
-            if (enet_host_service(client, &event, 1000) > 0 && event.type == ENET_EVENT_TYPE_CONNECT)
-            {
-                std::cout << "Connection to server succeeded.\n";
-                return true;
-            }
-            std::cout << "Retrying connection... (" << retries << " attempts left)\n";
+        if (enet_host_service(client, &event, 5000) > 0 && event.type == ENET_EVENT_TYPE_CONNECT)
+        {
+            std::cout << "Connection to server succeeded.\n";
+            isConnected = true;
+            return true;
         }
 
-        enet_peer_reset(peer);
-        std::cerr << "Connection to server failed after multiple attempts.\n";
+        enet_peer_reset(clientPeer);
+        std::cerr << "Connection to server failed.\n";
         return false;
     }
 
-    inline void Update_Host()
-    {
-        if (!server) return;
-
-        ENetEvent event;
-        while (enet_host_service(server, &event, 0) > 0)  // Non-blocking check for events
-        {
-            switch (event.type)
-            {
-                case ENET_EVENT_TYPE_CONNECT:
-                    std::cout << "Client connected from " << event.peer->address.host << ":" << event.peer->address.port << "\n";
-                    break;
-
-                case ENET_EVENT_TYPE_RECEIVE:
-                    std::cout << "Received packet from client.\n";
-                    enet_packet_destroy(event.packet);
-                    break;
-
-                case ENET_EVENT_TYPE_DISCONNECT:
-                    std::cout << "Client disconnected.\n";
-                    break;
-
-                default:
-                    break;
-            }
-        }
-    }
-
-    inline void Update_Client()
-    {
-        if (!client) return;
-
-        ENetEvent event;
-        while (enet_host_service(client, &event, 0) > 0) // Non-blocking check for events
-        {
-            switch (event.type)
-            {
-                case ENET_EVENT_TYPE_RECEIVE:
-                    std::cout << "Received packet from server.\n";
-                    enet_packet_destroy(event.packet);
-                    break;
-
-                case ENET_EVENT_TYPE_DISCONNECT:
-                    std::cout << "Disconnected from server.\n";
-                    isConnected = false; // Mark the client as disconnected
-                    break;
-
-                default:
-                    break;
-            }
-        }
-    }
+    
 
     inline void Cleanup()
     {
         if (server) {
             enet_host_destroy(server);
             server = nullptr;
+            clientConnected = false;
             std::cout << "Server destroyed.\n";
         }
 
         if (client) {
             enet_host_destroy(client);
             client = nullptr;
+            isConnected = false;
             std::cout << "Client destroyed.\n";
         }
 

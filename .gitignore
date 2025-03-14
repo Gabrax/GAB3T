@@ -32,6 +32,7 @@
 
 # Ignore dir
 .vscode/
+.cache/
 build/
 conan/
 Release/

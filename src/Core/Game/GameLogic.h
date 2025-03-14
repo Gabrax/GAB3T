@@ -19,6 +19,8 @@
 #define GLT_IMPLEMENTATION
 #include "gltext.h"
 #include <chrono>
+#define NOMINMAX
+#include <enet/enet.h>
 
 
 constexpr float changeX = 2.1f;
@@ -73,6 +75,7 @@ private:
     GLTtext* Host = gltCreateText();
     GLTtext* Client = gltCreateText();
     GLTtext* Connected = gltCreateText();
+    GLTtext* Waiting = gltCreateText();
     GLTtext* Disconnected = gltCreateText();
     GLTtext* Host_Adress = gltCreateText();
 
@@ -98,18 +101,16 @@ private:
     float animationZ = 2.5f;  // Starting Z position for animation
     const float animationSpeed = 0.05f;  // Speed of sliding animation
     std::chrono::time_point<std::chrono::steady_clock> animationStart;
-    void handleAnimation();
     // MENU INPUT //     
     void handleBorderInput();
     void ReturnToMenu();
     // MENU INPUT //
-    void HandlePlayerMoving();
     // PVP MODE //
     void PVPhandlePlayersInput();
     void handlePlayerInput();
     void handleEnemyInput();
     // PVP MODE //
-
+    void HandlePlayerMoving();
     // PVE MODE //
     void PVEhandlePlayersInput();
     void handleAiInput();
@@ -119,7 +120,16 @@ private:
     bool gameIsOver(std::array<std::array<char, BOARD_SIZE>, BOARD_SIZE>& board);
     // PVE MODE // 
 
+    // MULTIPLAYER //
+    void SendMoveToClient(int row, int col, char player);
+    void UpdateClient();
+    void SendMoveToHost(int row, int col, char player);
+    void MULTIhandlePlayersInput();
+    void UpdateHost();
+    // MULTIPLAYER //
+
     // BOARD LOGIC //
+    void handleAnimation();
     void ResetGame();
     bool PositionTaken(float x, float y);
     void updateBoard(std::array<std::array<char, BOARD_SIZE>, BOARD_SIZE>& board, char player, float x, float y);
