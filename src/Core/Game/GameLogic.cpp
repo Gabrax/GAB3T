@@ -230,6 +230,8 @@ void Game::Update()
             else if (selectedIndex1 == 1) MP::_Client = true;
             MP::hasTriedConnecting = false;
             MP::isConnected = false;
+            MP::inputDebounce = true; // Activate debounce
+            MP::debounceStartTime = glfwGetTime(); // Store the time of selection
         }
 
         gltBeginDraw();
@@ -415,10 +417,13 @@ void Game::MULTIhandlePlayersInput() {
         return; // Block input while animation is running
     }
 
-    if (MP::_Host)  
-        handlePlayerInput();
-    if (MP::_Client)  
-        handleEnemyInput();
+    if (MP::_Host)  handlePlayerInput();
+    if (MP::_Client){
+      if (MP::inputDebounce && (glfwGetTime() - MP::debounceStartTime < 0.2)) return; // Ignore input for 200ms
+
+      MP::inputDebounce = false; // Reset debounce after timeout
+      handleEnemyInput();
+    }  
 }
 
 void Game::handlePlayerInput() {
@@ -432,8 +437,10 @@ void Game::handlePlayerInput() {
             animationZ = 2.5f;
             isAnimating = true;
             animationStart = std::chrono::steady_clock::now();
-            if (MP::_Host) SendMoveToClient(selectPos.x, selectPos.y, 'P'); puts("SEND TO CLIENT"); 
-
+            if (MP::_Host) {
+              SendMoveToClient(selectPos.x, selectPos.y, 'P');
+              puts("SEND TO CLIENT"); 
+            }
         }
     }
 }
@@ -449,8 +456,11 @@ void Game::handleEnemyInput() {
             animationZ = 2.5f;
             isAnimating = true;
             animationStart = std::chrono::steady_clock::now();
-            if (MP::_Client) SendMoveToHost(selectPos.x, selectPos.y, 'E'); puts("SEND TO HOST"); 
-        }
+            if (MP::_Client) {
+              SendMoveToHost(selectPos.x, selectPos.y, 'E'); 
+              puts("SEND TO HOST");
+            }
+        } 
     }
 }
 // PVP MODE //
@@ -676,8 +686,6 @@ void Game::updateBoard(std::array<std::array<char, BOARD_SIZE>, BOARD_SIZE>& boa
       int row = closestIndex / BOARD_SIZE;
       int col = closestIndex % BOARD_SIZE;
       board[row][col] = player;
-
-
   }
 }
 
@@ -712,14 +720,16 @@ void Game::UpdateHost()
                 if (data.rfind("MOVE", 0) == 0) { 
                     int playerID, row, col;
                     sscanf_s(data.c_str(), "MOVE|%d|%d|%d", &playerID, &row, &col);
-                    
-                    updateBoard(board, 'E', row, col);
-                    crosses.emplace_back(crossModel, glm::vec3(selectPos.x, selectPos.y, animationZ));
+                 
+                    if (playerID == 69 && !PositionTaken(row, col)) {
+                        check.emplace_back('E', row, col);
+                        updateBoard(board, 'E', row, col);
 
-                    std::cout << "Received Move from Client: Player " << playerID << " at (" << row << ", " << col << ")\n";
-
-                    ENetPacket* packet = enet_packet_create(data.c_str(), data.size() + 1, ENET_PACKET_FLAG_RELIABLE);
-                    enet_peer_send(MP::serverPeer, 0, packet);
+                        crosses.emplace_back(crossModel, glm::vec3(row, col, animationZ));
+                        animationZ = 2.5f;
+                        isAnimating = true;
+                        animationStart = std::chrono::steady_clock::now();
+                    }
                 }
                 break;
             }
@@ -753,11 +763,16 @@ void Game::UpdateClient()
                 if (data.rfind("MOVE", 0) == 0) {
                     int playerID, row, col;
                     sscanf_s(data.c_str(), "MOVE|%d|%d|%d", &playerID, &row, &col);
+                    if (playerID == 80 && !PositionTaken(row, col)) {
+                        check.emplace_back('P', row, col);
+                        updateBoard(board, 'P', row, col);
 
-                    updateBoard(board, 'P', row, col);
-                    circles.emplace_back(circleModel, glm::vec3(selectPos.x, selectPos.y, animationZ));
+                        circles.emplace_back(circleModel, glm::vec3(row, col, animationZ));
+                        animationZ = 2.5f;
+                        isAnimating = true;
+                        animationStart = std::chrono::steady_clock::now();
 
-                    std::cout << "Received Move from Host: Player " << playerID << " at (" << row << ", " << col << ")\n";
+                    }
                 }
                 break;
             }

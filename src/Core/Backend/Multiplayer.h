@@ -14,6 +14,8 @@ namespace MP {
     inline ENetPeer* serverPeer = nullptr;
     inline ENetPeer* clientPeer = nullptr;
     inline bool clientConnected = false;
+    inline bool inputDebounce = false; 
+    inline double debounceStartTime = 0.0;
 
     inline bool HasClientConnected() {
         return clientConnected;
