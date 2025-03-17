@@ -16,6 +16,7 @@ namespace MP {
     inline bool clientConnected = false;
     inline bool inputDebounce = false; 
     inline double debounceStartTime = 0.0;
+    inline bool HostTurn = true;
 
     inline bool HasClientConnected() {
         return clientConnected;

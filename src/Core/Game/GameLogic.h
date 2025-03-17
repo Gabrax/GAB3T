@@ -76,8 +76,11 @@ private:
     GLTtext* Client = gltCreateText();
     GLTtext* Connected = gltCreateText();
     GLTtext* Waiting = gltCreateText();
+    GLTtext* WaitingHost = gltCreateText();
+    GLTtext* WaitingClient = gltCreateText();
     GLTtext* Disconnected = gltCreateText();
-    GLTtext* Host_Adress = gltCreateText();
+    GLTtext* HostWins = gltCreateText();
+    GLTtext* ClientWins = gltCreateText();
 
     std::vector<std::tuple<char,float,float>> check;
     std::array<std::pair<float, float>, 9> mapCoord = {
@@ -126,6 +129,7 @@ private:
     void SendMoveToHost(int row, int col, char player);
     void MULTIhandlePlayersInput();
     void UpdateHost();
+    void SendRESET();
     // MULTIPLAYER //
 
     // BOARD LOGIC //
