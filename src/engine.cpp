@@ -6,9 +6,11 @@
 #include <glm/glm.hpp>
 #include "Core/Backend/Bloom.h"
 
+#define CLEAR_BUFFER glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
 void Engine::Run()
 {
-    Window::Init((int)(800),(int)(600));
+    Window::Init(800,600);
 
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -20,12 +22,12 @@ void Engine::Run()
     {  
         Window::BeginFrame();
 
-          fb.Bind(); 
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+          fb.Bind();
+          CLEAR_BUFFER
           game.Update();
           fb.RenderBloomTexture(0.005f);
           fb.UnBind();
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+          CLEAR_BUFFER
           fb.Render();
 
         Window::EndFrame();

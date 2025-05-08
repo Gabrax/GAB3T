@@ -25,12 +25,9 @@
 
 constexpr float changeX = 2.1f;
 constexpr float changeY = 2.1f;
-constexpr int BOARD_SIZE = 3;
-static bool isEnd = false;
-static bool PvPmode = false;
-static bool PvEmode = false;
-static char Pwins;
-static char Ewins;
+constexpr int BOARD_SIZE = 4;
+static bool isEnd = false, PvPmode = false, PvEmode = false;
+static char Pwins, Ewins;
 static int score;
 
 static std::array<std::array<char, BOARD_SIZE>, BOARD_SIZE> board;
@@ -43,6 +40,8 @@ enum GameState {
 };
 
 static GameState currentState = MENU;
+
+#define INIT_TEXT(name) GLTtext* name = gltCreateText()
     
 struct Game {
 
@@ -56,40 +55,35 @@ private:
     float orbitRadius = 5.0f; 
     float orbitSpeed = 1.0f;  
 
-    float time;
-    float x;
-    float y; 
+    float time, x, y, red, green, blue; 
     glm::vec3 lightPosition = glm::vec3(0.0f);
-    float red;  
-    float green;
-    float blue;
     glm::vec4 gradientColor = glm::vec4(0.0f);
+    glm::vec3 selectPos = glm::vec3(0.0f);
 
-    GLTtext* title = gltCreateText();
-    GLTtext* Owins = gltCreateText();
-    GLTtext* Xwins = gltCreateText();
-    GLTtext* Draw = gltCreateText();
-    GLTtext* PvsAI = gltCreateText();
-    GLTtext* Local = gltCreateText();
-    GLTtext* Multiplayer = gltCreateText();
-    GLTtext* Host = gltCreateText();
-    GLTtext* Client = gltCreateText();
-    GLTtext* Connected = gltCreateText();
-    GLTtext* Waiting = gltCreateText();
-    GLTtext* WaitingHost = gltCreateText();
-    GLTtext* WaitingClient = gltCreateText();
-    GLTtext* Disconnected = gltCreateText();
-    GLTtext* HostWins = gltCreateText();
-    GLTtext* ClientWins = gltCreateText();
+    INIT_TEXT(title);
+    INIT_TEXT(Owins);
+    INIT_TEXT(Xwins);
+    INIT_TEXT(Draw);
+    INIT_TEXT(PvsAI);
+    INIT_TEXT(Local);
+    INIT_TEXT(Multiplayer);
+    INIT_TEXT(Host);
+    INIT_TEXT(Client);
+    INIT_TEXT(Connected);
+    INIT_TEXT(Waiting);
+    INIT_TEXT(WaitingHost);
+    INIT_TEXT(WaitingClient);
+    INIT_TEXT(Disconnected);
+    INIT_TEXT(HostWins);
+    INIT_TEXT(ClientWins);
 
     std::vector<std::tuple<char,float,float>> check;
-    std::array<std::pair<float, float>, 9> mapCoord = {
-        std::make_pair(-2.1f, 2.1f), std::make_pair(0, 2.1f), std::make_pair(2.1f, 2.1f),
-        std::make_pair(-2.1f, 0), std::make_pair(0, 0), std::make_pair(2.1f, 0),
-        std::make_pair(-2.1f, -2.1f), std::make_pair(0, -2.1f), std::make_pair(2.1f, -2.1f)
+    std::array<std::pair<float, float>, BOARD_SIZE * BOARD_SIZE> mapCoord = {
+        std::make_pair(-2.1f, 2.1f),  std::make_pair(0, 2.1f),  std::make_pair(2.1f, 2.1f),  std::make_pair(4.2f, 2.1f),
+        std::make_pair(-2.1f, 0),     std::make_pair(0, 0),     std::make_pair(2.1f, 0),     std::make_pair(4.2f, 0),
+        std::make_pair(-2.1f, -2.1f), std::make_pair(0, -2.1f), std::make_pair(2.1f, -2.1f), std::make_pair(4.2f, -2.1f),
+        std::make_pair(-2.1f, -4.2f), std::make_pair(0, -4.2f), std::make_pair(2.1f, -4.2f), std::make_pair(4.2f, -4.2f)
     };
-
-    glm::vec3 selectPos = glm::vec3(0.0f);
 
     std::shared_ptr<StaticModel> circleModel = std::make_shared<StaticModel>("res/models/Circle.obj");
     std::vector<Circle> circles;
@@ -117,7 +111,7 @@ private:
     // PVE MODE //
     void PVEhandlePlayersInput();
     void handleAiInput();
-    int minimax(std::array<std::array<char, BOARD_SIZE>, BOARD_SIZE>& board, int depth, bool maximizingPlayer);
+    int minimax(std::array<std::array<char, BOARD_SIZE>, BOARD_SIZE>& board, int depth, bool maximizingPlayer = false,int alpha = INT_MIN, int beta = INT_MAX);
     std::vector<std::array<std::array<char, BOARD_SIZE>, BOARD_SIZE>> generateMoves(std::array<std::array<char, BOARD_SIZE>, BOARD_SIZE>& board, char player);
     int evaluate(std::array<std::array<char, BOARD_SIZE>, BOARD_SIZE>& board);
     bool gameIsOver(std::array<std::array<char, BOARD_SIZE>, BOARD_SIZE>& board);

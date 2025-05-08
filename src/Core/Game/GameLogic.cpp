@@ -1,26 +1,17 @@
 #include "GameLogic.h"
 #include "glad/glad.h"
 #include "../Backend/Multiplayer.h"
+#include <climits>
 #include <limits>
 
 Game::Game() : isPlayerTurn(true) {
         Util::BakeShaders();
         gltInit();
-        gltSetText(title, "Tic Tac Toe");
-        gltSetText(Owins, "PLAYER 0 WINS");
-        gltSetText(Xwins, "PLAYER X WINS");
-        gltSetText(Draw, "DRAW");
-        gltSetText(PvsAI, "PvsAI");
-        gltSetText(Local, "Local");
-        gltSetText(Multiplayer, "Multiplayer");
-        gltSetText(Host, "Host");
-        gltSetText(Client, "Client");
-        gltSetText(Connected, "Connected");
-        gltSetText(Disconnected, "Disconnected");
-        gltSetText(Waiting, "Waiting for client...");
-        gltSetText(HostWins, "Host Wins");
-        gltSetText(ClientWins, "Client Wins");
-        gltSetText(WaitingHost, "Waiting for Client turn");
+        gltSetText(title, "Tic Tac Toe"); gltSetText(Owins, "PLAYER 0 WINS"); gltSetText(Xwins, "PLAYER X WINS");
+        gltSetText(Draw, "DRAW"); gltSetText(PvsAI, "PvsAI"); gltSetText(Local, "Local");
+        gltSetText(Multiplayer, "Multiplayer"); gltSetText(Host, "Host"); gltSetText(Client, "Client");
+        gltSetText(Connected, "Connected"); gltSetText(Disconnected, "Disconnected"); gltSetText(Waiting, "Waiting for client...");
+        gltSetText(HostWins, "Host Wins"); gltSetText(ClientWins, "Client Wins");gltSetText(WaitingHost, "Waiting for Client turn");
         gltSetText(WaitingClient, "Waiting for Host turn");
         board = createEmptyBoard();
         envMap.Bake();
@@ -37,12 +28,9 @@ void Game::Update()
       glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
       static int selectedIndex = 0;
-      if (Input::KeyPressed(GAB_KEY_UP) || Input::KeyPressed(GAB_KEY_W)) {
-          selectedIndex = (selectedIndex - 1 + 3) % 3; 
-      }
-      if (Input::KeyPressed(GAB_KEY_DOWN) || Input::KeyPressed(GAB_KEY_S)) {
-          selectedIndex = (selectedIndex + 1) % 3; 
-      }
+      if (Input::KeyPressed(GAB_KEY_UP) || Input::KeyPressed(GAB_KEY_W)) selectedIndex = (selectedIndex - 1 + 3) % 3; 
+      if (Input::KeyPressed(GAB_KEY_DOWN) || Input::KeyPressed(GAB_KEY_S)) selectedIndex = (selectedIndex + 1) % 3;
+
       if(Input::KeyPressed(GAB_KEY_ENTER) || Input::KeyPressed(GAB_KEY_SPACE)) {
         if (selectedIndex == 0) currentState = PVE_MODE;
         else if (selectedIndex == 1) currentState = PVP_MODE;
@@ -60,16 +48,13 @@ void Game::Update()
       gltColor(red, green, blue, 1.0f);
       gltDrawText2D(title, (Window::GetWindowWidth()/2.0f) - 220.0f, 100, 5);
 
-      if (selectedIndex == 0) gltColor(1.0f, 0.0f, 0.0f, 1.0f); 
-      else gltColor(1.0f, 1.0f, 1.0f, 1.0f); 
+      selectedIndex == 0 ? gltColor(1.0f, 0.0f, 0.0f, 1.0f) : gltColor(1.0f, 1.0f, 1.0f, 1.0f); 
       gltDrawText2D(PvsAI, (Window::GetWindowWidth()/2.0f) - 80.0f, 250, 4);
 
-      if (selectedIndex == 1) gltColor(0.0f, 1.0f, 0.0f, 1.0f);
-      else gltColor(1.0f, 1.0f, 1.0f, 1.0f);
+      selectedIndex == 1 ? gltColor(0.0f, 1.0f, 0.0f, 1.0f) : gltColor(1.0f, 1.0f, 1.0f, 1.0f);
       gltDrawText2D(Local, (Window::GetWindowWidth()/2.0f) - 80.0f, 320, 4);
 
-      if (selectedIndex == 2) gltColor(0.0f, 1.0f, 1.0f, 1.0f);
-      else gltColor(1.0f, 1.0f, 1.0f, 1.0f);
+      selectedIndex == 2 ? gltColor(0.0f, 1.0f, 1.0f, 1.0f) : gltColor(1.0f, 1.0f, 1.0f, 1.0f);
       gltDrawText2D(Multiplayer, (Window::GetWindowWidth()/2.0f) - 190.0f, 390, 4);
 
       gltEndDraw();
@@ -137,11 +122,8 @@ void Game::Update()
       }
       glDisable(GL_BLEND);
 
-      if (Input::KeyPressed(GAB_KEY_R) && isEnd) {
-        ResetGame();
-      } else if (Input::KeyPressed(GAB_KEY_RIGHT_CONTROL) || Input::KeyPressed(GAB_KEY_LEFT_CONTROL)) {
-        ReturnToMenu();
-      }
+      if (Input::KeyPressed(GAB_KEY_R) && isEnd) ResetGame();
+      else if (Input::KeyPressed(GAB_KEY_RIGHT_CONTROL) || Input::KeyPressed(GAB_KEY_LEFT_CONTROL)) ReturnToMenu();
       // PVP PVP PVP //
     break;
 
@@ -204,11 +186,8 @@ void Game::Update()
       }
       glDisable(GL_BLEND);
 
-      if (Input::KeyPressed(GAB_KEY_R) && isEnd) {
-        ResetGame();
-      } else if (Input::KeyPressed(GAB_KEY_RIGHT_CONTROL) || Input::KeyPressed(GAB_KEY_LEFT_CONTROL)) {
-        ReturnToMenu();
-      }
+      if (Input::KeyPressed(GAB_KEY_R) && isEnd) ResetGame();
+      else if (Input::KeyPressed(GAB_KEY_RIGHT_CONTROL) || Input::KeyPressed(GAB_KEY_LEFT_CONTROL)) ReturnToMenu();
       // PVE PVE PVE //
     break;
 
@@ -330,7 +309,7 @@ void Game::Update()
                 isEnd = true;
                 gltDrawText2D(ClientWins, (Window::GetWindowWidth()/2.0f) - 200.0f, 50, 5);
             }
-            if (Pwins != 'P' && Ewins != 'E' && score == 9 && !isAnimating) {
+            if (Pwins != 'P' && Ewins != 'E' && score == 16 && !isAnimating) {
                 isEnd = true;
                 gltDrawText2D(Draw, (Window::GetWindowWidth()/2.0f) - 100.0f, 50, 5);
             }
@@ -410,11 +389,11 @@ void Game::HandlePlayerMoving() {
     if (Input::KeyPressed(GAB_KEY_UP) || Input::KeyPressed(GAB_KEY_W)) {
         if (selectPos.y + changeY <= 2.1f) selectPos.y += changeY;
     } else if (Input::KeyPressed(GAB_KEY_DOWN) || Input::KeyPressed(GAB_KEY_S)) {
-        if (selectPos.y - changeY >= -2.1f) selectPos.y -= changeY;
+        if (selectPos.y - changeY >= -4.2f) selectPos.y -= changeY;
     } else if (Input::KeyPressed(GAB_KEY_LEFT) || Input::KeyPressed(GAB_KEY_A)) {
         if (selectPos.x - changeX >= -2.1f) selectPos.x -= changeX;
     } else if (Input::KeyPressed(GAB_KEY_RIGHT) || Input::KeyPressed(GAB_KEY_D)) {
-        if (selectPos.x + changeX <= 2.1f) selectPos.x += changeX;
+        if (selectPos.x + changeX <= 4.2f) selectPos.x += changeX;
     }
 }
 
@@ -507,11 +486,8 @@ void Game::handleAnimation() {
         return;
     }
 
-    if (!circles.empty() && std::get<0>(check.back()) == 'P') {
-        circles.back().GetPosition().z = animationZ;
-    } else if (!crosses.empty() && std::get<0>(check.back()) == 'E') {
-        crosses.back().GetPosition().z = animationZ;
-    }
+    if (!circles.empty() && std::get<0>(check.back()) == 'P') circles.back().GetPosition().z = animationZ;
+    else if (!crosses.empty() && std::get<0>(check.back()) == 'E') crosses.back().GetPosition().z = animationZ;
 }
 // PVE MODE //
 void Game::PVEhandlePlayersInput() {
@@ -534,26 +510,22 @@ void Game::handleAiInput() {
       float bestY = 0.0f;
       int bestScore = std::numeric_limits<int>::min();
 
-      // Generate all possible moves for the AI player
       std::vector<std::tuple<float, float, float>> possibleMoves;
       for (const auto& coord : mapCoord) {
-          float newX = std::get<0>(coord);
-          float newY = std::get<1>(coord);
-          if (!PositionTaken(newX, newY)) {
-              possibleMoves.emplace_back(newX, newY, 0.0f);
-          }
+          float newX = std::get<0>(coord), newY = std::get<1>(coord);
+          if (!PositionTaken(newX, newY)) possibleMoves.emplace_back(newX, newY, 0.0f);
       }
 
       for (const auto& move : possibleMoves) {
-          float newX = std::get<0>(move);
-          float newY = std::get<1>(move);
+          float newX = std::get<0>(move), newY = std::get<1>(move);
 
           updateBoard(board, 'E', newX, newY);
+
 #ifdef DEBUG
           std::cout << "Evaluating move: (" << newX << ", " << newY << ")\n";
 #endif 
+          int score = minimax(board, 8);
 
-          int score = minimax(board, 9, false);
 #ifdef DEBUG
           std::cout << "Score for move (" << newX << ", " << newY << "): " << score << "\n";
 #endif 
@@ -580,23 +552,29 @@ void Game::handleAiInput() {
   }
 }
 
-int Game::minimax(std::array<std::array<char, BOARD_SIZE>, BOARD_SIZE>& board, int depth, bool maximizingPlayer) {
+int Game::minimax(std::array<std::array<char, BOARD_SIZE>, BOARD_SIZE>& board, int depth, bool maximizingPlayer,int alpha, int beta) {
   int score = evaluate(board);
   if (score == 10 || score == -10) return score;
   if (depth == 0 || gameIsOver(board)) return 0;
 
   if (maximizingPlayer) {
-      int maxScore = std::numeric_limits<int>::min();
+      int maxEval = std::numeric_limits<int>::min();
       for (auto& move : generateMoves(board, 'E')) {
-          maxScore = std::max(maxScore, minimax(move, depth - 1, false) - depth);
+          int eval = minimax(move, depth - 1, false, alpha, beta);
+          maxEval = std::max(maxEval, eval);
+          alpha = std::max(alpha, eval);
+          if (beta <= alpha) break;  // Cutoff
       }
-      return maxScore;
+      return maxEval;
   } else {
-      int minScore = std::numeric_limits<int>::max();
+      int minEval = std::numeric_limits<int>::max();
       for (auto& move : generateMoves(board, 'P')) {
-          minScore = std::min(minScore, minimax(move, depth - 1, true) + depth);
+          int eval = minimax(move, depth - 1, true, alpha, beta);
+          minEval = std::min(minEval, eval);
+          beta = std::min(beta, eval);
+          if (beta <= alpha) break;  // Cutoff
       }
-      return minScore;
+      return minEval;
   }
 }
 
@@ -615,28 +593,27 @@ std::vector<std::array<std::array<char, BOARD_SIZE>, BOARD_SIZE>> Game::generate
 }
 
 int Game::evaluate(std::array<std::array<char, BOARD_SIZE>, BOARD_SIZE>& board) {
-  // Check rows and columns for a win
-  for (int i = 0; i < BOARD_SIZE; ++i) {
-      if (board[i][0] == board[i][1] && board[i][1] == board[i][2]) {
-          if (board[i][0] == 'E') return 10;
-          else if (board[i][0] == 'P') return -10;
-      }
-      if (board[0][i] == board[1][i] && board[1][i] == board[2][i]) {
-          if (board[0][i] == 'E') return 10;
-          else if (board[0][i] == 'P') return -10;
-      }
-  }
-  // Check diagonals for a win
-  if (board[0][0] == board[1][1] && board[1][1] == board[2][2]) {
-      if (board[0][0] == 'E') return 10;
-      else if (board[0][0] == 'P') return -10;
-  }
-  if (board[0][2] == board[1][1] && board[1][1] == board[2][0]) {
-      if (board[0][2] == 'E') return 10;
-      else if (board[0][2] == 'P') return -10;
-  }
-  // If no winner, return 0
-  return 0;
+    // Check rows and columns
+    for (int i = 0; i < BOARD_SIZE; ++i) {
+        if (board[i][0] != ' ' && board[i][0] == board[i][1] && board[i][1] == board[i][2] && board[i][2] == board[i][3]) {
+            return (board[i][0] == 'E') ? 10 : -10;
+        }
+        if (board[0][i] != ' ' && board[0][i] == board[1][i] && board[1][i] == board[2][i] && board[2][i] == board[3][i]) {
+            return (board[0][i] == 'E') ? 10 : -10;
+        }
+    }
+
+    // Check main diagonal
+    if (board[0][0] != ' ' && board[0][0] == board[1][1] && board[1][1] == board[2][2] && board[2][2] == board[3][3]) {
+        return (board[0][0] == 'E') ? 10 : -10;
+    }
+
+    // Check anti-diagonal
+    if (board[0][3] != ' ' && board[0][3] == board[1][2] && board[1][2] == board[2][1] && board[2][1] == board[3][0]) {
+        return (board[0][3] == 'E') ? 10 : -10;
+    }
+
+    return 0;
 }
 
 bool Game::gameIsOver(std::array<std::array<char, BOARD_SIZE>, BOARD_SIZE>& board) {
@@ -847,9 +824,7 @@ std::array<std::array<char, BOARD_SIZE>, BOARD_SIZE> Game::createEmptyBoard() {
 }
 
 void Game::ClearBoard(){
-  for(auto& i : board){
-      i.fill(' ');
-  }
+  for(auto& i : board) i.fill(' ');
 }
 
 char Game::checkifPwins(const std::array<std::array<char, BOARD_SIZE>, BOARD_SIZE>& board) {
@@ -908,7 +883,7 @@ char Game::checkifEwins(const std::array<std::array<char, BOARD_SIZE>, BOARD_SIZ
       for (char cell : row) {
           if (cell == 'E') {
               count++;
-              if (count == 3) return 'E'; 
+              if (count == 4) return 'E'; 
           } else {
               count = 0; 
           }
@@ -921,7 +896,7 @@ char Game::checkifEwins(const std::array<std::array<char, BOARD_SIZE>, BOARD_SIZ
       for (size_t row = 0; row < BOARD_SIZE; row++) {
           if (board[row][col] == 'E') {
               count++;
-              if (count == 3) return 'E'; 
+              if (count == 4) return 'E'; 
           } else {
               count = 0; 
           }
