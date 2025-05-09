@@ -66,18 +66,19 @@ void Game::Update()
     case PVP_MODE:
       // PVP PVP PVP //
       glEnable(GL_DEPTH_TEST);
-        manager.RenderLights();
-        time = glfwGetTime(); 
-        x = orbitRadius * cos(orbitSpeed * time);
-        y = orbitRadius * sin(orbitSpeed * time);
-        lightPosition = glm::vec3(x, y, 2.0f);
-        red = (sin(time * 0.5f) + 1.0f) * 0.5f;  
-        green = (sin(time * 0.7f) + 1.0f) * 0.5f;
-        blue = (sin(time * 1.0f) + 1.0f) * 0.5f;
-        gradientColor = glm::vec4(red, green, blue, 1.0f);
-        manager.EditLight(0,gradientColor,lightPosition);
-        envMap.Render();
-        boardModel->Render(glm::vec3(0.0f));
+
+      time = glfwGetTime(); 
+      x = orbitRadius * cos(orbitSpeed * time);
+      y = orbitRadius * sin(orbitSpeed * time);
+      lightPosition = glm::vec3(x, y, 2.0f);
+      red = (sin(time * 0.5f) + 1.0f) * 0.5f;  
+      green = (sin(time * 0.7f) + 1.0f) * 0.5f;
+      blue = (sin(time * 1.0f) + 1.0f) * 0.5f;
+      gradientColor = glm::vec4(red, green, blue, 1.0f);
+      manager.EditLight(0,gradientColor,lightPosition);
+      manager.RenderLights();
+      envMap.Render();
+      boardModel->Render(glm::vec3(0.0f));
 
       if (!isEnd) {
         selectModel->Render(selectPos);
@@ -91,7 +92,7 @@ void Game::Update()
 
       glEnable(GL_BLEND);
       glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-      Pwins = checkifPwins(board);
+      Pwins = checkWinner(board,'P');
       if (Pwins == 'P' && !isAnimating) {
         isEnd = true;
         gltBeginDraw();
@@ -101,7 +102,7 @@ void Game::Update()
         for (auto& cross : crosses) cross.SetExplosion(true);
       }
 
-      Ewins = checkifEwins(board);
+      Ewins = checkWinner(board,'E');
       if (Ewins == 'E' && !isAnimating) {
         isEnd = true;
         gltBeginDraw();
@@ -111,7 +112,7 @@ void Game::Update()
         for (auto& circle : circles) circle.SetExplosion(true);
       }
 
-      if (Pwins != 'P' && Ewins != 'E' && score == 9 && !isAnimating) {
+      if (Pwins != 'P' && Ewins != 'E' && score == 16 && !isAnimating) {
         isEnd = true;
         gltBeginDraw();
         gltColor(1.0f, 1.0f, 1.0f, 1.0f);
@@ -130,18 +131,20 @@ void Game::Update()
     case PVE_MODE:
       // PVE PVE PVE //
       glEnable(GL_DEPTH_TEST);
-        manager.RenderLights();
-        time = glfwGetTime(); 
-        x = orbitRadius * cos(orbitSpeed * time);
-        y = orbitRadius * sin(orbitSpeed * time);
-        lightPosition = glm::vec3(x, y, 2.0f);
-        red = (sin(time * 0.5f) + 1.0f) * 0.5f;  // Oscillates between 0 and 1
-        green = (sin(time * 0.7f) + 1.0f) * 0.5f;
-        blue = (sin(time * 1.0f) + 1.0f) * 0.5f;
-        gradientColor = glm::vec4(red, green, blue, 1.0f);
-        manager.EditLight(0,gradientColor,lightPosition);
-        envMap.Render();
-        boardModel->Render(glm::vec3(0.0f));
+
+      manager.RenderLights();
+      time = glfwGetTime(); 
+      x = orbitRadius * cos(orbitSpeed * time);
+      y = orbitRadius * sin(orbitSpeed * time);
+      lightPosition = glm::vec3(x, y, 2.0f);
+      red = (sin(time * 0.5f) + 1.0f) * 0.5f;  // Oscillates between 0 and 1
+      green = (sin(time * 0.7f) + 1.0f) * 0.5f;
+      blue = (sin(time * 1.0f) + 1.0f) * 0.5f;
+      gradientColor = glm::vec4(red, green, blue, 1.0f);
+      manager.EditLight(0,gradientColor,lightPosition);
+      envMap.Render();
+      boardModel->Render(glm::vec3(0.0f));
+
       if (!isEnd) {
         selectModel->Render(selectPos);
         PVEhandlePlayersInput();
@@ -155,7 +158,7 @@ void Game::Update()
       glEnable(GL_BLEND);
       glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-      Pwins = checkifPwins(board);
+      Pwins = checkWinner(board,'P');
       if (Pwins == 'P' && !isAnimating) {
         isEnd = true;
         gltBeginDraw();
@@ -165,7 +168,7 @@ void Game::Update()
         for (auto& cross : crosses) cross.SetExplosion(true);
       }
 
-      Ewins = checkifEwins(board);
+      Ewins = checkWinner(board,'E');
       if (Ewins == 'E' && !isAnimating) {
         isEnd = true;
         gltBeginDraw();
@@ -175,7 +178,7 @@ void Game::Update()
         for (auto& circle : circles) circle.SetExplosion(true);
       }
 
-      if (Pwins != 'P' && Ewins != 'E' && score == 9 && !isAnimating) {
+      if (Pwins != 'P' && Ewins != 'E' && score == 16 && !isAnimating) {
         isEnd = true;
         gltBeginDraw();
         gltColor(1.0f, 1.0f, 1.0f, 1.0f);
@@ -261,8 +264,6 @@ void Game::Update()
 
             glEnable(GL_DEPTH_TEST); 
 
-            manager.RenderLights();
-
             time = glfwGetTime();
             x = orbitRadius * cos(orbitSpeed * time);
             y = orbitRadius * sin(orbitSpeed * time);
@@ -272,6 +273,7 @@ void Game::Update()
             blue = (sin(time * 1.0f) + 1.0f) * 0.5f;
             gradientColor = glm::vec4(red, green, blue, 1.0f);
             manager.EditLight(0, gradientColor, lightPosition);
+            manager.RenderLights();
             envMap.Render();
             boardModel->Render(glm::vec3(0.0f));
 
@@ -299,12 +301,12 @@ void Game::Update()
 
             score = countPlayers(board);
 
-            Pwins = checkifPwins(board);
+            Pwins = checkWinner(board,'P');
             if (Pwins == 'P' && !isAnimating) {
                 isEnd = true;
                 gltDrawText2D(HostWins, (Window::GetWindowWidth()/2.0f) - 200.0f, 50, 5);
             }
-            Ewins = checkifEwins(board);
+            Ewins = checkWinner(board,'E');
             if (Ewins == 'E' && !isAnimating) {
                 isEnd = true;
                 gltDrawText2D(ClientWins, (Window::GetWindowWidth()/2.0f) - 200.0f, 50, 5);
@@ -404,11 +406,8 @@ void Game::PVPhandlePlayersInput() {
         return; // Block input while animation is running
     }
 
-    if (isPlayerTurn) {
-        handlePlayerInput();
-    } else {
-        handleEnemyInput();
-    }
+    if (isPlayerTurn) handlePlayerInput();
+    else handleEnemyInput();
 }
 
 void Game::MULTIhandlePlayersInput() {
@@ -417,10 +416,7 @@ void Game::MULTIhandlePlayersInput() {
         return; // Block input while animation is running
     }
 
-
-    if (MP::_Host && MP::HostTurn) {
-        handlePlayerInput();
-    }
+    if (MP::_Host && MP::HostTurn) handlePlayerInput();
     else if (MP::_Client && !MP::HostTurn) {
         // Debounce handling for client input
         if (MP::inputDebounce) {
@@ -474,10 +470,8 @@ void Game::handleAnimation() {
     auto now = std::chrono::steady_clock::now();
     float elapsedTime = std::chrono::duration<float>(now - animationStart).count();
 
-    // Calculate the current Z position based on elapsed time and animation speed
     animationZ -= animationSpeed * elapsedTime;
 
-    // Ensure it doesn't overshoot Z = 0.0f
     if (animationZ <= 0.0f) {
         animationZ = 0.0f;
         isAnimating = false; // Animation is complete
@@ -497,17 +491,13 @@ void Game::PVEhandlePlayersInput() {
       return; 
   }
 
-  if (isPlayerTurn) {
-      handlePlayerInput();
-  } else {
-      handleAiInput();
-  }
+  if (isPlayerTurn) handlePlayerInput();
+  else handleAiInput();
 }
 
 void Game::handleAiInput() {
   if (!isPlayerTurn) {
-      float bestX = 0.0f;
-      float bestY = 0.0f;
+      float bestX = 0.0f, bestY = 0.0f;
       int bestScore = std::numeric_limits<int>::min();
 
       std::vector<std::tuple<float, float, float>> possibleMoves;
@@ -521,14 +511,7 @@ void Game::handleAiInput() {
 
           updateBoard(board, 'E', newX, newY);
 
-#ifdef DEBUG
-          std::cout << "Evaluating move: (" << newX << ", " << newY << ")\n";
-#endif 
           int score = minimax(board, 8);
-
-#ifdef DEBUG
-          std::cout << "Score for move (" << newX << ", " << newY << "): " << score << "\n";
-#endif 
 
           updateBoard(board, ' ', newX, newY);
 
@@ -539,10 +522,6 @@ void Game::handleAiInput() {
           }
       }
 
-#ifdef DEBUG
-      std::cout << "Best move chosen: (" << bestX << ", " << bestY << ") with score " << bestScore << "\n";
-#endif
-      // Make the best move
       check.emplace_back('E', bestX, bestY);
       updateBoard(board, 'E', bestX, bestY);
       crosses.emplace_back(crossModel, glm::vec3(bestX, bestY, animationZ));
@@ -559,7 +538,7 @@ int Game::minimax(std::array<std::array<char, BOARD_SIZE>, BOARD_SIZE>& board, i
 
   if (maximizingPlayer) {
       int maxEval = std::numeric_limits<int>::min();
-      for (auto& move : generateMoves(board, 'E')) {
+      for (auto& move : generateMoves(board, 'E',true)) {
           int eval = minimax(move, depth - 1, false, alpha, beta);
           maxEval = std::max(maxEval, eval);
           alpha = std::max(alpha, eval);
@@ -568,7 +547,7 @@ int Game::minimax(std::array<std::array<char, BOARD_SIZE>, BOARD_SIZE>& board, i
       return maxEval;
   } else {
       int minEval = std::numeric_limits<int>::max();
-      for (auto& move : generateMoves(board, 'P')) {
+      for (auto& move : generateMoves(board, 'P',false)) {
           int eval = minimax(move, depth - 1, true, alpha, beta);
           minEval = std::min(minEval, eval);
           beta = std::min(beta, eval);
@@ -578,40 +557,42 @@ int Game::minimax(std::array<std::array<char, BOARD_SIZE>, BOARD_SIZE>& board, i
   }
 }
 
-std::vector<std::array<std::array<char, BOARD_SIZE>, BOARD_SIZE>> Game::generateMoves(std::array<std::array<char, BOARD_SIZE>, BOARD_SIZE>& board, char player) {
-  std::vector<std::array<std::array<char, BOARD_SIZE>, BOARD_SIZE>> moves;
-  for (int i = 0; i < BOARD_SIZE; ++i) {
-      for (int j = 0; j < BOARD_SIZE; ++j) {
-          if (board[i][j] == ' ') {
-              std::array<std::array<char, BOARD_SIZE>, BOARD_SIZE> newBoard = board;
-              newBoard[i][j] = player;
-              moves.push_back(newBoard);
-          }
-      }
-  }
-  return moves;
+std::vector<std::array<std::array<char, BOARD_SIZE>, BOARD_SIZE>> Game::generateMoves(std::array<std::array<char, BOARD_SIZE>, BOARD_SIZE>& board, char player,bool maximizingPlayer) {
+    std::vector<std::pair<int, std::array<std::array<char, BOARD_SIZE>, BOARD_SIZE>>> scoredMoves;
+
+    for (int i = 0; i < BOARD_SIZE; ++i) {
+        for (int j = 0; j < BOARD_SIZE; ++j) {
+            if (board[i][j] == ' ') {
+                auto newBoard = board;
+                newBoard[i][j] = player;
+                int score = evaluate(newBoard);  // or use a lighter heuristic
+                scoredMoves.emplace_back(score, newBoard);
+            }
+        }
+    }
+
+    std::sort(scoredMoves.begin(), scoredMoves.end(), [&](const auto& a, const auto& b) {
+        return maximizingPlayer ? (a.first > b.first) : (a.first < b.first);
+    });
+
+    std::vector<std::array<std::array<char, BOARD_SIZE>, BOARD_SIZE>> moves;
+    for (const auto& pair : scoredMoves) {
+        moves.push_back(pair.second);
+    }
+    return moves;
 }
 
 int Game::evaluate(std::array<std::array<char, BOARD_SIZE>, BOARD_SIZE>& board) {
     // Check rows and columns
     for (int i = 0; i < BOARD_SIZE; ++i) {
-        if (board[i][0] != ' ' && board[i][0] == board[i][1] && board[i][1] == board[i][2] && board[i][2] == board[i][3]) {
-            return (board[i][0] == 'E') ? 10 : -10;
-        }
-        if (board[0][i] != ' ' && board[0][i] == board[1][i] && board[1][i] == board[2][i] && board[2][i] == board[3][i]) {
-            return (board[0][i] == 'E') ? 10 : -10;
-        }
+        if (board[i][0] != ' ' && board[i][0] == board[i][1] && board[i][1] == board[i][2] && board[i][2] == board[i][3]) return (board[i][0] == 'E') ? 10 : -10;
+        if (board[0][i] != ' ' && board[0][i] == board[1][i] && board[1][i] == board[2][i] && board[2][i] == board[3][i]) return (board[0][i] == 'E') ? 10 : -10;
     }
 
     // Check main diagonal
-    if (board[0][0] != ' ' && board[0][0] == board[1][1] && board[1][1] == board[2][2] && board[2][2] == board[3][3]) {
-        return (board[0][0] == 'E') ? 10 : -10;
-    }
-
+    if (board[0][0] != ' ' && board[0][0] == board[1][1] && board[1][1] == board[2][2] && board[2][2] == board[3][3]) return (board[0][0] == 'E') ? 10 : -10;
     // Check anti-diagonal
-    if (board[0][3] != ' ' && board[0][3] == board[1][2] && board[1][2] == board[2][1] && board[2][1] == board[3][0]) {
-        return (board[0][3] == 'E') ? 10 : -10;
-    }
+    if (board[0][3] != ' ' && board[0][3] == board[1][2] && board[1][2] == board[2][1] && board[2][1] == board[3][0]) return (board[0][3] == 'E') ? 10 : -10;
 
     return 0;
 }
@@ -823,106 +804,48 @@ std::array<std::array<char, BOARD_SIZE>, BOARD_SIZE> Game::createEmptyBoard() {
   return emptyBoard;
 }
 
-void Game::ClearBoard(){
-  for(auto& i : board) i.fill(' ');
-}
 
-char Game::checkifPwins(const std::array<std::array<char, BOARD_SIZE>, BOARD_SIZE>& board) {
-  // Check horizontally
-  for (const auto& row : board) {
-      int count = 0;
-      for (char cell : row) {
-          if (cell == 'P') {
-              count++;
-              if (count == 3) return 'P'; 
-          } else {
-              count = 0; 
-          }
-      }
-  }
 
-  // Check vertically
-  for (size_t col = 0; col < BOARD_SIZE; col++) {
-      int count = 0;
-      for (size_t row = 0; row < BOARD_SIZE; row++) {
-          if (board[row][col] == 'P') {
-              count++;
-              if (count == 3) return 'P'; 
-          } else {
-              count = 0; 
-          }
-      }
-  }
-
-  // Check diagonally (top-left to bottom-right)
-  for (size_t i = 0; i <= BOARD_SIZE - 3; i++) {
-      for (size_t j = 0; j <= BOARD_SIZE - 3; j++) {
-          if (board[i][j] == 'P' && board[i+1][j+1] == 'P' && board[i+2][j+2] == 'P') {
-              return 'P'; 
-          }
-      }
-  }
-
-  // Check diagonally (top-right to bottom-left)
-  for (size_t i = 0; i <= BOARD_SIZE - 3; i++) {
-      for (size_t j = BOARD_SIZE - 1; j >= 2; j--) {
-          if (board[i][j] == 'P' && board[i+1][j-1] == 'P' && board[i+2][j-2] == 'P') {
-              return 'P'; 
-          }
-      }
-  }
-
-  // If no winner found
-  return '\0';
-}
-
-char Game::checkifEwins(const std::array<std::array<char, BOARD_SIZE>, BOARD_SIZE>& board) {
-  // Check horizontally
-  for (const auto& row : board) {
-      int count = 0;
-      for (char cell : row) {
-          if (cell == 'E') {
-              count++;
-              if (count == 4) return 'E'; 
-          } else {
-              count = 0; 
-          }
-      }
-  }
-
-  // Check vertically
-  for (size_t col = 0; col < BOARD_SIZE; col++) {
-      int count = 0;
-      for (size_t row = 0; row < BOARD_SIZE; row++) {
-          if (board[row][col] == 'E') {
-              count++;
-              if (count == 4) return 'E'; 
-          } else {
-              count = 0; 
-          }
-      }
-  }
-
-  // Check diagonally (top-left to bottom-right)
-  for (size_t i = 0; i <= BOARD_SIZE - 3; i++) {
-      for (size_t j = 0; j <= BOARD_SIZE - 3; j++) {
-          if (board[i][j] == 'E' && board[i+1][j+1] == 'E' && board[i+2][j+2] == 'E') {
-              return 'E'; 
-          }
-      }
-  }
-
-  // Check diagonally (top-right to bottom-left)
-  for (size_t i = 0; i <= BOARD_SIZE - 3; i++) {
-      for (size_t j = BOARD_SIZE - 1; j >= 2; j--) {
-          if (board[i][j] == 'E' && board[i+1][j-1] == 'E' && board[i+2][j-2] == 'E') {
-              return 'E'; 
-          }
-      }
-  }
-
-  // If no winner found
-  return '\0';
+char Game::checkWinner(const std::array<std::array<char, BOARD_SIZE>, BOARD_SIZE>& board, char player) {
+    // Horizontal (-)
+    for (int i = 0; i < BOARD_SIZE; ++i) {
+        int count = 0;
+        for (int j = 0; j < BOARD_SIZE; ++j) {
+            count = (board[i][j] == player) ? count + 1 : 0;
+            if (count == 4) return player;
+        }
+    }
+    // Vertical (I)
+    for (int j = 0; j < BOARD_SIZE; ++j) {
+        int count = 0;
+        for (int i = 0; i < BOARD_SIZE; ++i) {
+            count = (board[i][j] == player) ? count + 1 : 0;
+            if (count == 4) return player;
+        }
+    }
+    // Diagonal (\)
+    for (int i = 0; i <= BOARD_SIZE - 4; ++i) {
+        for (int j = 0; j <= BOARD_SIZE - 4; ++j) {
+            if (board[i][j] == player &&
+                board[i+1][j+1] == player &&
+                board[i+2][j+2] == player &&
+                board[i+3][j+3] == player) {
+                return player;
+            }
+        }
+    }
+    // Diagonal (/)
+    for (int i = 0; i <= BOARD_SIZE - 4; ++i) {
+        for (int j = 3; j < BOARD_SIZE; ++j) {
+            if (board[i][j] == player &&
+                board[i+1][j-1] == player &&
+                board[i+2][j-2] == player &&
+                board[i+3][j-3] == player) {
+                return player;
+            }
+        }
+    }
+    return '\0';
 }
 // BOARD LOGIC //
 

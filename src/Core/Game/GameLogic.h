@@ -111,8 +111,8 @@ private:
     // PVE MODE //
     void PVEhandlePlayersInput();
     void handleAiInput();
-    int minimax(std::array<std::array<char, BOARD_SIZE>, BOARD_SIZE>& board, int depth, bool maximizingPlayer = false,int alpha = INT_MIN, int beta = INT_MAX);
-    std::vector<std::array<std::array<char, BOARD_SIZE>, BOARD_SIZE>> generateMoves(std::array<std::array<char, BOARD_SIZE>, BOARD_SIZE>& board, char player);
+    int minimax(std::array<std::array<char, BOARD_SIZE>, BOARD_SIZE>& board, int depth, bool maximizingPlayer = false,int alpha = std::numeric_limits<int>::min(), int beta = std::numeric_limits<int>::max());
+    std::vector<std::array<std::array<char, BOARD_SIZE>, BOARD_SIZE>> generateMoves(std::array<std::array<char, BOARD_SIZE>, BOARD_SIZE>& board, char player, bool maximizingPlayer);
     int evaluate(std::array<std::array<char, BOARD_SIZE>, BOARD_SIZE>& board);
     bool gameIsOver(std::array<std::array<char, BOARD_SIZE>, BOARD_SIZE>& board);
     // PVE MODE // 
@@ -133,8 +133,7 @@ private:
     void updateBoard(std::array<std::array<char, BOARD_SIZE>, BOARD_SIZE>& board, char player, float x, float y);
     unsigned int countPlayers(std::array<std::array<char, BOARD_SIZE>, BOARD_SIZE>& board);
     std::array<std::array<char, BOARD_SIZE>, BOARD_SIZE> createEmptyBoard();
-    void ClearBoard();
-    char checkifPwins(const std::array<std::array<char, BOARD_SIZE>, BOARD_SIZE>& board);
-    char checkifEwins(const std::array<std::array<char, BOARD_SIZE>, BOARD_SIZE>& board);
+    inline void ClearBoard() { for(auto& i : board) i.fill(' '); }
+    char checkWinner(const std::array<std::array<char, BOARD_SIZE>, BOARD_SIZE>& board, char player);
     // BOARD LOGIC //
 };
