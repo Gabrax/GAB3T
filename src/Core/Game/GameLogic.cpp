@@ -500,10 +500,10 @@ void Game::handleAiInput() {
       float bestX = 0.0f, bestY = 0.0f;
       int bestScore = std::numeric_limits<int>::min();
 
-      std::vector<std::tuple<float, float, float>> possibleMoves;
+      possibleMoves.clear();
       for (const auto& coord : mapCoord) {
           float newX = std::get<0>(coord), newY = std::get<1>(coord);
-          if (!PositionTaken(newX, newY)) possibleMoves.emplace_back(newX, newY, 0.0f);
+          if (!PositionTaken(newX, newY)) possibleMoves.emplace_back(newX, newY);
       }
 
       for (const auto& move : possibleMoves) {
@@ -558,8 +558,8 @@ int Game::minimax(std::array<std::array<char, BOARD_SIZE>, BOARD_SIZE>& board, i
 }
 
 std::vector<std::array<std::array<char, BOARD_SIZE>, BOARD_SIZE>> Game::generateMoves(std::array<std::array<char, BOARD_SIZE>, BOARD_SIZE>& board, char player,bool maximizingPlayer) {
-    std::vector<std::pair<int, std::array<std::array<char, BOARD_SIZE>, BOARD_SIZE>>> scoredMoves;
 
+    scoredMoves.clear();
     for (int i = 0; i < BOARD_SIZE; ++i) {
         for (int j = 0; j < BOARD_SIZE; ++j) {
             if (board[i][j] == ' ') {
@@ -575,7 +575,7 @@ std::vector<std::array<std::array<char, BOARD_SIZE>, BOARD_SIZE>> Game::generate
         return maximizingPlayer ? (a.first > b.first) : (a.first < b.first);
     });
 
-    std::vector<std::array<std::array<char, BOARD_SIZE>, BOARD_SIZE>> moves;
+    moves.clear();
     for (const auto& pair : scoredMoves) {
         moves.push_back(pair.second);
     }
@@ -610,8 +610,6 @@ bool Game::gameIsOver(std::array<std::array<char, BOARD_SIZE>, BOARD_SIZE>& boar
   }
   return true;
 }
-
-
 // PVE MODE // 
 
 // BOARD LOGIC //
@@ -623,14 +621,12 @@ void Game::ResetGame(){
     check.clear();
     crosses.clear();
     circles.clear();
-    selectPos = glm::vec3(0.0f);
+    selectPos = glm::vec3(-1.1f,-1.1f,0.0f);
 }
 
 bool Game::PositionTaken(float x, float y) {
   for (const auto& i : check) {
-      float val1 = std::get<1>(i);
-      float val2 = std::get<2>(i);
-      //std::cout << "Comparing (" << x << ", " << y << ") with (" << val1 << ", " << val2 << ")" << std::endl;
+      float val1 = std::get<1>(i), val2 = std::get<2>(i);
       if (std::abs(val1 - x) < 0.01f && std::abs(val2 - y) < 0.01f) return true;
   }
   return false;
@@ -801,8 +797,6 @@ std::array<std::array<char, BOARD_SIZE>, BOARD_SIZE> Game::createEmptyBoard() {
   }
   return emptyBoard;
 }
-
-
 
 char Game::checkWinner(const std::array<std::array<char, BOARD_SIZE>, BOARD_SIZE>& board, char player) {
     // Horizontal (-)

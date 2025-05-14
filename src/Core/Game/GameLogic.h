@@ -1,5 +1,6 @@
 #pragma once
 
+#include <algorithm>
 #include <iostream>
 #include <memory>
 #include <vector>
@@ -29,8 +30,6 @@ constexpr int BOARD_SIZE = 4;
 static bool isEnd = false, PvPmode = false, PvEmode = false;
 static char Pwins, Ewins;
 static int score;
-
-static std::array<std::array<char, BOARD_SIZE>, BOARD_SIZE> board;
 
 enum GameState {
     MENU,
@@ -77,26 +76,32 @@ private:
     INIT_TEXT(HostWins);
     INIT_TEXT(ClientWins);
 
+    std::array<std::array<char, BOARD_SIZE>, BOARD_SIZE> board;
     std::vector<std::tuple<char,float,float>> check;
     std::array<std::pair<float, float>, BOARD_SIZE * BOARD_SIZE> mapCoord = {
-        std::make_pair(-3.3f, 3.3f),  std::make_pair(-1.1f, 3.3f),  std::make_pair(1.3f, 3.3f),  std::make_pair(3.5f, 3.3f),
-        std::make_pair(-3.3f, 1.1f),  std::make_pair(-1.1f, 1.1f),  std::make_pair(1.3f, 1.1f),  std::make_pair(3.5f, 1.1f),
-        std::make_pair(-3.3f, -1.1f), std::make_pair(-1.1f, -1.1f), std::make_pair(1.3f, -1.1f), std::make_pair(3.5f, -1.1f),
-        std::make_pair(-3.3f, -3.3f), std::make_pair(-1.1f, -3.3f), std::make_pair(1.3f, -3.3f), std::make_pair(3.5f, -3.3f),
+        std::make_pair(-3.3f, 3.3f),  std::make_pair(-1.1f, 3.3f),  std::make_pair(1.1f, 3.3f),  std::make_pair(3.3f, 3.3f),
+        std::make_pair(-3.3f, 1.1f),  std::make_pair(-1.1f, 1.1f),  std::make_pair(1.1f, 1.1f),  std::make_pair(3.3f, 1.1f),
+        std::make_pair(-3.3f, -1.1f), std::make_pair(-1.1f, -1.1f), std::make_pair(1.1f, -1.1f), std::make_pair(3.3f, -1.1f),
+        std::make_pair(-3.3f, -3.3f), std::make_pair(-1.1f, -3.3f), std::make_pair(1.1f, -3.3f), std::make_pair(3.3f, -3.3f),
     };
+    std::vector<std::tuple<float, float>> possibleMoves;
+    std::vector<std::pair<int, std::array<std::array<char, BOARD_SIZE>, BOARD_SIZE>>> scoredMoves;
+    std::vector<std::array<std::array<char, BOARD_SIZE>, BOARD_SIZE>> moves;
 
+    std::unique_ptr<StaticModel> boardModel = std::make_unique<StaticModel>("res/models/4x4map.obj");
+    std::unique_ptr<StaticModel> selectModel = std::make_unique<StaticModel>("res/models/Select.obj");
     std::shared_ptr<StaticModel> circleModel = std::make_shared<StaticModel>("res/models/Circle.obj");
-    std::vector<Circle> circles;
     std::shared_ptr<StaticModel> crossModel = std::make_shared<StaticModel>("res/models/Cross.obj");
+
+    std::vector<Circle> circles;
     std::vector<Cross> crosses;
-    std::shared_ptr<StaticModel> boardModel = std::make_shared<StaticModel>("res/models/4x4map.obj");
-    std::shared_ptr<StaticModel> selectModel = std::make_shared<StaticModel>("res/models/Select.obj");
+
     LightManager manager;
     EnvironmentMap envMap;
     bool isPlayerTurn;
     bool isAnimating = false;
-    float animationZ = 2.5f;  // Starting Z position for animation
-    const float animationSpeed = 0.05f;  // Speed of sliding animation
+    float animationZ = 2.5f;  
+    const float animationSpeed = 0.05f;  
     std::chrono::time_point<std::chrono::steady_clock> animationStart;
     // MENU INPUT //     
     void handleBorderInput();
