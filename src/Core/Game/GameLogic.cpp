@@ -384,18 +384,18 @@ void Game::ReturnToMenu(){
   crosses.clear();
   circles.clear();
   ClearBoard();
-  selectPos = glm::vec3(0.0f);
+  selectPos = glm::vec3(-1.1f,-1.1f,0.0f);;
 }
 // MENU INPUT //
 void Game::HandlePlayerMoving() {
     if (Input::KeyPressed(GAB_KEY_UP) || Input::KeyPressed(GAB_KEY_W)) {
-        if (selectPos.y + changeY <= 2.1f) selectPos.y += changeY;
+        if (selectPos.y + changeY <= 5.4f) selectPos.y += changeY;
     } else if (Input::KeyPressed(GAB_KEY_DOWN) || Input::KeyPressed(GAB_KEY_S)) {
-        if (selectPos.y - changeY >= -4.2f) selectPos.y -= changeY;
+        if (selectPos.y - changeY >= -5.4f) selectPos.y -= changeY;
     } else if (Input::KeyPressed(GAB_KEY_LEFT) || Input::KeyPressed(GAB_KEY_A)) {
-        if (selectPos.x - changeX >= -2.1f) selectPos.x -= changeX;
+        if (selectPos.x - changeX >= -3.4f) selectPos.x -= changeX;
     } else if (Input::KeyPressed(GAB_KEY_RIGHT) || Input::KeyPressed(GAB_KEY_D)) {
-        if (selectPos.x + changeX <= 4.2f) selectPos.x += changeX;
+        if (selectPos.x + changeX <= 5.4f) selectPos.x += changeX;
     }
 }
 
@@ -631,9 +631,7 @@ bool Game::PositionTaken(float x, float y) {
       float val1 = std::get<1>(i);
       float val2 = std::get<2>(i);
       //std::cout << "Comparing (" << x << ", " << y << ") with (" << val1 << ", " << val2 << ")" << std::endl;
-      if (std::abs(val1 - x) < 0.01f && std::abs(val2 - y) < 0.01f) {
-          return true;
-      }
+      if (std::abs(val1 - x) < 0.01f && std::abs(val2 - y) < 0.01f) return true;
   }
   return false;
 }

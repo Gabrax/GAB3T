@@ -23,8 +23,8 @@
 #include <enet/enet.h>
 
 
-constexpr float changeX = 2.1f;
-constexpr float changeY = 2.1f;
+constexpr float changeX = 2.2f;
+constexpr float changeY = 2.2f;
 constexpr int BOARD_SIZE = 4;
 static bool isEnd = false, PvPmode = false, PvEmode = false;
 static char Pwins, Ewins;
@@ -58,7 +58,7 @@ private:
     float time, x, y, red, green, blue; 
     glm::vec3 lightPosition = glm::vec3(0.0f);
     glm::vec4 gradientColor = glm::vec4(0.0f);
-    glm::vec3 selectPos = glm::vec3(0.0f);
+    glm::vec3 selectPos = glm::vec3(-1.1f,-1.1f,0.0f);
 
     INIT_TEXT(title);
     INIT_TEXT(Owins);
@@ -79,17 +79,17 @@ private:
 
     std::vector<std::tuple<char,float,float>> check;
     std::array<std::pair<float, float>, BOARD_SIZE * BOARD_SIZE> mapCoord = {
-        std::make_pair(-2.1f, 2.1f),  std::make_pair(0, 2.1f),  std::make_pair(2.1f, 2.1f),  std::make_pair(4.2f, 2.1f),
-        std::make_pair(-2.1f, 0),     std::make_pair(0, 0),     std::make_pair(2.1f, 0),     std::make_pair(4.2f, 0),
-        std::make_pair(-2.1f, -2.1f), std::make_pair(0, -2.1f), std::make_pair(2.1f, -2.1f), std::make_pair(4.2f, -2.1f),
-        std::make_pair(-2.1f, -4.2f), std::make_pair(0, -4.2f), std::make_pair(2.1f, -4.2f), std::make_pair(4.2f, -4.2f)
+        std::make_pair(-3.3f, 3.3f),  std::make_pair(-1.1f, 3.3f),  std::make_pair(1.3f, 3.3f),  std::make_pair(3.5f, 3.3f),
+        std::make_pair(-3.3f, 1.1f),  std::make_pair(-1.1f, 1.1f),  std::make_pair(1.3f, 1.1f),  std::make_pair(3.5f, 1.1f),
+        std::make_pair(-3.3f, -1.1f), std::make_pair(-1.1f, -1.1f), std::make_pair(1.3f, -1.1f), std::make_pair(3.5f, -1.1f),
+        std::make_pair(-3.3f, -3.3f), std::make_pair(-1.1f, -3.3f), std::make_pair(1.3f, -3.3f), std::make_pair(3.5f, -3.3f),
     };
 
     std::shared_ptr<StaticModel> circleModel = std::make_shared<StaticModel>("res/models/Circle.obj");
     std::vector<Circle> circles;
     std::shared_ptr<StaticModel> crossModel = std::make_shared<StaticModel>("res/models/Cross.obj");
     std::vector<Cross> crosses;
-    std::shared_ptr<StaticModel> boardModel = std::make_shared<StaticModel>("res/models/Map.obj");
+    std::shared_ptr<StaticModel> boardModel = std::make_shared<StaticModel>("res/models/4x4map.obj");
     std::shared_ptr<StaticModel> selectModel = std::make_shared<StaticModel>("res/models/Select.obj");
     LightManager manager;
     EnvironmentMap envMap;
