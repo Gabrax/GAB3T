@@ -34,17 +34,21 @@ for %%A in (%*) do (
 goto :detect_os
 
 :help
-echo Usage: build.bat [options]
-echo.
+echo Usage: ./build.sh [options]
+echo(
 echo Options:
-echo   -CMSVC          Use the MSVC compiler (Visual Studio 2022)
-echo   -CGCC           Use the GCC compiler
-echo   -CCLANG         Use the Clang compiler
-echo   -DRELEASE       Build in release mode
-echo.
+echo   -C           Compiler flag(no compiler specified = CMake detects which one)
+echo   -D           Build flag
+echo   --help       Show this help message and exit
+
+echo Compilers:
+echo   MSVC         Use the MSVC compiler
+echo   GCC          Use the GCC compiler
+echo   CLANG        Use the Clang compiler
+echo( 
 echo Examples:
-echo   build.bat -CGCC -DRELEASE
-echo   build.bat -DRELEASE -CMSVC
+echo   ./build.sh -CGCC -DRELEASE
+echo   ./build.sh -DRELEASE -CMSVC
 exit /b 0
 
 :detect_os

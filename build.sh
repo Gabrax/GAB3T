@@ -31,7 +31,7 @@ for arg in "$@"; do
             echo -e "${YELLOW}Usage:${RESET} ./build.sh [options]"
             echo -e ""
             echo -e "${YELLOW}Options:${RESET}"
-            echo -e "  -C | -c          Compiler flag"
+            echo -e "  -C | -c          Compiler flag(no compiler specified = CMake detects which one)"
             echo -e "  -D | -d          Build flag"
             echo -e "  --help, -h       Show this help message and exit"
 
