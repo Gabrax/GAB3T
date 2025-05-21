@@ -10,13 +10,46 @@ GREEN="\e[32m"
 YELLOW="\e[33m"
 RESET="\e[0m"
 
-# Set the compiler based on the argument
-COMPILER=$1
+COMPILER=""
 RELEASE_MODE=false
 
-if [[ "$2" == "release" ]]; then
-    RELEASE_MODE=true
-fi
+for arg in "$@"; do
+    case "$arg" in
+        -CMSVC|-Cmsvc|-cmsvc)
+            COMPILER="msvc"
+            ;;
+        -CGCC|-Cgcc|-cgcc)
+            COMPILER="gcc"
+            ;;
+        -CCLANG|-Cclang|-cclang)
+            COMPILER="clang"
+            ;;
+        -DRELEASE|-Drelease|-drelease)
+            RELEASE_MODE=true
+            ;;
+        --help|-h)
+            echo -e "${YELLOW}Usage:${RESET} ./build.sh [options]"
+            echo -e ""
+            echo -e "${YELLOW}Options:${RESET}"
+            echo -e "  -C | -c          Compiler flag"
+            echo -e "  -D | -d          Build flag"
+            echo -e "  --help, -h       Show this help message and exit"
+
+            echo -e "${YELLOW}Compilers:${RESET}"
+            echo -e "  MSVC | msvc      Use the MSVC compiler (Visual Studio 2022)"
+            echo -e "  GCC  | gcc       Use the GCC compiler"
+            echo -e "  CLANG | clang    Use the Clang compiler"
+            echo -e ""
+            echo -e "${YELLOW}Examples:${RESET}"
+            echo -e "  ./build.sh -CGCC -DRELEASE"
+            echo -e "  ./build.sh -Drelease -Cmsvc"
+            exit 0
+            ;;
+        *)
+            echo -e "${RED}[!] unknown argument: $arg${RESET}"
+            ;;
+    esac
+done
 
 if [[ "$OS" == "Linux" || "$OS" == "Darwin" ]]; then
     # Linux or macOS
@@ -48,13 +81,16 @@ cd "$BUILD_DIR" || { echo -e "${RED}[*] Failed to navigate to build directory${R
 
 # Check if project is already configured
 if [ -f "CMakeCache.txt" ]; then
-    echo -e "${GREEN}[*] Project is already configured${RESET}"
+    echo -e "${YELLOW}[*] Project is already configured${RESET}"
 else
-    echo -e "${YELLOW}[*] Configuring the project with CMake...${RESET}"
+    echo -e "${GREEN}[*] Configuring the project with CMake...${RESET}"
     
     CMAKE_ARGS=""
     if $RELEASE_MODE; then
         CMAKE_ARGS="-DRELEASE=ON"
+        echo -e "${YELLOW}[*] Building in RELEASE${RESET}"
+    else
+        echo -e "${YELLOW}[*] Building in DEBUG${RESET}"
     fi
 
     # If no compiler is specified, run cmake with the default system compiler

@@ -22,7 +22,8 @@ void Game::Update()
 {
   switch (currentState) {
 
-    case MENU:
+    case MENU: 
+    {
       // MENU //
       glEnable(GL_BLEND);
       glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -61,9 +62,11 @@ void Game::Update()
 
       glDisable(GL_BLEND);
 
-    break;
+      break;
+    }
 
     case PVP_MODE:
+    {
       // PVP PVP PVP //
       glEnable(GL_DEPTH_TEST);
 
@@ -126,9 +129,11 @@ void Game::Update()
       if (Input::KeyPressed(GAB_KEY_R) && isEnd) ResetGame();
       else if (Input::KeyPressed(GAB_KEY_RIGHT_CONTROL) || Input::KeyPressed(GAB_KEY_LEFT_CONTROL)) ReturnToMenu();
       // PVP PVP PVP //
-    break;
+      break;
+    }
 
     case PVE_MODE:
+    {
       // PVE PVE PVE //
       glEnable(GL_DEPTH_TEST);
 
@@ -192,12 +197,11 @@ void Game::Update()
       if (Input::KeyPressed(GAB_KEY_R) && isEnd) ResetGame();
       else if (Input::KeyPressed(GAB_KEY_RIGHT_CONTROL) || Input::KeyPressed(GAB_KEY_LEFT_CONTROL)) ReturnToMenu();
       // PVE PVE PVE //
-    break;
+      break;
+    }
 
-    
-    
     case MULTI_MODE:
-
+    {
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
@@ -339,7 +343,8 @@ void Game::Update()
             ReturnToMenu();
         }
 
-    break;
+      break;
+    }
   
   }
 

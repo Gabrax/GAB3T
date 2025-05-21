@@ -14,7 +14,8 @@
 git clone https://github.com/Gabrax/TicTacToe.git
 ```
 ```bash
-sh build.sh
+On Windows -> build.bat --help
+On Linux   -> sh build.sh --help
 ```
 
 ## ⌨️ KeyMap
