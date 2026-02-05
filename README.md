@@ -1,6 +1,5 @@
-> [!WARNING]
-> Dependencies: CMake, C++ 17 <br>
-> 'res' folder needs to be in the same directory as executable
+> [!IMPORTANT]
+> All rights to the assets belong to their respective authors.
 
 <div align="center">
   
@@ -54,7 +53,7 @@ https://github.com/user-attachments/assets/4704b8da-9d7b-4da9-a063-cf0005936af5
 <a href="https://github.com/nothings/stb/blob/master/stb_image.h">stb_image</a> •
 <a href="https://github.com/assimp/assimp">assimp</a> •
 <a href="https://github.com/zeux/meshoptimizer">meshoptimizer</a> •
-<a href="https://github.com/vallentin/glText">glText</a>
+<a href="https://github.com/vallentin/glText">glText</a> •
 <a href="https://github.com/zpl-c/enet">enet</a>
 </p>
 
