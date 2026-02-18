@@ -3,15 +3,17 @@
 
 <div align="center">
   
-## KeyMap
+## Controls
 
-</div>
+<div align="center">
 
-- Enter/Space - move to mode selection, choose mode, put your choice on board
-- Arrows/WSAD - move around mode selection, and around board cells
-- Left Ctrl/Right Ctrl - go back from board to mode selection
-- R - reset the state of the board
-- Esc - close application
+|Keys|Description|
+|---|---|
+|<kbd>Enter</kbd>, <kbd>Space</kbd>|Move to mode selection, choose mode, put your choice on board|
+|<kbd>Arrows</kbd>, <kbd>WSAD</kbd>|Move around mode selection, board cells|
+|<kbd>Left Ctrl</kbd>, <kbd>Right Ctrl</kbd> |Return to mode selection|
+|<kbd>R</kbd>|Reset the state of the board|
+|<kbd>Esc</kbd>|Close application|
 
 <div align="center">
   
